@@ -1,0 +1,27 @@
+﻿Team 16 Project Charter
+Problem Statement:
+There is no mobile application on the market that completely satisfies the need to quickly and efficiently schedule events amongst group members, friend circles, and classmates, allowing them to push and accept calendar events. Similar systems from Google, Facebook, and Upto provide partial systems for managing social environments, but they fail to provide users with customizable transparency, specific scalability, and unique features for the college environment.
+
+
+Project Objectives:
+* Allow people to quickly create events and share them with groups or lists
+* Allow people to view events for groups or lists
+* Allow people to easily push events to all of their graphical calendars
+
+
+Stakeholders: 
+Purdue Students. Purdue Organizations. Professors. Purdue students’ friends, and relatives. Any group members. 
+
+
+
+
+Deliverables: 
+
+
+* A mobile application available on the Android platform
+* Interface with existing graphical calendar APIs from Google and Facebook
+* A simple, intuitive user interface for receiving and sending events
+* A mechanism to create an event and send it to Facebook friends
+* A mechanism to view a list of events sent to them
+* A mechanism to  choose to push incoming events to their Google/Facebook calendars or put to a “maybe later” stack
+* An SQL database to receive incoming tasks from the app
