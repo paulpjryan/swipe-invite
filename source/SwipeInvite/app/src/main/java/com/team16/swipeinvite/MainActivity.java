@@ -22,6 +22,7 @@ public class MainActivity extends Activity
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
     private NavigationDrawerFragment mNavigationDrawerFragment;
+
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
 
@@ -35,20 +36,24 @@ public class MainActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getFragmentManager().findFragmentById(R.id.navigation_drawer);
-        mTitle = getTitle();
+        mNavigationDrawerFragment = (NavigationDrawerFragment)getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mDrawerList = (ListView)findViewById(R.id.navigation_drawer);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
+        mTitle = getTitle();
+
         //
-        String[] mOptionsList = {"Option 1", "Option 2", "Option 3"};
+        String[] mOptionsList = {"Home", "Groups", "Messages"};
 
         // Set the adapter for the list view
         mDrawerList.setAdapter(new ArrayAdapter<String>(this,
                 R.layout.drawer_list_item, mOptionsList));
         // Set the list's click listener
         //mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+
+        // enable ActionBar app icon to behave as action to toggle nav drawer
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
 
 
         // Set up the drawer.
@@ -64,6 +69,10 @@ public class MainActivity extends Activity
         fragmentManager.beginTransaction()
                 .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
                 .commit();
+
+        // update selected item and title, then close the drawer
+        //mDrawerList.setItemChecked(position, true);
+        //mDrawerLayout.closeDrawer(mDrawerList);
     }
 
     public void onSectionAttached(int number) {
@@ -78,6 +87,12 @@ public class MainActivity extends Activity
                 mTitle = getString(R.string.title_section3);
                 break;
         }
+    }
+
+    @Override
+    public void setTitle(CharSequence title) {
+        mTitle = title;
+        getActionBar().setTitle(mTitle);
     }
 
     public void restoreActionBar() {
