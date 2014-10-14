@@ -16,5 +16,24 @@
     <string name="drawer_open">Drawer Open</string>
     <string name="drawer_close">Drawer Close</string>
     <string name="title_activity_sample">SampleActivity</string>
+    <string name="title_activity_add_person2group">Add People</string>
 
+    <!-- Add person to group -->
+    <string name="add_person2group_editMessage">Name/Keyword</string>
+    <string name="add_person2group_btn">Invite</string>
+    
+    
+    <!-- User profile -->
+    <string name="user_profile_username">Username : </string>
+    <string name="user_profile_password">Password : </string>
+    <string name="user_profile_name">Full Name : </string>
+    <string name="user_profile_email">Email : </string>
+    <string name="user_profile_gender">Gender : </string>
+    <string name="user_profile_male">Male</string>
+    <string name="user_profile_female">Female</string>
+    <string name="user_profile_edit">  Edit  </string>
+	<string name="title_activity_user_profile">My Profile</string>
+	
+	
+	
 </resources>
