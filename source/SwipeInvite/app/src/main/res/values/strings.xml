@@ -34,11 +34,14 @@
     <string name="title_activity_user_profile">My Profile</string>
    
     
-    <!-- Group creation -->
+    <!-- Group creation -->			
      <string name="title_activity_group_creation">Add New Group</string>
       <string name="group_creation_name">Group Name: </string>
-       <string name="group_creation_description">Description </string>
+       <string name="group_creation_description">Description: </string>
        <string name="group_creation_addButton">Add people </string>
        <string name="group_creation_buildButton">Create </string>
-
+       <string name="group_creation_type">Group type: </string>
+        <string name="group_creation_private">private </string>
+		<string name="group_creation_public">public </string>
+		
 </resources>
