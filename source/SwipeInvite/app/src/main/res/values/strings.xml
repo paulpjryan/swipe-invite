@@ -32,16 +32,24 @@
     <string name="user_profile_female">Female</string>
     <string name="user_profile_edit">  Edit  </string>
     <string name="title_activity_user_profile">My Profile</string>
-   
+
+    <!-- Group creation -->
+    <string name="title_activity_group_creation">Add New Group</string>
+    <string name="group_creation_name">Group Name: </string>
+    <string name="group_creation_description">Description: </string>
+    <string name="group_creation_addButton">Add people </string>
+    <string name="group_creation_buildButton">Create </string>
+    <string name="group_creation_type">Group type: </string>
+    <string name="group_creation_private">private </string>
+    <string name="group_creation_public">public </string>
     
-    <!-- Group creation -->			
-     <string name="title_activity_group_creation">Add New Group</string>
-      <string name="group_creation_name">Group Name: </string>
-       <string name="group_creation_description">Description: </string>
-       <string name="group_creation_addButton">Add people </string>
-       <string name="group_creation_buildButton">Create </string>
-       <string name="group_creation_type">Group type: </string>
-        <string name="group_creation_private">private </string>
-		<string name="group_creation_public">public </string>
-		
+    
+    
+    <!-- serach for group -->
+    <string name="title_activity_search_group">Search Group</string>
+    <string name="search_group_find">Search</string>
+     <string name="search_group_name">Group Name/Keyword</string>
+    <string name="search_group_request">Join</string>
+    
+
 </resources>

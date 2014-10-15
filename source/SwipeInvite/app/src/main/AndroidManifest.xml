@@ -28,7 +28,7 @@
         <activity
             android:name=".BaseActivity2"
             android:label="@string/title_activity_base_activity2" >
-        </activity>
+        </activity>
         -->
         <activity
             android:name=".SampleActivity"
@@ -45,6 +45,10 @@
         <activity
             android:name=".GroupCreationActivity"
             android:label="@string/title_activity_group_creation" >
+        </activity>
+        <activity
+            android:name=".SearchGroupActivity"
+            android:label="@string/title_activity_search_group" >
         </activity>
     </application>
 
