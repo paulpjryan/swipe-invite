@@ -51,14 +51,16 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="3"
-            android:text="@string/group_creation_private" />
+            android:text="@string/group_creation_private" 
+            android:onClick="onCheckboxClicked"/>
          
                   <CheckBox
             android:id="@+id/checkBox_group_type2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="3"
-            android:text="@string/group_creation_public" />
+            android:text="@string/group_creation_public"
+            android:onClick="onCheckboxClicked" />
         
 
     </LinearLayout>

@@ -15,38 +15,38 @@ public class User {
 	}
 	
 	public void addFriend(User frnd) {
-		friends.add(frnd);
-		frndcount++;
+		this.friends.add(frnd);
+		this.frndcount++;
 		
 	}
 	
 	public void removeFriend(User frnd) {
-		friends.remove(frnd);
-		frndcount--;
+		this.friends.remove(frnd);
+		this.frndcount--;
 		
 	}
 	
 	public void removeFriend(int i) {
-		friends.remove(i);
-		frndcount--;
+		this.friends.remove(i);
+		this.frndcount--;
 		
 	}
 	
 	public void addGroup(Group grp) {
 		this.groups.add(grp);
-		grpcount++;
+		this.grpcount++;
 		
 	}
 	
 	public void removeGroup(Group grp) {
-		groups.remove(grp);
-		grpcount--;
+		this.groups.remove(grp);
+		this.grpcount--;
 		
 	}
 	
 	public void removeGroup(int i) {
-		groups.remove(i);
-		grpcount--;
+		this.groups.remove(i);
+		this.grpcount--;
 		
 	}
 	
