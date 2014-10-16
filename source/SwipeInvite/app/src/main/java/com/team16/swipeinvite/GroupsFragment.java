@@ -10,7 +10,6 @@ import android.view.ViewGroup;
  * Created by PRyan on 10/16/2014.
  */
 public class GroupsFragment extends Fragment {
-    public static final String ARG_PLANET_NUMBER = "planet_number";
 
     public GroupsFragment() {
         // Empty constructor required for fragment subclasses
@@ -21,7 +20,7 @@ public class GroupsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_group, container, false);
 
-        getActivity().setTitle("Groups");
+        //getActivity().setTitle("Groups");
         return rootView;
     }
 }

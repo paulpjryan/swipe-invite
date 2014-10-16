@@ -3,6 +3,7 @@ package com.team16.swipeinvite;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
@@ -31,8 +32,8 @@ public class MainActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mTitle = mDrawerTitle = getTitle();
-
+        mTitle = getTitle();
+        mDrawerTitle = getTitle();
         //Names of tabs in the drawer
         drawerTitleList = new String[]{"Events", "Groups", "Test"};
 
@@ -81,22 +82,59 @@ public class MainActivity extends Activity
     }
 
     @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.test, menu);
         return true;
     }
 
+    /* Called whenever we call invalidateOptionsMenu() */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // If the nav drawer is open, hide action items related to the content view
+        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+        //This gets disabled when the drawer is open
+        //menu.findItem(R.id.action_websearch).setVisible(!drawerOpen);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
+        // The action bar home/up action should open or close the drawer.
+        // ActionBarDrawerToggle will take care of this.
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-        return super.onOptionsItemSelected(item);
+        // Handle action buttons
+        switch(item.getItemId()) {
+            /*case R.id.action_websearch:
+                // create intent to perform web search for this planet
+                Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
+                intent.putExtra(SearchManager.QUERY, getActionBar().getTitle());
+                // catch event that there's no activity to handle intent
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(this, R.string.app_not_available, Toast.LENGTH_LONG).show();
+                }
+                return true;
+            */
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     /* The click listner for ListView in the navigation drawer */
@@ -110,23 +148,20 @@ public class MainActivity extends Activity
     private void selectItem(int position) {
         // update the main content by replacing fragments
         Fragment fragment;
-       //switch (position) {
-       //    case 2:
-        if(position == 1) {
-            fragment = new GroupsFragment();
+        switch (position) {
+            case 1:
+                fragment = new GroupsFragment();
+                break;
+            default:
+                fragment = new EventsFragment();
+                break;
         }
-        else
-        {
-            fragment = new EventsFragment();
-        }
-       //        break;
-       //}
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
 
         // update selected item and title, then close the drawer
         mDrawerList.setItemChecked(position, true);
-        setTitle(drawerTitleList[position]);
+        mTitle = drawerTitleList[position];
         mDrawerLayout.closeDrawer(mDrawerList);
     }
 }
