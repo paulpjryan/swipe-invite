@@ -165,4 +165,3 @@ public class MainActivity extends Activity
         mDrawerLayout.closeDrawer(mDrawerList);
     }
 }
-
