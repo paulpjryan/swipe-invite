@@ -15,9 +15,9 @@ public class UserProfileActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_user_profile);
 		
-		TextView usrnm = (TextView) findViewById(R.layout.textView_user_username);
-		TextView nme = (TextView) findViewById(R.layout.textView_user_name);
-		TextView mail = (TextView) findViewById(R.layout.textView_user_email)
+		TextView usrnm = (TextView) findViewById(R.id.textView_user_username);
+		TextView nme = (TextView) findViewById(R.id.textView_user_name);
+		TextView mail = (TextView) findViewById(R.id.textView_user_email);
 		String username = usrnm.getText().toString();
 		String fullname = nme.getText().toString();
 		String emailadd = mail.getText().toString();

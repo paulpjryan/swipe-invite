@@ -29,7 +29,7 @@ public class User {
 		
 	}
 	
-	public void getEmail() {
+	public String getEmail() {
 		return this.email;
 		
 	}
@@ -45,12 +45,12 @@ public class User {
 		
 	}
 	
-	public void getFullName() {
+	public String getFullName() {
 		return this.name;
 		
 	}
 	
-	public void getUserName() {
+	public String getUserName() {
 		return this.username;
 		
 	}
