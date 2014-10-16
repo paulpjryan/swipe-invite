@@ -3,8 +3,8 @@ package com.team16.swipeinvite;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.res.Configuration;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
@@ -91,6 +91,7 @@ public class MainActivity extends Activity
             selectItem(0);
 
         }
+
     }
 
     //This method is called at the startup of onCreate
@@ -183,6 +184,7 @@ public class MainActivity extends Activity
         // update selected item and title, then close the drawer
         mDrawerList.setItemChecked(position, true);
         mTitle = drawerTitleList[position];
+
         mDrawerLayout.closeDrawer(mDrawerList);
     }
 }

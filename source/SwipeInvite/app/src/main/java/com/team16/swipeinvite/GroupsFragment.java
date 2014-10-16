@@ -20,7 +20,12 @@ public class GroupsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_group, container, false);
 
-        //getActivity().setTitle("Groups");
+        // THIS CRASHES THE APP. IT SHOULD PROBABLY BE SOMEWHERE ELSE
+        //TextView mTextView;
+        //mTextView = (TextView)getView().findViewById(R.id.textViewGroupsFragment);
+        //mTextView.setText("Current User: " + BaasUser.current().getName() + " With PW: " + BaasUser.current().getPassword());
+
+        getActivity().setTitle("Groups");
         return rootView;
     }
 }
