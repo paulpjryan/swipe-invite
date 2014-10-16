@@ -142,6 +142,10 @@
 
     	</LinearLayout>
 
+
+
+
+
  	 	    <Button
  	 	        
  	 	        android:id="@+id/button_user_edit"
@@ -151,8 +155,11 @@
  	 	        android:layout_gravity="right"
  	 	        android:text="@string/user_profile_edit"/>
 
- 	 	  
- 	 	      
- 	 
- 
+
+
+
+
+
+
+
 </LinearLayout>

@@ -1,13 +1,19 @@
+package com.team16.swipeinvite;
+
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Observable;
 
 
 
-import java.util.*;
+
 
 public class Group extends Observable{
     User creator;
     String groupname;
     ArrayList<User> members = new ArrayList<User>();
-    ArrayList<CalendarContract.Events> events = new ArrayList<Events>();
+    ArrayList<Events> events = new ArrayList<Events>();
     int frndcount = 0;
     int eventcount = 0;
     boolean isprivate;

@@ -1,6 +1,5 @@
+package com.team16.swipeinvite;
 
-import java.util.Observable;
-import java.util.Observer;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -11,6 +10,10 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+
+import java.security.acl.Group;
+import java.util.Observable;
+import java.util.Observer;
 
 
 
