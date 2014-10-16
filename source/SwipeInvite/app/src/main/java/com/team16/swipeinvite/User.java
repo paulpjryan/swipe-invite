@@ -1,3 +1,6 @@
+package com.team16.swipeinvite;
+
+
 import java.util.*;
 
 public class User {
