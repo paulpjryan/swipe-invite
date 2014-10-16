@@ -24,21 +24,6 @@ public class User {
 		
 	}
 	
-	public void setEmail(String addr) {
-		this.email = addr;
-		
-	}
-	
-	public void getEmail() {
-		return this.email;
-		
-	}
-	
-	public boolean isMale() {
-		return this.male;
-		
-	}
-	
 	public void addFriend(User frnd) {
 		this.friends.add(frnd);
 		this.frndcount++;
@@ -46,12 +31,6 @@ public class User {
 	}
 	
 	public void getFullName() {
-		return this.name;
-		
-	}
-	
-	public void getUserName() {
-		return this.username;
 		
 	}
 	

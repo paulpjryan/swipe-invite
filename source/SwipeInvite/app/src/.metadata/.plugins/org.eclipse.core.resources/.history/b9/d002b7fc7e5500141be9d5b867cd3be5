@@ -6,8 +6,6 @@ import java.util.*;
 public class User {
 	String name;
 	String username;
-	String email;
-	boolean male;
 	int frndcount = 0;
 	int grpcount = 0;
 	ArrayList<User> friends = new ArrayList<User>();
@@ -19,39 +17,9 @@ public class User {
 		
 	}
 	
-	public void setGender(boolean value) {
-		this.male = value;
-		
-	}
-	
-	public void setEmail(String addr) {
-		this.email = addr;
-		
-	}
-	
-	public void getEmail() {
-		return this.email;
-		
-	}
-	
-	public boolean isMale() {
-		return this.male;
-		
-	}
-	
 	public void addFriend(User frnd) {
 		this.friends.add(frnd);
 		this.frndcount++;
-		
-	}
-	
-	public void getFullName() {
-		return this.name;
-		
-	}
-	
-	public void getUserName() {
-		return this.username;
 		
 	}
 	
