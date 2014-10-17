@@ -38,7 +38,12 @@
         </activity>
         <activity
             android:name=".GroupCreationActivity"
-            android:label="@string/title_activity_group_creation" >
+            android:label="@string/title_activity_group_creation"
+            android:parentActivityName="com.team16.swipeinvite.MainActivity" >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.team16.swipeinvite.MainActivity" />
         </activity>
         <activity
             android:name=".SearchGroupActivity"
@@ -50,7 +55,12 @@
         </activity>
         <activity
             android:name=".GroupEditActivity"
-            android:label="@string/title_activity_group_edit" >
+            android:label="@string/title_activity_group_edit"
+            android:parentActivityName="com.team16.swipeinvite.MainActivity" >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.team16.swipeinvite.MainActivity" />
         </activity>
     </application>
 
