@@ -1,10 +1,13 @@
 package com.team16.swipeinvite;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -61,6 +64,17 @@ public class GroupsFragment extends Fragment {
 
         ListView listView = (ListView) rootView.findViewById(R.id.listview_groups);
         listView.setAdapter(mArrayAdapter);
+
+        //This just opens group_edit on tap. We should have some sort of edit action or button.
+        listView.setOnItemClickListener(new OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id)
+            {
+                Intent intent = new Intent(getActivity(), GroupEditActivity.class);
+                //ADD ARGUMENTS
+                startActivity(intent);
+            }
+        });
 
         getActivity().setTitle("Groups");
         return rootView;
