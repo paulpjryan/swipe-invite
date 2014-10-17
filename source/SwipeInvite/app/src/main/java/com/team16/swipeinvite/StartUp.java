@@ -18,6 +18,7 @@ public class StartUp extends Application {
     private BaasBox box;
     private User activeUser;
     private ArrayList<User> previousLogins;
+    private boolean remember;
 
     //The onCreate method is where startup procedures should be run.
     @Override
@@ -47,11 +48,17 @@ public class StartUp extends Application {
 
         activeUser = new User();
         previousLogins = new ArrayList<User>();
+        remember = false;
     }
 
     //A method to return the BaasBox object, not really necessary as it is already global
     public BaasBox getBaasBox(){
         return box;
+    }
+
+    //Method to set remember checkbox
+    public void setRemember(boolean b) {
+        this.remember = b;
     }
 
     //Method to return the active user object
@@ -71,7 +78,7 @@ public class StartUp extends Application {
     }
 
     //Method to completely reset the active user to its original, blank state
-    public void resetActiveUser(boolean remember) {
+    public void resetActiveUser() {
         if (remember) {
             //Check to see if going over capacity for local user data
             if(localDataAtMax()) {
@@ -80,6 +87,7 @@ public class StartUp extends Application {
 
             previousLogins.add(activeUser);   //adding logged out user to previous list
         }
+        remember = false;
         activeUser = new User();
     }
 

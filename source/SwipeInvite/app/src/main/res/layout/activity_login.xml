@@ -54,6 +54,11 @@
                 android:imeActionId="@+id/login"
                 android:imeOptions="actionUnspecified" />
 
+            <CheckBox android:id="@+id/checkbox_login_remember"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/login_remember"
+                android:onClick="onCheckboxClicked"/>
 
             <Button android:id="@+id/sign_in_button"
                 android:layout_width="150dp"
