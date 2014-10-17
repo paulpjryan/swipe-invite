@@ -5,9 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.TextView;
 
 public class GroupCreationActivity extends Activity {
 
@@ -17,24 +14,24 @@ public class GroupCreationActivity extends Activity {
 		setContentView(R.layout.activity_group_creation);
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
-
+        /*
         TextView nameview = (TextView) findViewById(R.id.textView_group_name);
 		TextView descview = (TextView) findViewById(R.id.textView_group_description);
         RadioGroup radgroup = (RadioGroup) findViewById(R.id.radioGroup);
+
         int selectedId = radgroup.getCheckedRadioButtonId();
         RadioButton type = (RadioButton) findViewById(selectedId);
         boolean ispriv = false;
-        if((type.getText()).equals("Private"))
+        if((type.getText()).equals("text_private"))
             ispriv = true;
 
 		String groupname = nameview.getText().toString();
 		String desc = descview.getText().toString();
-        /* HOW TO GET CURRENT USER */
         User current = ((StartUp) this.getApplication()).getActiveUser();
         Group newgroup = new Group(current, groupname, ispriv);
         newgroup.setDescription(desc);
         current.groups.add(newgroup);
-
+        */
 	}
 
 
