@@ -16,7 +16,7 @@ public class Group extends Observable{
     boolean isprivate;
 
     public Group(User creat, String group, boolean priv) {
-        this.creator = new User(creat.name, creat.username);
+        this.creator = creat;
         this.isprivate = priv;
         this.groupname = group;
 
@@ -69,6 +69,11 @@ public class Group extends Observable{
 
     public int getEventCount() {
         return eventcount;
+
+    }
+
+    public void setGroupname(String newname) {
+        this.groupname = newname;
 
     }
 
