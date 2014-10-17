@@ -1,9 +1,13 @@
 package com.team16.swipeinvite;
 
 
+import com.baasbox.android.BaasDocument;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Observable;
+import android.util.Log;
+import com.baasbox.android.BaasUser;
 
 
 public class Group extends Observable{
@@ -15,6 +19,8 @@ public class Group extends Observable{
     int frndcount = 0;
     int eventcount = 0;
     boolean isprivate;
+
+    BaasDocument groupDoc;
 
     public Group(User creat, String group, boolean priv) {
         this.creator = creat;
@@ -81,6 +87,40 @@ public class Group extends Observable{
     public void setGroupname(String newname) {
         this.groupname = newname;
 
+    }
+
+    //Method to store a Baas document of representation inside this group
+    public void setBaasGroup(BaasDocument d) {
+        //Checking if this is the correct type of document
+        if (!d.getCollection().equals("group")) {
+            Log.d("LOG", "Incorrect document type trying to write to group.");
+            return;
+        }
+
+        //Setting document locally and inflating properties
+        this.groupDoc = d;
+        String authorname = d.getAuthor();
+        BaasUser author = BaasUser.withUserName(authorname);
+        User auth = new User();
+        auth.unWrapUser(author);
+        this.creator = auth;
+        this.groupname = d.getString("name");
+        this.description = d.getString("description");
+        this.frndcount = d.getInt("frndcount");
+        this.eventcount = d.getInt("eventcount");
+
+        return;
+    }
+
+    //Method to get the BaasGroup representation of this object
+    public BaasDocument getBaasGroup() {
+        //Pushing the local data to a server object
+        groupDoc.putString("name", this.groupname);
+        groupDoc.putString("description", this.description);
+        groupDoc.putLong("frndcount", this.frndcount);
+        groupDoc.putLong("eventcount", this.eventcount);
+
+        return groupDoc;
     }
 
 }

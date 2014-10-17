@@ -112,6 +112,10 @@ public class LoginActivity extends FragmentActivity {
     }
 
     private void completeLogin(boolean success){
+        //Set the current user to our active user model
+        ((StartUp) this.getApplication()).setActiveUser(BaasUser.current());
+
+        //Standard completion stuff
         showProgress(false);
         mSignupOrLogin = null;
         if (success) {
