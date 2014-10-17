@@ -28,7 +28,7 @@ public class UserProfileActivity extends Activity {
         String password = pass.getText().toString();
 		String fullname = nme.getText().toString();
 		String emailadd = mail.getText().toString();*/
-        
+
         //activeUser = new User(fullname, username, password);
         //activeUser.setEmail(mail);
         //activeUser.setGender(ismale);
