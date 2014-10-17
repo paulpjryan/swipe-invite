@@ -50,8 +50,6 @@
         android:layout_marginLeft="90dp"
         android:id="@+id/radioGroup">
 
-
-
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

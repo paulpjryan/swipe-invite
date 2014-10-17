@@ -2,6 +2,7 @@ package com.team16.swipeinvite;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.RadioButton;
@@ -14,8 +15,10 @@ public class GroupCreationActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_group_creation);
-		
-		TextView nameview = (TextView) findViewById(R.id.textView_group_name);
+
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+
+        TextView nameview = (TextView) findViewById(R.id.textView_group_name);
 		TextView descview = (TextView) findViewById(R.id.textView_group_description);
         RadioGroup radgroup = (RadioGroup) findViewById(R.id.radioGroup);
         int selectedId = radgroup.getCheckedRadioButtonId();
@@ -51,6 +54,11 @@ public class GroupCreationActivity extends Activity {
 		if (id == R.id.action_settings) {
 			return true;
 		}
+        else if(id == android.R.id.home)
+        {
+            NavUtils.navigateUpFromSameTask(this);
+            return true;
+        }
 		return super.onOptionsItemSelected(item);
 	}
 }

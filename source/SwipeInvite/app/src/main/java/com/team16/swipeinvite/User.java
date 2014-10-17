@@ -1,6 +1,8 @@
 package com.team16.swipeinvite;
 
 
+import android.util.Log;
+
 import java.util.*;
 import com.baasbox.android.BaasUser;
 
@@ -112,26 +114,45 @@ public class User {
 
     //Method used to unwrap the contents of a BaasUser object to this user object
     public void unWrapUser (BaasUser u) {
+        if (u == null) {
+            Log.d("LOG", "Current user null.");
+        }
         //Importing default properties of BaasUser
         this.username = u.getName();
-        this.password = u.getPassword();
+        try {
+            this.password = u.getPassword();
+        } catch (NullPointerException g) {
+            Log.d("LOG", "No password parsed.");
+        }
 
         //Importing FRIEND properties of BaasUser
         if (u.getScope(BaasUser.Scope.FRIEND) != null) {   //making sure the current user has access
+            try {
 
+            } catch (NullPointerException f) {
+                Log.d("LOG", "No user data.");
+            }
         }
 
         //Importing REGISTERED properties of BaasUser
         if (u.getScope(BaasUser.Scope.REGISTERED) != null) {   //making sure the current user has access
-            this.name = u.getScope(BaasUser.Scope.REGISTERED).getString("name");
-            this.male = u.getScope(BaasUser.Scope.REGISTERED).getBoolean("male");
-            this.frndcount = u.getScope(BaasUser.Scope.REGISTERED).getLong("frndcount").intValue();
+            try {
+                this.name = u.getScope(BaasUser.Scope.REGISTERED).getString("name");
+                this.male = u.getScope(BaasUser.Scope.REGISTERED).getBoolean("male");
+                this.frndcount = u.getScope(BaasUser.Scope.REGISTERED).getLong("frndcount").intValue();
+            } catch (NullPointerException e) {
+                Log.d("LOG", "No user data.");
+            }
         }
 
         //Importing PRIVATE properties of BaasUser
         if (u.getScope(BaasUser.Scope.PRIVATE) != null) {   //making sure the current user has access
-            this.email = u.getScope(BaasUser.Scope.PRIVATE).getString("email");
-            this.grpcount = u.getScope(BaasUser.Scope.PRIVATE).getLong("grpcount").intValue();
+            try {
+                this.email = u.getScope(BaasUser.Scope.PRIVATE).getString("email");
+                this.grpcount = u.getScope(BaasUser.Scope.PRIVATE).getLong("grpcount").intValue();
+            } catch (NullPointerException i) {
+                Log.d("LOG", "No user data.");
+            }
         }
 
         return;

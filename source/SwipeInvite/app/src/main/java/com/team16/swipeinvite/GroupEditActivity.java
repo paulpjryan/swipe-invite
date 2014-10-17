@@ -2,6 +2,7 @@ package com.team16.swipeinvite;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -12,6 +13,8 @@ public class GroupEditActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_edit);
+
+        getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
 
@@ -29,6 +32,11 @@ public class GroupEditActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
+            return true;
+        }
+        else if(id == android.R.id.home)
+        {
+            NavUtils.navigateUpFromSameTask(this);
             return true;
         }
         return super.onOptionsItemSelected(item);

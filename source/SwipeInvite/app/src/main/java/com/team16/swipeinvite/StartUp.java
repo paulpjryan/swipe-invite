@@ -60,4 +60,9 @@ public class StartUp extends Application {
         return;
     }
 
+    //Method to completely reset the active user to its original, blank state
+    public void resetActiveUser() {
+        activeUser = new User();
+    }
+
 }
