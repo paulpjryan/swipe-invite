@@ -9,7 +9,7 @@ import com.baasbox.android.BaasUser;
 public class User {
 	String name;  //registered
 	String username;  //default
-    private String password;  //default
+    //private String password;  //default  //OBSOLETE WITH NEW PROTOCOL FOR USER HANDLING
 	String email;  //private
 	boolean male;  //registered
 	int frndcount = 0;  //registered
@@ -17,17 +17,22 @@ public class User {
 	ArrayList<User> friends = new ArrayList<User>();  //server call, friend
 	ArrayList<Group> groups = new ArrayList<Group>();  //server call, private
 
+    private BaasUser userObj;
+
     //Defualt user object creation for startup
     public User() {
     }
-	
+
+    /*
 	public User(String nm, String usrnm, String pass) {
 		this.name = nm;
 		this.username = usrnm;
         this.password = pass;
 		
 	}
+	*/
 
+    /*
     public void setPassword(String p) {
         this.password = p;
     }
@@ -35,7 +40,8 @@ public class User {
     public String getPassword() {
         return this.password;
     }
-	
+	*/
+
 	public void setGender(boolean value) {
 		this.male = value;
 		
@@ -115,15 +121,19 @@ public class User {
     //Method used to unwrap the contents of a BaasUser object to this user object
     public void unWrapUser (BaasUser u) {
         if (u == null) {
-            Log.d("LOG", "Current user null.");
+            Log.d("LOG", "User null.");
+            return;
         }
+        userObj = u;
         //Importing default properties of BaasUser
         this.username = u.getName();
+        /*
         try {
             this.password = u.getPassword();
         } catch (NullPointerException g) {
             Log.d("LOG", "No password parsed.");
         }
+        */
 
         //Importing FRIEND properties of BaasUser
         if (u.getScope(BaasUser.Scope.FRIEND) != null) {   //making sure the current user has access
@@ -159,10 +169,12 @@ public class User {
     }
 
     //Method used to wrap the contents of this user object to a provided BaasUser
-    //returns null if this is not the correct user or if incorrect password
-    public BaasUser wrapUser(BaasUser u) {
+    //returns null if this is not the correct user
+    public BaasUser wrapToCurrentUser() {
+        BaasUser u = BaasUser.current();
         //Checking default properties of BaasUser
         if (!(u.getName().equals(this.username))) {
+            Log.d("LOG", "Tried to save incorrect user profile to current user.");
             return null;
         }
 

@@ -20,6 +20,7 @@ import com.baasbox.android.BaasHandler;
 import com.baasbox.android.BaasResult;
 import com.baasbox.android.BaasUser;
 import com.baasbox.android.RequestToken;
+import android.widget.CheckBox;
 //import com.team16.com.team.16.swipeinvite.R;
 
 /**
@@ -112,13 +113,13 @@ public class LoginActivity extends FragmentActivity {
     }
 
     private void completeLogin(boolean success){
-        //Set the current user to our active user model
-        ((StartUp) this.getApplication()).setActiveUser(BaasUser.current());
-
         //Standard completion stuff
         showProgress(false);
         mSignupOrLogin = null;
         if (success) {
+            //Set the current user to our active user model
+            ((StartUp) this.getApplication()).setActiveUser(BaasUser.current());
+            //Go to main activity
             Intent intent = new Intent(this,MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
@@ -240,5 +241,24 @@ public class LoginActivity extends FragmentActivity {
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
+
+    //Method of responding to a checkbox click
+    public void onCheckboxClicked(View view) {
+        // Is the view now checked?
+        boolean checked = ((CheckBox) view).isChecked();
+
+        // Check which checkbox was clicked
+        switch(view.getId()) {
+            case R.id.checkbox_login_remember:
+                if (checked) {
+                    ((StartUp) this.getApplication()).setRemember(true);
+                }
+                else {
+                    ((StartUp) this.getApplication()).setRemember(false);
+                }
+                break;
+        }
+    }
+
 
 }
