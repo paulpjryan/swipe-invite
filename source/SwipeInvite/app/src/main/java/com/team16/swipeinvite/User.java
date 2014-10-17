@@ -137,11 +137,13 @@ public class User {
         return;
     }
 
-    //Method used to wrap the contents of this user object to a BaasUser
-    public BaasUser wrapUser() {
-        //Setting default properties of BaasUser
-        BaasUser u = BaasUser.withUserName(this.username);
-        u.setPassword(this.password);
+    //Method used to wrap the contents of this user object to a provided BaasUser
+    //returns null if this is not the correct user or if incorrect password
+    public BaasUser wrapUser(BaasUser u) {
+        //Checking default properties of BaasUser
+        if (!(u.getName().equals(this.username))) {
+            return null;
+        }
 
         //Setting FRIEND properties
 
@@ -157,6 +159,5 @@ public class User {
         //Returning BaasUser object with set profile data
         return u;
     }
-	
 
 }
