@@ -27,20 +27,11 @@ public class EventsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        // Create some dummy data for the ListView.  Here's a sample weekly forecast
         String[] data = {
-                "CS307 - Group 16 meeting",
-                "CS354 Project Group meeting",
-                "SIGAPP Purdue meeting",
-                "Zombie Impersonators of Tippecanoe County meeting",
-                "Friends of Miur Valley meeting",
-                "The three best friends that anyone could have meeting",
-                "BBQ Sauce Club meeting",
-                "We like wine and we don't care who knows meeting",
-                "Mountain biking friends meeting",
-                "People who don't go to Indiana University quarterly touching base",
-                "The whitest kids u know skit planning meeting",
-                "CS 391 meeting"
+                "Group 1 Meeting - 4:30pm",
+                "Pork tasting - 6:15pm",
+                "Project Demo - 11:30am",
+                "RANDOM DANCING - ALL THE TIME"
         };
 
         List<String> dummyData = new ArrayList<String>(Arrays.asList(data));

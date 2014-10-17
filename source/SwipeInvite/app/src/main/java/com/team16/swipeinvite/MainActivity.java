@@ -53,7 +53,7 @@ public class MainActivity extends Activity
         mTitle = getTitle();
         mDrawerTitle = getTitle();
         //Names of tabs in the drawer
-        drawerTitleList = new String[]{"Events", "Groups", "Test"};
+        drawerTitleList = new String[]{"Events", "Groups"};
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
