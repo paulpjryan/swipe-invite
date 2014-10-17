@@ -63,10 +63,9 @@ public class StartUp extends Application {
         int n = isPrev(u);
         if (n != -1) {
             activeUser = previousLogins.remove(n);  //pull prev user from list if present
-            return;
         }
 
-        //Fill new user slot in active user if not present
+        //Unpack BaasUser profile data into user object
         activeUser.unWrapUser(u);
         return;
     }
