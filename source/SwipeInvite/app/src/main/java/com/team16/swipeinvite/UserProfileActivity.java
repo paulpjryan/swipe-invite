@@ -25,7 +25,7 @@ public class UserProfileActivity extends Activity {
         int selectedId = radgroup.getCheckedRadioButtonId();
         boolean ismale = false;
         RadioButton gender = (RadioButton) findViewById(selectedId);
-        if(gender.getText() == "Male")
+        if((gender.getText()).equals("Male"))
             ismale = true;
 		String username = usrnm.getText().toString();
         String password = pass.getText().toString();

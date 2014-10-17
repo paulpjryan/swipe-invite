@@ -24,7 +24,7 @@ public class GroupCreationActivity extends Activity {
         int selectedId = radgroup.getCheckedRadioButtonId();
         RadioButton type = (RadioButton) findViewById(selectedId);
         boolean ispriv = false;
-        if(type.getText() == "Private")
+        if((type.getText()).equals("Private"))
             ispriv = true;
 
 		String groupname = nameview.getText().toString();
