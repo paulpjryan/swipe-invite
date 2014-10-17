@@ -119,7 +119,7 @@ public class MainActivity extends Activity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.test, menu);
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -142,7 +142,10 @@ public class MainActivity extends Activity
         }
         // Handle action buttons
         switch(item.getItemId()) {
-            /*case R.id.action_websearch:
+            case R.id.action_logout:
+                /* CODE TO LOGOUT GOES IN HERE. THIS OTHER STUFF IS JUST PLACEHOLDER
+
+
                 // create intent to perform web search for this planet
                 Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
                 intent.putExtra(SearchManager.QUERY, getActionBar().getTitle());
@@ -150,10 +153,10 @@ public class MainActivity extends Activity
                 if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivity(intent);
                 } else {
-                    Toast.makeText(this, R.string.app_not_available, Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Action unavailable", Toast.LENGTH_LONG).show();
                 }
+                */
                 return true;
-            */
             default:
                 return super.onOptionsItemSelected(item);
         }
