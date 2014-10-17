@@ -14,6 +14,10 @@ public class User {
 	int grpcount = 0;  //private
 	ArrayList<User> friends = new ArrayList<User>();  //server call, friend
 	ArrayList<Group> groups = new ArrayList<Group>();  //server call, private
+
+    //Defualt user object creation for startup
+    public User() {
+    }
 	
 	public User(String nm, String usrnm, String pass) {
 		this.name = nm;
