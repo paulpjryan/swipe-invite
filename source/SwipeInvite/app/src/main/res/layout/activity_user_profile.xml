@@ -112,8 +112,9 @@
  	 	<LinearLayout
 		        android:id="@+id/linearLayout_profile_gender"
 		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content" 
-		        android:orientation="horizontal">
+		        android:layout_height="80dp"
+		        android:orientation="horizontal"
+            android:layout_marginTop="10dp">
 
  	 		
 		    
@@ -124,21 +125,27 @@
 		        android:layout_height="wrap_content"
 		        android:text="@string/user_profile_gender"
 		        android:textAppearance="?android:attr/textAppearanceSmall" />
- 	  		
- 	  		<CheckBox
- 	 		    android:id="@+id/checkBox_user_male"
- 	 		    android:layout_width="0dp"
- 	 		    android:layout_height="wrap_content"
- 	 		    android:layout_weight="3"
- 	 		    android:text="@string/user_profile_male" />
- 	  		
- 	  		 <CheckBox
- 	 		    android:id="@+id/checkBox_user_female"
- 	 		    android:layout_width="0dp"
- 	 		    android:layout_height="wrap_content"
- 	 		    android:layout_weight="3"
- 	 		    android:text="@string/user_profile_female" />
 
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="160dp">
+
+                <RadioButton
+                   android:id="@+id/Radiobutton_user_male"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                   android:text="Male" />
+
+                <RadioButton
+                  android:id="@+id/Radiobutton_user_female"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_weight="3"
+                  android:text= "Female" />
+
+            </RadioGroup>
 
         </LinearLayout>
 

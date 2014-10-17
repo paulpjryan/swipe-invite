@@ -14,7 +14,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Group Name:"
         android:id="@+id/textView"
-        android:layout_alignBottom="@+id/group_name"
+        android:layout_alignBottom="@+id/textView"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
@@ -23,17 +23,17 @@
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
         android:ems="10"
-        android:id="@+id/group_name"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:id="@+id/textView_new_group"
+        android:layout_alignBottom="@+id/textView"
+        android:layout_alignRight="@+id/listView"
+        android:layout_alignEnd="@+id/listView" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Add Persons"
         android:id="@+id/add_users"
-        android:layout_below="@+id/group_name"
+        android:layout_below="@+id/textView"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="31dp" />
@@ -44,8 +44,8 @@
         android:text="Delete Persons"
         android:id="@+id/delete_users"
         android:layout_alignTop="@+id/add_users"
-        android:layout_alignRight="@+id/group_name"
-        android:layout_alignEnd="@+id/group_name" />
+        android:layout_alignRight="@+id/textView_new_group"
+        android:layout_alignEnd="@+id/textView_new_group" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -73,8 +73,8 @@
         android:text="Submit"
         android:id="@+id/submit"
         android:layout_alignParentBottom="true"
-        android:layout_alignRight="@+id/group_name"
-        android:layout_alignEnd="@+id/group_name"
-        android:layout_marginRight="34dp" />
+        android:layout_alignRight="@+id/textView_new_group"
+        android:layout_alignEnd="@+id/textView_new_group"
+        android:layout_marginBottom="31dp" />
 
 </RelativeLayout>

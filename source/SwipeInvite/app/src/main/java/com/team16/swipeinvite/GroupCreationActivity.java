@@ -4,7 +4,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.CheckBox;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 public class GroupCreationActivity extends Activity {
@@ -16,8 +17,13 @@ public class GroupCreationActivity extends Activity {
 		
 		TextView nameview = (TextView) findViewById(R.id.textView_group_name);
 		TextView descview = (TextView) findViewById(R.id.textView_group_description);
-        CheckBox priv = (CheckBox) findViewById(R.id.checkBox_group_type1);
-        boolean ispriv = priv.isChecked();
+        RadioGroup radgroup = (RadioGroup) findViewById(R.id.radioGroup);
+        int selectedId = radgroup.getCheckedRadioButtonId();
+        RadioButton type = (RadioButton) findViewById(selectedId);
+        boolean ispriv = false;
+        if(type.getText() == "Private")
+            ispriv = true;
+
 		String groupname = nameview.getText().toString();
 		String desc = descview.getText().toString();
         /* HOW TO GET CURRENT USER */
