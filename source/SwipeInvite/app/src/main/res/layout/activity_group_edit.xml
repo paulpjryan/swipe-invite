@@ -70,8 +70,8 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Done"
-        android:id="@+id/done"
+        android:text="Submit"
+        android:id="@+id/submit"
         android:layout_alignParentBottom="true"
         android:layout_alignRight="@+id/group_name"
         android:layout_alignEnd="@+id/group_name"
