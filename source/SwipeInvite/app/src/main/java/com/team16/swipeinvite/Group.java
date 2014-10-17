@@ -165,23 +165,10 @@ public class Group extends Observable{
     //Method to figure out if a group equals a group
     public boolean equals(Group g) {
         //Checking for null obj
-        if (g == null || groupDoc == null) {
-            return false;
-        } else if (g.getGroupDoc() == null) {
+        if (g == null) {
             return false;
         }
-
-        //Checking if this is the correct type of document
-        if (!(g.getGroupDoc().getCollection().equals("group"))) {
-            Log.d("LOG", "Incorrect document type trying to write to group.");
-            return false;
-        }
-
-        //Comparing groups by ID
-        if ((g.getGroupDoc().getId()).equals(groupDoc.getId())) {
-            return true;
-        }
-        return false;
+        return equals(g.getGroupDoc());
     }
 
     //Static method to convert a Group object to a BaasDocument
