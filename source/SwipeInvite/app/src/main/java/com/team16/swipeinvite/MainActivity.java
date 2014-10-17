@@ -16,7 +16,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.baasbox.android.BaasHandler;
+import com.baasbox.android.BaasResult;
 import com.baasbox.android.BaasUser;
+import com.baasbox.android.RequestToken;
 
 public class MainActivity extends Activity
 {
@@ -40,6 +43,9 @@ public class MainActivity extends Activity
         if (BaasUser.current() == null){
             startLoginScreen();
             return;
+        }
+        if (savedInstanceState != null) {
+            logoutToken = RequestToken.loadAndResume(savedInstanceState,LOGOUT_TOKEN_KEY,logoutHandler);
         }
 
         setContentView(R.layout.activity_main);
@@ -156,11 +162,30 @@ public class MainActivity extends Activity
                     Toast.makeText(this, "Action unavailable", Toast.LENGTH_LONG).show();
                 }
                 */
+                BaasUser.current().logout(logoutHandler);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    /* LOGOUT METHOD SECTION */
+    private final static String LOGOUT_TOKEN_KEY = "logout";
+    private void onLogout(){
+        startLoginScreen();
+    }
+
+    private RequestToken logoutToken;
+    private final BaasHandler<Void> logoutHandler =
+            new BaasHandler<Void>() {
+                @Override
+                public void handle(BaasResult<Void> voidBaasResult) {
+                    logoutToken=null;
+                    onLogout();
+                }
+            };
+    /* END LOGOUT SECTION */
+
 
     /* The click listner for ListView in the navigation drawer */
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
