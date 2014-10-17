@@ -4,7 +4,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.CheckBox;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 public class UserProfileActivity extends Activity {
@@ -18,8 +19,14 @@ public class UserProfileActivity extends Activity {
 		TextView nme = (TextView) findViewById(R.id.textView_user_name);
         TextView pass = (TextView) findViewById((R.id.textView_user_password));
 		TextView mail = (TextView) findViewById(R.id.textView_user_email);
-        CheckBox male = (CheckBox) findViewById(R.id.checkBox_user_male);
-        boolean ismale = male.isChecked();
+       // CheckBox male = (CheckBox) findViewById(R.id.checkBox_user_male);
+       // boolean ismale = male.isChecked();
+        RadioGroup radgroup = (RadioGroup) findViewById(R.id.radioGroup);
+        int selectedId = radgroup.getCheckedRadioButtonId();
+        boolean ismale = false;
+        RadioButton gender = (RadioButton) findViewById(selectedId);
+        if(gender.getText() == "Male")
+            ismale = true;
 		String username = usrnm.getText().toString();
         String password = pass.getText().toString();
 		String fullname = nme.getText().toString();
