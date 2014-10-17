@@ -112,13 +112,13 @@ public class LoginActivity extends FragmentActivity {
     }
 
     private void completeLogin(boolean success){
-        //Set the current user to our active user model
-        ((StartUp) this.getApplication()).setActiveUser(BaasUser.current());
-
         //Standard completion stuff
         showProgress(false);
         mSignupOrLogin = null;
         if (success) {
+            //Set the current user to our active user model
+            ((StartUp) this.getApplication()).setActiveUser(BaasUser.current());
+            //Go to main activity
             Intent intent = new Intent(this,MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);

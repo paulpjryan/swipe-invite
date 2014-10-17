@@ -186,7 +186,7 @@ public class MainActivity extends Activity
     private final static String LOGOUT_TOKEN_KEY = "logout";
     private void onLogout(){
         //Remove active user data from our model
-        ((StartUp) this.getApplication()).resetActiveUser();
+        ((StartUp) this.getApplication()).resetActiveUser(true);  //CHANGE TRUE TO USER INPUT LATER
 
         //Go back to logout screen
         startLoginScreen();

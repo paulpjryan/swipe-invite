@@ -4,6 +4,7 @@ import android.app.Application;
 import android.util.Log;
 import com.baasbox.android.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /* The purpose of this class is to handle any global variables that the application must manage
@@ -11,10 +12,12 @@ import java.util.List;
 * model object.
 * */
 public class StartUp extends Application {
+    private static final int MAX_CAPACITY = 10;
 
     //This holds the BaasBox android object with the connection settings.
     private BaasBox box;
     private User activeUser;
+    private ArrayList<User> previousLogins;
 
     //The onCreate method is where startup procedures should be run.
     @Override
@@ -43,7 +46,7 @@ public class StartUp extends Application {
 //        box = BaasBox.initDefault(this,config);
 
         activeUser = new User();
-
+        previousLogins = new ArrayList<User>();
     }
 
     //A method to return the BaasBox object, not really necessary as it is already global
@@ -56,13 +59,59 @@ public class StartUp extends Application {
 
     //Method to set active user object
     public void setActiveUser(BaasUser u) {
+        //Checking if the user is in the previous user list
+        int n = isPrev(u);
+        if (n != -1) {
+            activeUser = previousLogins.remove(n);  //pull prev user from list if present
+            return;
+        }
+
+        //Fill new user slot in active user if not present
         activeUser.unWrapUser(u);
         return;
     }
 
     //Method to completely reset the active user to its original, blank state
-    public void resetActiveUser() {
+    public void resetActiveUser(boolean remember) {
+        if (remember) {
+            //Check to see if going over capacity for local user data
+            if(localDataAtMax()) {
+                previousLogins.remove(0);
+            }
+
+            previousLogins.add(activeUser);   //adding logged out user to previous list
+        }
         activeUser = new User();
+    }
+
+    //Method to remove previous profile to the User login history
+    //Note: adding is handled in this class, removal can be an option later
+    public void removePrevUser(User u) {
+        previousLogins.remove(u);
+        return;
+    }
+
+    //Method to decide if previous user is logging in again
+    private int isPrev(BaasUser u) {
+        //Check for null prev list
+        if (previousLogins.size() == 0) {
+            return -1;
+        }
+
+        //Check for matching username in list
+        for (User x: previousLogins) {
+            if (x.getUserName().equals(u.getName())) {
+                Log.d("LOG", "Old user found: " + x.getUserName());
+                return previousLogins.indexOf(x);  //present result: index
+            }
+        }
+
+        return -1; //not present result
+    }
+
+    //Method for checking how many user profiles are stored in database
+    private boolean localDataAtMax() {
+        return (previousLogins.size() >= MAX_CAPACITY);
     }
 
 }

@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
+import android.widget.RadioGroup;
+import android.widget.RadioButton;
 
 public class GroupCreationActivity extends Activity {
 
@@ -14,11 +17,13 @@ public class GroupCreationActivity extends Activity {
 		setContentView(R.layout.activity_group_creation);
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
-        /*
+
+
         TextView nameview = (TextView) findViewById(R.id.textView_group_name);
 		TextView descview = (TextView) findViewById(R.id.textView_group_description);
         RadioGroup radgroup = (RadioGroup) findViewById(R.id.radioGroup);
 
+        /*
         int selectedId = radgroup.getCheckedRadioButtonId();
         RadioButton type = (RadioButton) findViewById(selectedId);
         boolean ispriv = false;
@@ -32,6 +37,7 @@ public class GroupCreationActivity extends Activity {
         newgroup.setDescription(desc);
         current.groups.add(newgroup);
         */
+
 	}
 
 
