@@ -32,6 +32,11 @@ public class User {
 	}
 	*/
 
+    public User(String nm, String usrnm) {
+        this.name = nm;
+        this.username = usrnm;
+    }
+
     /*
     public void setPassword(String p) {
         this.password = p;
@@ -172,6 +177,7 @@ public class User {
     //returns null if this is not the correct user
     public BaasUser wrapToCurrentUser() {
         BaasUser u = BaasUser.current();
+
         //Checking default properties of BaasUser
         if (!(u.getName().equals(this.username))) {
             Log.d("LOG", "Tried to save incorrect user profile to current user.");
@@ -191,6 +197,11 @@ public class User {
 
         //Returning BaasUser object with set profile data
         return u;
+    }
+
+    //Method to get the BaasUser object stored in this
+    public BaasUser getUserObj(){
+        return userObj;
     }
 
 }

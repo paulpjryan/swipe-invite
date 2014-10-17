@@ -72,4 +72,7 @@
     <string name="title_activity_group_edit">Edit Group</string>
     <string name="login_remember">Remember Me</string>
 
+    <!-- GROUP CREATION STUFF -->
+    <string name="group_create_status_message">Creating Group</string>
+
 </resources>
