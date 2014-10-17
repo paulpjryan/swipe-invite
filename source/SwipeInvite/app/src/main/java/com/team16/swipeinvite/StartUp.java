@@ -14,6 +14,7 @@ public class StartUp extends Application {
 
     //This holds the BaasBox android object with the connection settings.
     private BaasBox box;
+    private User activeUser;
 
     //The onCreate method is where startup procedures should be run.
     @Override
@@ -41,13 +42,22 @@ public class StartUp extends Application {
 //        config.httpPort = 9000;
 //        box = BaasBox.initDefault(this,config);
 
-        User activeUser = new User();
+        activeUser = new User();
 
     }
 
     //A method to return the BaasBox object, not really necessary as it is already global
     public BaasBox getBaasBox(){
         return box;
+    }
+
+    //Method to return the active user object
+    public User getActiveUser() { return activeUser; }
+
+    //Method to set active user object
+    public void setActiveUser(BaasUser u) {
+        activeUser.unWrapUser(u);
+        return;
     }
 
 }

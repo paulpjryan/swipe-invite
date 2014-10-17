@@ -21,9 +21,11 @@ public class GroupCreationActivity extends Activity {
         boolean ispriv = priv.isChecked();
 		String groupname = nameview.getText().toString();
 		String desc = descview.getText().toString();
-        Group newgroup = new Group(activeUser, groupname, priv);
+        /* HOW TO GET CURRENT USER */
+        User current = ((StartUp) this.getApplication()).getActiveUser();
+        Group newgroup = new Group(current, groupname, ispriv);
         newgroup.setDescription(desc);
-        activeUser.groups.add(newgroup);
+        current.groups.add(newgroup);
 
 	}
 
