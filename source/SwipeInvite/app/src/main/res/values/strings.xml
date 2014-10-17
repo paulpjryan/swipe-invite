@@ -69,6 +69,6 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
-    <string name="title_activity_group_edit">group_edit</string>
+    <string name="title_activity_group_edit">Edit Group</string>
 
 </resources>
