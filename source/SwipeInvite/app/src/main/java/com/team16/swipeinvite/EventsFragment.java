@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by PRyan on 10/16/2014.
+ * Fragment that shows which events a user has been invited to
  */
 public class EventsFragment extends Fragment {
 
