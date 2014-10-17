@@ -29,8 +29,12 @@ import com.baasbox.android.Role;
 
 public class GroupCreationActivity extends Activity {
     /* BAAS-SERVER TOKEN SECTION */
+    private String rememberId;
+    private final static String REMEMBER_ID_KEY = "id";
     private RequestToken savingRequestToken;
     private final static String SAVING_TOKEN_KEY = "saving";
+    private RequestToken grantingRequestToken;
+    private final static String GRANTING_TOKEN_KEY = "granting";
     /* END TOKEN SECTION */
 
     /* GLOBAL VAR SECTION FOR ACTIVITY */
@@ -56,6 +60,8 @@ public class GroupCreationActivity extends Activity {
         //DO NOT ADD ANY VIEW ACTIVITY CODE ABOVE HERE
         if (savedInstanceState != null) {
             savingRequestToken = RequestToken.loadAndResume(savedInstanceState, SAVING_TOKEN_KEY, onComplete);
+            grantingRequestToken = RequestToken.loadAndResume(savedInstanceState, GRANTING_TOKEN_KEY, onGrantComplete);
+            rememberId = savedInstanceState.getString(REMEMBER_ID_KEY);
         }
 
         //Form view
@@ -128,6 +134,11 @@ public class GroupCreationActivity extends Activity {
             //Need to suspend and save this token in the bundle
             savingRequestToken.suspendAndSave(outState, SAVING_TOKEN_KEY);
         }
+        if (grantingRequestToken != null) {
+            //Need to suspend and save this token in the bundle
+            grantingRequestToken.suspendAndSave(outState, GRANTING_TOKEN_KEY);
+            outState.putString(REMEMBER_ID_KEY, rememberId);
+        }
     }
 
     //handler for sending a request to the server for Group
@@ -139,6 +150,18 @@ public class GroupCreationActivity extends Activity {
                 Log.d("ERROR","ERROR",result.error());
             }
             completeCreate(result);
+        }
+    };
+
+    //handler for sending a grant to the server for Group
+    private final BaasHandler<Void> onGrantComplete = new BaasHandler<Void>() {
+        @Override
+        public void handle(BaasResult<Void> result) {
+            grantingRequestToken = null;
+            if (result.isFailed()) {
+                Log.d("ERROR","ERROR",result.error());
+            }
+            completeGrant(result);
         }
     };
 
@@ -249,25 +272,17 @@ public class GroupCreationActivity extends Activity {
     private void completeCreate(final BaasResult<BaasDocument> result) {
         //Reset token to null
         savingRequestToken = null;
-
+        saveGroup(result.value());
         //Check if successful result
         if (result.isSuccess()) {
             //Try to grant permission if not private
             if(!(result.value().getBoolean("isprivate"))){
-                //Launch grant request and put result group in total variable
-                /*BaasResult r2 = result.value().grantAllSync(Grant.READ, Role.REGISTERED);
-                if (r2.isFailed()) {   //Check for grant failure
-                    Log.d("LOG", "**GRANT_ERROR**", r2.error());
-                    showProgress(false);
-                    return;
-                }*/
-                saveGroup(result.value());
-                showProgress(false);
-                finish();
+                //Launch grant request and put result group id in global variable
+                rememberId = result.value().getId();
+                result.value().grantAll(Grant.READ, Role.REGISTERED, onGrantComplete);
             } else {
                 //TRY TO FINISH ACTIVITY, remove progress wheel
                 //save group locally to active user
-                saveGroup(result.value());
                 showProgress(false);
                 finish();
             }
@@ -279,6 +294,31 @@ public class GroupCreationActivity extends Activity {
     }
 
     /* END GROUP CREATION SECTION*/
+
+
+    /* GRANT COMPLETION SECTION*/
+    private void completeGrant(BaasResult<Void> result) {
+        grantingRequestToken = null;
+        //Checking to see if grant went through
+        if (result.isSuccess()) {
+            //Nothing to fix, just exit
+            rememberId = null;
+            showProgress(false);
+            finish();
+        } else {
+            //Fix unsync
+            for (Group x : ((StartUp) this.getApplication()).getActiveUser().groups) {
+                if (x.getGroupDoc().getId().equals(rememberId)) {
+                    ((StartUp) this.getApplication()).getActiveUser().removeGroup(x);
+                    Log.d("LOG", "FIXED SYNC ISSUE BY DELETING GROUP");
+                }
+            }
+            showProgress(false);
+        }
+        rememberId = null;
+    }
+    /* END GRANT SECTION */
+
 
     /* LOCAL SAVING SECTION */
     private void saveGroup(BaasDocument result) {
