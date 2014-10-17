@@ -46,6 +46,7 @@
     <string name="title_activity_search_group">Search Group</string>
     <string name="search_group_find">Search</string>
     <string name="search_group_name">Group Name/Keyword</string>
+<<<<<<< Updated upstream
     <string name="search_group_request">Join</string>.
 
     <!-- MENU ITEMS -->
@@ -53,6 +54,9 @@
     <string name="action_logout">Logout</string>
 
 
+=======
+    <string name="search_group_request">Join</string>
+>>>>>>> Stashed changes
     <string name="title_activity_start_up">StartUp</string>
     <!-- <string name="title_activity_login">LoginActivity</string> -->
 
