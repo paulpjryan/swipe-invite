@@ -1,14 +1,12 @@
 package com.team16.swipeinvite;
 
+import android.app.Application;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
-import android.widget.*;
 
 public class GroupCreationActivity extends Activity {
 
@@ -19,19 +17,16 @@ public class GroupCreationActivity extends Activity {
 		
 		TextView nameview = (TextView) findViewById(R.id.textView_group_name);
 		TextView descview = (TextView) findViewById(R.id.textView_group_description);
+        CheckBox priv = (CheckBox) findViewById(R.id.checkBox_group_type1);
+        boolean ispriv = priv.isChecked();
 		String groupname = nameview.getText().toString();
 		String desc = descview.getText().toString();
+        Group newgroup = new Group(activeUser, groupname, priv);
+        newgroup.setDescription(desc);
+        activeUser.groups.add(newgroup);
+
 	}
-	
-	public void onCheckboxClicked(View view) {
-	    // Is the view now checked?
-		boolean ispriv;
-	    if(view.getId() == R.id.checkBox_group_type1)
-	    	ispriv = true;
-	    else if(view.getId() == R.id.checkBox_group_type2)
-	    	ispriv = false;
-	    
-	}
+
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

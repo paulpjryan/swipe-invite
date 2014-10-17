@@ -9,6 +9,7 @@ import java.util.Observable;
 public class Group extends Observable{
     User creator;
     String groupname;
+    String description;
     ArrayList<User> members = new ArrayList<User>();
     ArrayList<Events> events = new ArrayList<Events>();
     int frndcount = 0;
@@ -32,6 +33,11 @@ public class Group extends Observable{
     public void removeEvent(int i) {
         events.remove(i);
         eventcount--;
+
+    }
+
+    public void setDescription(String desc) {
+        this.description = desc;
 
     }
 
