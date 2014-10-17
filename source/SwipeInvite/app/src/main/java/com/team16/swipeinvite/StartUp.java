@@ -40,6 +40,9 @@ public class StartUp extends Application {
 //        config.apiDomain = "192.168.56.1"; // the host address
 //        config.httpPort = 9000;
 //        box = BaasBox.initDefault(this,config);
+
+        User activeUser = new User();
+
     }
 
     //A method to return the BaasBox object, not really necessary as it is already global
