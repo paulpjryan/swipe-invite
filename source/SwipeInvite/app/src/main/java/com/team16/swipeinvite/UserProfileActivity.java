@@ -4,9 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.TextView;
 
 public class UserProfileActivity extends Activity {
 
@@ -15,7 +12,7 @@ public class UserProfileActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_user_profile);
 		
-		TextView usrnm = (TextView) findViewById(R.id.textView_user_username);
+		/*TextView usrnm = (TextView) findViewById(R.id.textView_user_username);
 		TextView nme = (TextView) findViewById(R.id.textView_user_name);
         TextView pass = (TextView) findViewById((R.id.textView_user_password));
 		TextView mail = (TextView) findViewById(R.id.textView_user_email);
@@ -30,7 +27,8 @@ public class UserProfileActivity extends Activity {
 		String username = usrnm.getText().toString();
         String password = pass.getText().toString();
 		String fullname = nme.getText().toString();
-		String emailadd = mail.getText().toString();
+		String emailadd = mail.getText().toString();*/
+        
         //activeUser = new User(fullname, username, password);
         //activeUser.setEmail(mail);
         //activeUser.setGender(ismale);
