@@ -3,31 +3,29 @@ package com.team16.swipeinvite;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.RadioGroup;
-import android.view.View;
 import android.widget.RadioButton;
-import android.util.Log;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.baasbox.android.BaasDocument;
-import com.baasbox.android.BaasResult;
-import com.baasbox.android.BaasUser;
-import com.baasbox.android.RequestToken;
 import com.baasbox.android.BaasHandler;
+import com.baasbox.android.BaasResult;
 import com.baasbox.android.Grant;
+import com.baasbox.android.RequestToken;
 import com.baasbox.android.Role;
 
-public class GroupCreationActivity extends Activity {
+public class GroupCreationActivity extends ActionBarActivity {
     /* BAAS-SERVER TOKEN SECTION */
     private String rememberId;
     private final static String REMEMBER_ID_KEY = "id";
@@ -55,7 +53,7 @@ public class GroupCreationActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_group_creation);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //DO NOT ADD ANY VIEW ACTIVITY CODE ABOVE HERE
         if (savedInstanceState != null) {

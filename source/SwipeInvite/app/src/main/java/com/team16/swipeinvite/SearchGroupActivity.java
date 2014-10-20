@@ -1,11 +1,11 @@
 package com.team16.swipeinvite;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class SearchGroupActivity extends Activity {
+public class SearchGroupActivity extends ActionBarActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
