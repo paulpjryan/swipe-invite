@@ -12,14 +12,8 @@ import java.util.List;
 * model object.
 * */
 public class StartUp extends Application {
-    private static final int MAX_CAPACITY = 10;
 
-    //This holds the BaasBox android object with the connection settings.
-    private BaasBox box;
-    private User activeUser;
-    private ArrayList<User> previousLogins;
-    private boolean remember;
-
+    /* ------------------ OVERRIDE METHODS FOR APPLICATION CLASS ---------------------- */
     //The onCreate method is where startup procedures should be run.
     @Override
     public void onCreate() {
@@ -34,29 +28,38 @@ public class StartUp extends Application {
         b.setPort(9000);  //Server port
         box = b.init();  //Initialize the BaasBox object through a builder method
 
-        //OLD CODE, DO NOT USE
-//        BaasBox.builder(this).setAuthentication(BaasBox.Config.AuthType.SESSION_TOKEN)
-//                .setApiDomain("10.0.2.0")
-//                .setPort(9000)
-//                .setAppCode("1234567890")
-//                .init();
-//        BaasBox.Config config = new BaasBox.Config();
-//        config.authenticationType = BaasBox.Config.AuthType.SESSION_TOKEN;
-//        config.apiDomain = "192.168.56.1"; // the host address
-//        config.httpPort = 9000;
-//        box = BaasBox.initDefault(this,config);
 
         activeUser = new User();
         previousLogins = new ArrayList<User>();
         remember = false;
     }
+    /* ------------------------------ END OVERRIDE METHODS ---------------------------- */
 
-    //A method to return the BaasBox object, not really necessary as it is already global
+
+
+    /* ----------------------- BAASBOX SETUP STUFF ---------------------------- */
+    //This holds the BaasBox android object with the connection settings.
+    private BaasBox box;
+
+    //A method to return the BaasBox object
     public BaasBox getBaasBox(){
         return box;
     }
+    /* ----------------------- END BAASBOX SETUP ------------------------------ */
 
-    //Method to set remember checkbox
+
+
+    /* --------- USER LOGIN PROFILE STORAGE AND MANAGEMENT --------------- */
+    //Local constants
+    private static final int MAX_CAPACITY = 10;
+
+    //Local Variables for use
+    private User activeUser;
+    private ArrayList<User> previousLogins;
+    private boolean remember;
+
+
+    //Method to set remember checkbox variable from the Login Activity
     public void setRemember(boolean b) {
         this.remember = b;
     }
@@ -87,12 +90,12 @@ public class StartUp extends Application {
 
             previousLogins.add(activeUser);   //adding logged out user to previous list
         }
-        remember = false;
+        remember = false;  //default state of checkbox in Login activity is false
         activeUser = new User();
     }
 
     //Method to remove previous profile to the User login history
-    //Note: adding is handled in this class, removal can be an option later
+    //Note: adding is handled in Login Activity, removal can be an option later
     public void removePrevUser(User u) {
         previousLogins.remove(u);
         return;
@@ -108,7 +111,7 @@ public class StartUp extends Application {
         //Check for matching username in list
         for (User x: previousLogins) {
             if (x.getUserName().equals(u.getName())) {
-                Log.d("LOG", "Old user found: " + x.getUserName());
+                Log.d("APPLICATION", "Old user found: " + x.getUserName());
                 return previousLogins.indexOf(x);  //present result: index
             }
         }
@@ -120,5 +123,7 @@ public class StartUp extends Application {
     private boolean localDataAtMax() {
         return (previousLogins.size() >= MAX_CAPACITY);
     }
+    /* ---------------- END USER MANAGEMENT ----------------------------- */
+
 
 }

@@ -26,50 +26,59 @@ import com.baasbox.android.RequestToken;
 import com.baasbox.android.Role;
 
 public class GroupCreationActivity extends ActionBarActivity {
-    /* BAAS-SERVER TOKEN SECTION */
+    /* ------------------ BAAS-SERVER TOKEN SECTION ------------------------------ */
     private String rememberId;
     private final static String REMEMBER_ID_KEY = "id";
     private RequestToken savingRequestToken;
     private final static String SAVING_TOKEN_KEY = "saving";
     private RequestToken grantingRequestToken;
     private final static String GRANTING_TOKEN_KEY = "granting";
-    /* END TOKEN SECTION */
+    /* ------------------- END TOKEN SECTION -------------------------------------- */
 
-    /* GLOBAL VAR SECTION FOR ACTIVITY */
+
+
+    /* ------------------- LOCAL VARIALBES FOR VIEW ELEMENTS -------------------------- */
+    //Variables for form view
+    private View groupCreateView;  //View with form
     private int ispriv = -1;  //start at -1 to represent nothing checked
     private EditText nameview;
     private EditText descview;
     private RadioGroup radgroup;
     private Button submit;
-    private View groupCreateView;  //View with form
-    private View groupStatusView;  //Status bar
+
+    //Variables for status bar view
+    private View groupStatusView;  //View with status bar
     private TextView statusMessage;
-    /* END GLOBAL VAR SECTION */
+    /* -------------------- END VARIABLES FOR VIEW ELEMENTS SECTION --------------------- */
 
 
-    /* STANDARD METHODS FOR ANDROID ACTIVITY SECTION */
+
+    /* ------------------ OVERRIDE METHODS FOR ANDROID ACTIVITY ------------------------ */
 	@Override
+    //onCreate is called when the activity is first started
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_group_creation);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //DO NOT ADD ANY VIEW ACTIVITY CODE ABOVE HERE
+        //Loading any previous server requests if the activity was closed
         if (savedInstanceState != null) {
             savingRequestToken = RequestToken.loadAndResume(savedInstanceState, SAVING_TOKEN_KEY, onComplete);
             grantingRequestToken = RequestToken.loadAndResume(savedInstanceState, GRANTING_TOKEN_KEY, onGrantComplete);
             rememberId = savedInstanceState.getString(REMEMBER_ID_KEY);
         }
 
-        //Form view
+        //Setting the content view and support action bar
+        setContentView(R.layout.activity_group_creation);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        //Form view creation to local variables
         this.groupCreateView = (View) findViewById(R.id.group_create_form);
         this.nameview = (EditText) findViewById(R.id.textView_group_name);
 		this.descview = (EditText) findViewById(R.id.textView_group_description);
         this.radgroup = (RadioGroup) findViewById(R.id.radioGroup);
         this.submit = (Button) findViewById(R.id.button_submit);
 
-        //Status View
+        //Status View creation to local variables
         this.groupStatusView = (View) findViewById(R.id.group_create_status);
         this.statusMessage = (TextView) findViewById(R.id.group_create_status_message);
 
@@ -77,6 +86,7 @@ public class GroupCreationActivity extends ActionBarActivity {
 
 
 	@Override
+    //Method to add options to the options menu for the activity
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.group_creation, menu);
@@ -84,6 +94,7 @@ public class GroupCreationActivity extends ActionBarActivity {
 	}
 
 	@Override
+    //Method to determine which option menu item was selected
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
@@ -99,22 +110,15 @@ public class GroupCreationActivity extends ActionBarActivity {
         }
 		return super.onOptionsItemSelected(item);
 	}
-    /* END STANDARD METHOD SECTION */
 
-
-    /* METHODS FOR DEALING WITH FOREGROUND AND BACKGROUND */
     @Override
+    //onPause is called when the activity leaves the user's view
     public void onPause() {
         super.onPause();
-        /* OBSOLETE
-        if (savingRequestToken != null) {
-            //Need to suspend token, only instance variable needed
-            showProgress(false);
-            savingRequestToken.suspend();
-        } */
     }
 
     @Override
+    //onResume is called when the activity comes back to the user's view
     public void onResume() {
         super.onResume();
         /*OBSOLETE
@@ -126,6 +130,7 @@ public class GroupCreationActivity extends ActionBarActivity {
     }
 
     @Override
+    //Method called when the system asks the activity to save any simple data to a bundle state
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (savingRequestToken != null) {
@@ -138,7 +143,11 @@ public class GroupCreationActivity extends ActionBarActivity {
             outState.putString(REMEMBER_ID_KEY, rememberId);
         }
     }
+    /* ------------------------ END OVERRIDE METHOD SECTION ---------------------------------- */
 
+
+
+    /* ----------------------- METHODS FOR BAASHANDLERS --------------------------------- */
     //handler for sending a request to the server for Group
     private final BaasHandler<BaasDocument> onComplete = new BaasHandler<BaasDocument>() {
         @Override
@@ -163,10 +172,11 @@ public class GroupCreationActivity extends ActionBarActivity {
         }
     };
 
-    /* END FORE/BACK SECTION */
+    /* ------------------------ END BAASHANDLER SECTION ------------------------------ */
 
 
-    /* RADIO GROUP RESPONDER SECTION */
+
+    /* --------------------- RADIO GROUP RESPONDER SECTION ----------------------------- */
 
     //Method to respond to the radio button clicked
     //Listener set in the xml
@@ -188,10 +198,11 @@ public class GroupCreationActivity extends ActionBarActivity {
         return;
     }
 
-    /* END RADIO GROUP SECTION */
+    /* ------------------------ END RADIO GROUP SECTION --------------------------------- */
 
 
-    /* SUBMIT BUTTON RESPONDER SECTION */
+
+    /* ------------------------ SUBMIT BUTTON RESPONDER SECTION ---------------------------- */
 
     //Method to respond to the actual button click
     //Listener is set in the xml
@@ -243,12 +254,11 @@ public class GroupCreationActivity extends ActionBarActivity {
 
         return;
     }
+    /* ---------------------- END SUBMIT BUTTON SECTION ----------------------- */
 
 
-    /* END SUBMIT BUTTON SECTION */
 
-
-    /* GROUP CREATION SECTION */
+    /* ---------------------- GROUP CREATION SECTION ------------------------------- */
     private void createNewGroup(String n, String d, boolean p) {
         //Creating local instance of the group
         Group g = new Group(((StartUp) this.getApplication()).getActiveUser(), n, p);
@@ -267,6 +277,7 @@ public class GroupCreationActivity extends ActionBarActivity {
 
     }
 
+    //Method called after a server request token finishes
     private void completeCreate(final BaasResult<BaasDocument> result) {
         //Reset token to null
         savingRequestToken = null;
@@ -291,10 +302,11 @@ public class GroupCreationActivity extends ActionBarActivity {
         return;
     }
 
-    /* END GROUP CREATION SECTION*/
+    /* -------------------------- END GROUP CREATION SECTION ----------------------------- */
 
 
-    /* GRANT COMPLETION SECTION*/
+
+    /* -------------------------- GRANT COMPLETION SECTION ------------------------------- */
     private void completeGrant(BaasResult<Void> result) {
         grantingRequestToken = null;
         //Checking to see if grant went through
@@ -315,19 +327,21 @@ public class GroupCreationActivity extends ActionBarActivity {
         }
         rememberId = null;
     }
-    /* END GRANT SECTION */
+    /* --------------------------- END GRANT SECTION ---------------------------------- */
 
 
-    /* LOCAL SAVING SECTION */
+    
+    /* -------------------------- LOCAL SAVING SECTION -------------------------------- */
     private void saveGroup(BaasDocument result) {
         Group n = new Group(result);
         ((StartUp) this.getApplication()).getActiveUser().addGroup(n);
 
     }
-    /* END LOCAL SAVING SECTION */
+    /* -------------------------- END LOCAL SAVING SECTION ---------------------------- */
 
 
-    /* SHOW SEND PROGRESS SECTION */
+
+    /* --------------------------- SHOW SEND PROGRESS SECTION ----------------------------- */
     //This method just loads a different view with a transition of fading
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
@@ -365,6 +379,6 @@ public class GroupCreationActivity extends ActionBarActivity {
             groupCreateView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
-    /* END SHOWING PROGRESS SECTION */
+    /* ------------------------ END SHOWING PROGRESS SECTION ----------------------------- */
 
 }
