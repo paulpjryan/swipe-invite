@@ -9,6 +9,7 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,8 +23,10 @@ import com.baasbox.android.BaasResult;
 import com.baasbox.android.BaasUser;
 import com.baasbox.android.RequestToken;
 
-public class MainActivity extends ActionBarActivity
-{
+public class MainActivity extends ActionBarActivity {
+    /* -------------------- LOG TAG CONSTANTS --------------------------- */
+    private final static String LOG_TAG = "MAIN_ACT";
+    /* -------------------- END LOG TAG CONSTANTS ----------------------- */
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -37,6 +40,7 @@ public class MainActivity extends ActionBarActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(LOG_TAG, "onCreate called");
 
         //DO NOT ADD ANY CODE BEFORE THIS LINE PERTAINING TO THE MAIN ACTIVITY
         //This checks to see if there is a current user logged in or not
