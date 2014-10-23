@@ -35,11 +35,26 @@ class Event implements Parcelable {
 
     //region Methods for Parcelable interface
     public void writeToParcel(Parcel out, int flags) {
-        event.writeToParcel(out, flags);
+        out.writeParcelable(event, flags);
     }
 
     public int describeContents() {
-        return event.describeContents();
+        return 0;
+    }
+
+    public static final Parcelable.Creator<Event> CREATOR
+            = new Parcelable.Creator<Event>() {
+        public Event createFromParcel(Parcel in) {
+            return new Event(in);
+        }
+
+        public Event[] newArray(int size) {
+            return new Event[size];
+        }
+    };
+
+    private Event(Parcel in) {
+        event = in.readParcelable(BaasDocument.class.getClassLoader());
     }
     //endregion
 
