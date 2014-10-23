@@ -12,12 +12,18 @@ import java.util.List;
 * model object.
 * */
 public class StartUp extends Application {
+    /* -------------------- LOG TAG CONSTANTS --------------------------- */
+    private final static String LOG_TAG = "APPLICATION";
+    /* -------------------- END LOG TAG CONSTANTS ----------------------- */
+
+
 
     /* ------------------ OVERRIDE METHODS FOR APPLICATION CLASS ---------------------- */
     //The onCreate method is where startup procedures should be run.
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.d(LOG_TAG, "onCreate called");
 
         //Create a new BaasBox builder object to set the configs
         BaasBox.Builder b = new BaasBox.Builder(this);
@@ -28,10 +34,22 @@ public class StartUp extends Application {
         b.setPort(9000);  //Server port
         box = b.init();  //Initialize the BaasBox object through a builder method
 
+        //Restore any user data that may have been saved locally
+        if (restoreData()) {  //Check if application has been killed
+            //check for data to load, if no data, just setup new application
 
-        activeUser = new User();
-        previousLogins = new ArrayList<User>();
-        remember = false;
+            //Set up local data
+            activeUser = new User();
+            previousLogins = new ArrayList<User>();
+            remember = false;
+            Log.d(LOG_TAG, "Local data reset from scratch.");
+        } else {
+            //No need to load any local data
+            Log.d(LOG_TAG, "Local data not reloaded.");
+        }
+
+        //Set the check kill string to a non null value
+        checkKill = "alive";
     }
     /* ------------------------------ END OVERRIDE METHODS ---------------------------- */
 
@@ -46,6 +64,31 @@ public class StartUp extends Application {
         return box;
     }
     /* ----------------------- END BAASBOX SETUP ------------------------------ */
+
+
+
+    /* ----------------------------- METHODS FOR DATA STORAGE ----------------------------- */
+    //Private instance variable to see if the application has be killed
+    private static String checkKill;
+
+    //Methods to handle any possible application destruction, need to save data to SQL database
+
+    //Should be called from all activities in onStop()
+    //ONLY CALL IF THE ACTIVITY IS NOT LAUNCHING AN INTENT TO A NEW ACTIVITY
+    public void possibleKill() {
+        //Save all user objects to local disk
+
+    }
+    //Should be called from the onCreate() method of the application
+    private boolean restoreData() {
+        if (checkKill == null) {
+            //Restore all user objects from local disk
+            return true;
+        }
+        return false;
+    }
+
+    /* ----------------------------- END DATA STORAGE -------------------------------- */
 
 
 
@@ -111,7 +154,7 @@ public class StartUp extends Application {
         //Check for matching username in list
         for (User x: previousLogins) {
             if (x.getUserName().equals(u.getName())) {
-                Log.d("APPLICATION", "Old user found: " + x.getUserName());
+                Log.d(LOG_TAG, "Old user found: " + x.getUserName());
                 return previousLogins.indexOf(x);  //present result: index
             }
         }
@@ -124,6 +167,37 @@ public class StartUp extends Application {
         return (previousLogins.size() >= MAX_CAPACITY);
     }
     /* ---------------- END USER MANAGEMENT ----------------------------- */
+
+
+
+    /* ----------------- BAASBOX INTERACTION METHODS FOR GROUP CREATION ----------------------- */
+    //Tokens for saving and resuming requests
+    private RequestToken savingRequestToken;
+    private final static String SAVING_TOKEN_KEY = "saving";
+
+    //Handlers for receiving request results
+    private final BaasHandler<BaasDocument> onComplete = new BaasHandler<BaasDocument>() {
+        @Override
+        public void handle(BaasResult<BaasDocument> result) {
+            savingRequestToken = null;
+            if (result.isFailed()) {
+                Log.d(LOG_TAG,"ERROR",result.error());
+            }
+            //completeCreate(result);
+        }
+    };
+
+    //Method to save the group to users group list
+    public void createNewGroup(Group g) {
+        //Package new group object into BaasDocument
+        BaasDocument newDoc = Group.getBaasGroup(g);
+
+        //Try to send Group Document object to server
+        savingRequestToken = newDoc.save(onComplete);
+    }
+
+
+    /* ---------------- END BAASBOX INTERACTION METHODS FOR GROUP CREATION --------------------- */
 
 
 }
