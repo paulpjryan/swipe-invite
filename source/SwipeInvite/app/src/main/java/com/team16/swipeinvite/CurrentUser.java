@@ -1,11 +1,15 @@
 package com.team16.swipeinvite;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.baasbox.android.BaasDocument;
 import com.baasbox.android.BaasUser;
 
 /**
  * Created by kylekrynski on 10/22/14.
  */
-class CurrentUser {
+class CurrentUser implements Parcelable {
     //region Constant keys for json data contained in user object
     private static final String COMMON_NAME_KEY =  "common_name";
     private static final String EMAIL_KEY = "email";
@@ -15,6 +19,32 @@ class CurrentUser {
 
     //region Local instance variables for user class
     private BaasUser user;
+    //endregion
+
+
+    //region Methods for Parcelable interface
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeParcelable(user, flags);
+    }
+
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Parcelable.Creator<CurrentUser> CREATOR
+            = new Parcelable.Creator<CurrentUser>() {
+        public CurrentUser createFromParcel(Parcel in) {
+            return new CurrentUser(in);
+        }
+
+        public CurrentUser[] newArray(int size) {
+            return new CurrentUser[size];
+        }
+    };
+
+    private CurrentUser(Parcel in) {
+        user = in.readParcelable(BaasUser.class.getClassLoader());
+    }
     //endregion
 
 
@@ -32,13 +62,15 @@ class CurrentUser {
 
 
     //region Getter and setter from a BaasUser object
-    protected void setBaasUser(BaasUser u) throws UserException {
-        if (!u.getName().equals(user.getName())) throw new UserException("Incorrect user save.");
-        this.user = u;
-    }
-
     protected BaasUser getBaasUser() {
         return this.user;
+    }
+    //endregion
+
+
+    //region Getter for username
+    protected String getUsername() {
+        return this.user.getName();
     }
     //endregion
 

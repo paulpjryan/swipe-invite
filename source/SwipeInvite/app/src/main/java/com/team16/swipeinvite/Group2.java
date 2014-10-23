@@ -32,12 +32,28 @@ class Group2 implements Parcelable {
 
     //region Methods for Parcelable interface
     public void writeToParcel(Parcel out, int flags) {
-        group.writeToParcel(out, flags);
+        out.writeParcelable(group, flags);
     }
 
     public int describeContents() {
-        return group.describeContents();
+        return 0;
     }
+
+    public static final Parcelable.Creator<Group2> CREATOR
+            = new Parcelable.Creator<Group2>() {
+        public Group2 createFromParcel(Parcel in) {
+            return new Group2(in);
+        }
+
+        public Group2[] newArray(int size) {
+            return new Group2[size];
+        }
+    };
+
+    private Group2(Parcel in) {
+        group = in.readParcelable(BaasDocument.class.getClassLoader());
+    }
+
     //endregion
 
 
