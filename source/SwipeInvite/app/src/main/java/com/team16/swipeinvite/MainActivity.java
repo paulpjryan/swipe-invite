@@ -37,6 +37,8 @@ public class MainActivity extends ActionBarActivity {
 
     private String[] drawerTitleList;
 
+    private Model m;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -190,6 +192,7 @@ public class MainActivity extends ActionBarActivity {
     private final static String LOGOUT_TOKEN_KEY = "logout";
     private void onLogout(){
         //Remove active user data from our model
+        //DUMP ALL USER DATA
         ((StartUp) this.getApplication()).resetActiveUser();
 
         //Go back to logout screen
