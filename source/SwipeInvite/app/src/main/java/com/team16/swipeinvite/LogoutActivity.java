@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -53,6 +54,7 @@ public class LogoutActivity extends Activity {
         if (savedInstanceState != null) {
             model = savedInstanceState.getParcelable(MODEL_KEY);
             modelRT = savedInstanceState.getParcelable(MODEL_TOKEN_KEY);
+            logoutRT = savedInstanceState.getParcelable(LOGOUT_TOKEN_KEY);
         } else {
             model = getIntent().getParcelableExtra("model_data");
         }
@@ -70,14 +72,22 @@ public class LogoutActivity extends Activity {
     protected void onResume() {
         super.onResume();
         if (modelRT != null) {
+            showProgress(true);
             modelRT.resume(onModelSave);
+        } else if (logoutRT != null) {
+            showProgress(true);
+            logoutRT.resume(onLogout);
         }
     }
     @Override
     protected void onPause() {
         super.onPause();
         if (modelRT != null) {
+            showProgress(false);
             modelRT.suspend();
+        } else if (logoutRT != null) {
+            showProgress(false);
+            logoutRT.suspend();
         }
     }
     @Override
@@ -86,6 +96,8 @@ public class LogoutActivity extends Activity {
         outState.putParcelable(MODEL_KEY, model);
         if (modelRT != null) {
             outState.putParcelable(MODEL_TOKEN_KEY, modelRT);
+        } else if (logoutRT != null) {
+            outState.putParcelable(LOGOUT_TOKEN_KEY, logoutRT);
         }
     }
     //endregion
@@ -115,7 +127,7 @@ public class LogoutActivity extends Activity {
                 showProgress(false);
                 return;
             } else if (result.isSuccess()) {
-                //MOVE ON TO LOGOUT
+                logoutRT = BaasUser.current().logout(onLogout);
                 return;
             }
             Log.d(LOG_TAG, "Server save weird: " + result.toString());
@@ -123,6 +135,41 @@ public class LogoutActivity extends Activity {
             return;
         }
     };
+    //endregion
+
+
+    //region Variables and methods to deal with ansync logout request
+    private static final String LOGOUT_TOKEN_KEY = "logout";
+    private RequestToken logoutRT;
+    private final BaasHandler<Void> onLogout = new BaasHandler<Void>() {
+        @Override
+        //This is the method that will receive the server return
+        public void handle(BaasResult<Void> result) {
+            logoutRT = null;
+            if (result.isFailed()) {
+                //NOTIFY USER OF ERROR
+                Log.d(LOG_TAG, "Server logout error: " + result.error());
+                showProgress(false);
+                return;
+            } else if (result.isSuccess()) {
+                launchLoginActivity();
+                return;
+            }
+            Log.d(LOG_TAG, "Server logout weird: " + result.toString());
+            showProgress(false);
+            return;
+        }
+    };
+    //endregion
+
+
+    //region Method to return to the login activity
+    private void launchLoginActivity() {
+        Intent intent = new Intent(this, LoginActivity2.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
+    }
     //endregion
 
 

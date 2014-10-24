@@ -83,15 +83,19 @@ public class LoginActivity2 extends Activity {
     protected void onResume() {
         super.onResume();
         if (signInRT != null) {
+            showProgress(true);
             signInRT.resume(onComplete);
         } else if (modelRT != null) {
+            showProgress(true);
             modelRT.resume(onModelComplete);
             return;     //If this resumes, don't resume any further requests
         }
         if (dataRT != null) {
+            showProgress(true);
             dataRT.resume(onDataComplete);
         }
         if (friendRT != null) {
+            showProgress(true);
             friendRT.resume(onFriendComplete);
         }
     }
@@ -100,15 +104,19 @@ public class LoginActivity2 extends Activity {
     protected void onPause() {
         super.onPause();
         if (signInRT != null) {
+            showProgress(false);
             signInRT.suspend();
         } else if (modelRT != null) {
+            showProgress(false);
             modelRT.suspend();
             return;    //if this pauses, don't execute any further requests
         }
         if (dataRT != null) {
+            showProgress(false);
             dataRT.suspend();
         }
         if (friendRT != null) {
+            showProgress(false);
             friendRT.suspend();
         }
     }
@@ -422,6 +430,7 @@ public class LoginActivity2 extends Activity {
         showProgress(false);
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra("model_data", model);
         startActivity(intent);
         finish();

@@ -51,7 +51,7 @@ public class MainActivity extends ActionBarActivity {
             startLoginScreen();
             return;
         }
-        model = (Model) getIntent().getParcelableExtra("model_data");
+        model = getIntent().getParcelableExtra("model_data");
 
         if (savedInstanceState != null) {
             logoutToken = RequestToken.loadAndResume(savedInstanceState,LOGOUT_TOKEN_KEY,logoutHandler);
@@ -178,7 +178,8 @@ public class MainActivity extends ActionBarActivity {
                     Toast.makeText(this, "Action unavailable", Toast.LENGTH_LONG).show();
                 }
                 */
-                BaasUser.current().logout(logoutHandler);
+                //BaasUser.current().logout(logoutHandler);
+                startLoginScreen();
                 return true;
             case R.id.action_create_group:
 
