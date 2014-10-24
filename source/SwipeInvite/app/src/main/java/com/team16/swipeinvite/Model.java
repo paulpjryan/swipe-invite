@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import com.baasbox.android.BaasDocument;
 import com.baasbox.android.BaasUser;
 import com.baasbox.android.json.JsonArray;
+import com.baasbox.android.json.JsonObject;
 
 import java.util.ArrayList;
 
@@ -131,13 +132,67 @@ class Model implements Parcelable {
     //endregion
 
 
-    //region Methods for setting and getting the raw server model object
+    //region Methods for setting and getting the raw server model object  -- LOGIN ONLY
     //ONLY USE THESE METHODS AT LOGIN
     protected void setServerVersion(BaasDocument d) {
         if(!d.getCollection().equals(COLLECTION_NAME)) throw new ModelException("Document is not a model: " + d.toString());
         model = d;
-
+        extractIDs();
     }
+
+    //region Method and instance variable used to hold a list of IDS for retrieval  -- LOGIN ONLY
+    private ArrayList<ArrayList<String>> idList;
+    protected ArrayList<ArrayList<String>> getIdList() {
+        return idList;
+    }
+    protected boolean idListEmpty() {
+        if (idList == null) return true;
+        for (int i = 0; i < (idList.size()); i++) {
+            if (!idList.get(i).isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+    protected boolean dataIsEmpty() {
+        if (idList == null) return true;
+        for (int i = 0; i < (idList.size()-1); i++) {     //account for only document id's
+            if (!idList.get(i).isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+    //should only be used upon login and setting of a server version
+    private void extractIDs() {
+        idList = new ArrayList<ArrayList<String>>(5);
+        ArrayList<String> grps = new ArrayList<String>();
+        for (Object x : model.getArray(ACTIVE_GROUPS_KEY)) {
+            grps.add((String) x);
+        }
+        ArrayList<String> accpdEvents = new ArrayList<String>();
+        for (Object x : model.getArray(ACCEPTED_EVENTS_KEY)) {
+            accpdEvents.add((String) x);
+        }
+        ArrayList<String> wtgEvents = new ArrayList<String>();
+        for (Object x : model.getArray(WAITING_EVENTS_KEY)) {
+            wtgEvents.add((String) x);
+        }
+        ArrayList<String> rjdEvents = new ArrayList<String>();
+        for (Object x : model.getArray(REJECTED_EVENTS_KEY)) {
+            rjdEvents.add((String) x);
+        }
+        ArrayList<String> frnds = new ArrayList<String>();
+        for (Object x : model.getArray(ACQUAINTENCE_KEY)) {
+            frnds.add((String) x);
+        }
+        idList.set(0, grps);
+        idList.set(1, accpdEvents);
+        idList.set(2, wtgEvents);
+        idList.set(3, rjdEvents);
+        idList.set(4, frnds);
+    }
+    //endregion
 
     protected BaasDocument getServerVersion() {
         return model;

@@ -231,7 +231,7 @@ class Event implements Parcelable {
     //region Methods for dealing with the server ID for a specific group
     //Method to check if the current group instance is on the server
     protected boolean isOnServer() {
-        if (this.event.getId() != null) {
+        if (this.event != null && this.event.getId() != null) {
             return true;
         }
         return false;

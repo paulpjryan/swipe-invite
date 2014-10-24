@@ -194,7 +194,7 @@ class Group2 implements Parcelable {
     //region Methods for dealing with the server ID for a specific group
     //Method to check if the current group instance is on the server
     protected boolean isOnServer() {
-        if (this.group.getId() != null) {
+        if (this.group != null && this.group.getId() != null) {
             return true;
         }
         return false;

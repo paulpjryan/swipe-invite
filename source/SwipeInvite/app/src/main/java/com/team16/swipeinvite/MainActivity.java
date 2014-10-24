@@ -37,7 +37,7 @@ public class MainActivity extends ActionBarActivity {
 
     private String[] drawerTitleList;
 
-    private Model m;
+    private Model model;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +51,8 @@ public class MainActivity extends ActionBarActivity {
             startLoginScreen();
             return;
         }
+        model = (Model) getIntent().getParcelableExtra("model_data");
+
         if (savedInstanceState != null) {
             logoutToken = RequestToken.loadAndResume(savedInstanceState,LOGOUT_TOKEN_KEY,logoutHandler);
         }
@@ -110,10 +112,17 @@ public class MainActivity extends ActionBarActivity {
     //This method is called at the startup of onCreate
     //It will direct the user to a login activity
     private void startLoginScreen(){
-        Intent intent = new Intent(this,LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-        finish();
+        if (model == null) {     //Absolutely no data to save, must be first time startup
+            Intent intent = new Intent(this, LoginActivity2.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+        } else {
+            Intent intent = new Intent(this, LogoutActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            intent.putExtra("model_data", model);
+            startActivity(intent);
+        }
     }
 
     @Override
