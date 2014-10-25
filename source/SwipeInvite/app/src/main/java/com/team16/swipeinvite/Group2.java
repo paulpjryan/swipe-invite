@@ -89,27 +89,27 @@ class Group2 implements Parcelable {
     //region Methods to initialize the arrays upon creation of new group
     private void initializeMemberArray() {
         JsonArray j = new JsonArray();
-        j.addString(BaasUser.current().getName());
-        this.group.putArray(MEMBER_ARRAY_KEY, j);
+        j.add(BaasUser.current().getName());
+        this.group.put(MEMBER_ARRAY_KEY, j);
     }
     private void initializeEventArray() {
         JsonArray j = new JsonArray();
-        this.group.putArray(EVENT_ARRAY_KEY, j);
+        this.group.put(EVENT_ARRAY_KEY, j);
     }
     private void initializeDetailAdminArray() {
         JsonArray j = new JsonArray();
-        j.addString(BaasUser.current().getName());
-        this.group.putArray(DETAIL_ADMIN_ARRAY_KEY, j);
+        j.add(BaasUser.current().getName());
+        this.group.put(DETAIL_ADMIN_ARRAY_KEY, j);
     }
     private void initializeEventAdminArray() {
         JsonArray j = new JsonArray();
-        j.addString(BaasUser.current().getName());
-        this.group.putArray(MEMBER_ARRAY_KEY, j);
+        j.add(BaasUser.current().getName());
+        this.group.put(MEMBER_ARRAY_KEY, j);
     }
     private void initializeMemberAdminArray() {
         JsonArray j = new JsonArray();
-        j.addString(BaasUser.current().getName());
-        this.group.putArray(MEMBER_ARRAY_KEY, j);
+        j.add(BaasUser.current().getName());
+        this.group.put(MEMBER_ARRAY_KEY, j);
     }
     //endregion
 
@@ -151,7 +151,7 @@ class Group2 implements Parcelable {
     //region Getter and setter for group name
     protected void setName(String name) throws GroupException {
         if (!hasDetailPermission()) throw new GroupException("User does not have detail permission.");
-        group.putString(NAME_KEY, name);
+        group.put(NAME_KEY, name);
     }
 
     protected String getName() {
@@ -163,7 +163,7 @@ class Group2 implements Parcelable {
     //region Getter and setter for description
     protected void setDescription(String desc) throws GroupException {
         if (!hasDetailPermission()) throw new GroupException("User does not have detail permission.");
-        group.putString(DESCRIPTION_KEY, desc);
+        group.put(DESCRIPTION_KEY, desc);
     }
 
     protected String getDescription() {
@@ -175,7 +175,7 @@ class Group2 implements Parcelable {
     //region Getters and setters for privacy
     protected void setPrivate(boolean privacy) throws GroupException {
         if (!hasDetailPermission()) throw new GroupException("User does not have detail permission.");
-        group.putBoolean(PRIVACY_KEY, privacy);
+        group.put(PRIVACY_KEY, privacy);
     }
 
     protected boolean isPrivate () {
@@ -213,8 +213,8 @@ class Group2 implements Parcelable {
         if (!hasMemberPermission()) throw new GroupException("User does not have detail permission.");
         if (containsUser(username)) return;
         JsonArray ja = this.group.getArray(MEMBER_ARRAY_KEY);
-        ja.addString(username);
-        this.group.putArray(MEMBER_ARRAY_KEY, ja);
+        ja.add(username);
+        this.group.put(MEMBER_ARRAY_KEY, ja);
     }
 
     protected void removeUser(String username) throws GroupException {
@@ -230,7 +230,7 @@ class Group2 implements Parcelable {
                 ja.remove(i);
             }
         }
-        this.group.putArray(MEMBER_ARRAY_KEY, ja);
+        this.group.put(MEMBER_ARRAY_KEY, ja);
     }
 
     protected int getUserCount() {
@@ -257,8 +257,8 @@ class Group2 implements Parcelable {
         if (!hasEventPermission()) throw new GroupException("User does not have detail permission.");
         if (containsEvent(eventID)) return;
         JsonArray ja = this.group.getArray(EVENT_ARRAY_KEY);
-        ja.addString(eventID);
-        this.group.putArray(EVENT_ARRAY_KEY, ja);
+        ja.add(eventID);
+        this.group.put(EVENT_ARRAY_KEY, ja);
     }
 
     protected void removeEvent(String eventID) throws GroupException {
@@ -273,7 +273,7 @@ class Group2 implements Parcelable {
                 ja.remove(i);
             }
         }
-        this.group.putArray(EVENT_ARRAY_KEY, ja);
+        this.group.put(EVENT_ARRAY_KEY, ja);
     }
 
     protected int getEventCount() {
@@ -302,8 +302,8 @@ class Group2 implements Parcelable {
             return;
         }
         JsonArray ja = this.group.getArray(DETAIL_ADMIN_ARRAY_KEY);
-        ja.addString(username);
-        this.group.putArray(DETAIL_ADMIN_ARRAY_KEY, ja);
+        ja.add(username);
+        this.group.put(DETAIL_ADMIN_ARRAY_KEY, ja);
     }
 
     protected void demoteFromDetailAdmin(String username) throws GroupException {
@@ -319,7 +319,7 @@ class Group2 implements Parcelable {
                 ja.remove(i);
             }
         }
-        this.group.putArray(DETAIL_ADMIN_ARRAY_KEY, ja);
+        this.group.put(DETAIL_ADMIN_ARRAY_KEY, ja);
     }
 
     protected int getDetailAdminCount() {
@@ -339,8 +339,8 @@ class Group2 implements Parcelable {
             return;
         }
         JsonArray ja = this.group.getArray(MEMBER_ADMIN_ARRAY_KEY);
-        ja.addString(username);
-        this.group.putArray(MEMBER_ADMIN_ARRAY_KEY, ja);
+        ja.add(username);
+        this.group.put(MEMBER_ADMIN_ARRAY_KEY, ja);
     }
 
     protected void demoteFromMemberAdmin(String username) throws GroupException {
@@ -356,7 +356,7 @@ class Group2 implements Parcelable {
                 ja.remove(i);
             }
         }
-        this.group.putArray(MEMBER_ADMIN_ARRAY_KEY, ja);
+        this.group.put(MEMBER_ADMIN_ARRAY_KEY, ja);
     }
 
     protected int getMemberAdminCount() {
@@ -376,8 +376,8 @@ class Group2 implements Parcelable {
             return;
         }
         JsonArray ja = this.group.getArray(EVENT_ADMIN_ARRAY_KEY);
-        ja.addString(username);
-        this.group.putArray(EVENT_ADMIN_ARRAY_KEY, ja);
+        ja.add(username);
+        this.group.put(EVENT_ADMIN_ARRAY_KEY, ja);
     }
 
     protected void demoteFromEventAdmin(String username) throws GroupException {
@@ -393,7 +393,7 @@ class Group2 implements Parcelable {
                 ja.remove(i);
             }
         }
-        this.group.putArray(EVENT_ADMIN_ARRAY_KEY, ja);
+        this.group.put(EVENT_ADMIN_ARRAY_KEY, ja);
     }
 
     protected int getEventAdminCount() {

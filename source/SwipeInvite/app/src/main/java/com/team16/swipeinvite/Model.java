@@ -98,11 +98,11 @@ class Model implements Parcelable {
         if (model == null) {
             model = new BaasDocument(COLLECTION_NAME);
         }
-        model.putArray(ACTIVE_GROUPS_KEY, getJAofGroups(activeGroups));
-        model.putArray(ACCEPTED_EVENTS_KEY, getJAofEvents(acceptedEvents));
-        model.putArray(WAITING_EVENTS_KEY, getJAofEvents(waitingEvents));
-        model.putArray(REJECTED_EVENTS_KEY, getJAofEvents(rejectedEvents));
-        model.putArray(ACQUAINTENCE_KEY, getJAofFriends(friends));
+        model.put(ACTIVE_GROUPS_KEY, getJAofGroups(activeGroups));
+        model.put(ACCEPTED_EVENTS_KEY, getJAofEvents(acceptedEvents));
+        model.put(WAITING_EVENTS_KEY, getJAofEvents(waitingEvents));
+        model.put(REJECTED_EVENTS_KEY, getJAofEvents(rejectedEvents));
+        model.put(ACQUAINTENCE_KEY, getJAofFriends(friends));
         return model;
     }
 
