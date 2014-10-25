@@ -2,6 +2,7 @@ package com.team16.swipeinvite;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.baasbox.android.BaasDocument;
 import com.baasbox.android.BaasUser;
@@ -14,6 +15,8 @@ import java.util.ArrayList;
  * Created by kylekrynski on 10/23/14.
  */
 class Model implements Parcelable {
+    private static final String LOG_TAG = "MODEL";
+
     //region Constants to wrap the model data into a BaasDocument for later pulldown
     private static final String COLLECTION_NAME = "model";
     private static final String ACTIVE_GROUPS_KEY = "active_groups";
@@ -66,12 +69,37 @@ class Model implements Parcelable {
         }
     };
 
-    private Model(Parcel in) {
-        in.readTypedList(activeGroups, Group2.CREATOR);
-        in.readTypedList(acceptedEvents, Event.CREATOR);
-        in.readTypedList(waitingEvents, Event.CREATOR);
-        in.readTypedList(rejectedEvents, Event.CREATOR);
-        in.readTypedList(friends, Acquaintence.CREATOR);
+    private Model(Parcel in) {   //Have to check for null object references
+        try {
+            in.readTypedList(activeGroups, Group2.CREATOR);
+        } catch (NullPointerException e) {
+            activeGroups = new ArrayList<Group2>();
+            Log.d(LOG_TAG, "New active group array created.");
+        }
+        try {
+            in.readTypedList(acceptedEvents, Event.CREATOR);
+        } catch (NullPointerException e) {
+            acceptedEvents = new ArrayList<Event>();
+            Log.d(LOG_TAG, "New accepted event array created.");
+        }
+        try {
+            in.readTypedList(waitingEvents, Event.CREATOR);
+        } catch (NullPointerException e) {
+            waitingEvents = new ArrayList<Event>();
+            Log.d(LOG_TAG, "New waiting event array created.");
+        }
+        try {
+            in.readTypedList(rejectedEvents, Event.CREATOR);
+        } catch (NullPointerException e) {
+            rejectedEvents = new ArrayList<Event>();
+            Log.d(LOG_TAG, "New rejected event array created.");
+        }
+        try {
+            in.readTypedList(friends, Acquaintence.CREATOR);
+        } catch (NullPointerException e) {
+            friends = new ArrayList<Acquaintence>();
+            Log.d(LOG_TAG, "New friend array created.");
+        }
         currentUser = in.readParcelable(CurrentUser.class.getClassLoader());
         model = in.readParcelable(BaasDocument.class.getClassLoader());
     }
@@ -109,7 +137,7 @@ class Model implements Parcelable {
     private static JsonArray getJAofGroups(ArrayList<Group2> g) {
         JsonArray ja = new JsonArray();
         for (Group2 x : g) {
-            ja.addString(x.getId());
+            ja.add(x.getId());
         }
         return ja;
     }
@@ -117,7 +145,7 @@ class Model implements Parcelable {
     private static JsonArray getJAofEvents(ArrayList<Event> e) {
         JsonArray ja = new JsonArray();
         for (Event x : e) {
-            ja.addString(x.getId());
+            ja.add(x.getId());
         }
         return ja;
     }
@@ -125,7 +153,7 @@ class Model implements Parcelable {
     private static JsonArray getJAofFriends(ArrayList<Acquaintence> a) {
         JsonArray ja = new JsonArray();
         for (Acquaintence x : a) {
-            ja.addString(x.getUsername());
+            ja.add(x.getUsername());
         }
         return ja;
     }

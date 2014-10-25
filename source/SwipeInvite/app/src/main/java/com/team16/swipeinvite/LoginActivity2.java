@@ -285,8 +285,9 @@ public class LoginActivity2 extends Activity {
             return;
         } else if (r.size() == 0 || r.size() > 1) {
             //NO DATA TO RETRIEVE
+            //THIS CASE SHOULD NEVER HAPPEN
             Log.d(LOG_TAG, "Model object from server was not the correct size!");
-            launchMainActivity();
+            //launchMainActivity();
             return;
         }
         //MODEL EXISTS, set the server object in the model for later use of getting id
