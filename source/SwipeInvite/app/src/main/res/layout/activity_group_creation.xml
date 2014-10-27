@@ -55,6 +55,7 @@
             android:id="@+id/textView_group_name"
             android:layout_toRightOf="@+id/textView3"
             android:layout_toEndOf="@+id/textView3"
+            android:ems="8"
 
             />
 
@@ -144,7 +145,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="textMultiLine"
-            android:ems="10"
+            android:ems="8"
             android:id="@+id/textView_group_description"
 
             android:layout_below="@+id/group_create_group_des"
