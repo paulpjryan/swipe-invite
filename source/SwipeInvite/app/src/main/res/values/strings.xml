@@ -70,7 +70,7 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
-    <string name="title_activity_group_edit">Edit Group</string>
+    <string name="title_activity_group_edit">View/Edit Group</string>
     <string name="login_remember">Remember Me</string>
 
     <!-- GROUP CREATION STUFF -->
