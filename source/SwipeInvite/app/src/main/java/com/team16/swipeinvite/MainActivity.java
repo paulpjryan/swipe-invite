@@ -51,6 +51,7 @@ public class MainActivity extends ActionBarActivity {
             startLoginScreen();
             return;
         }
+        Log.d(LOG_TAG, "Getting model from intent.");
         model = getIntent().getParcelableExtra("model_data");
 
         if (savedInstanceState != null) {

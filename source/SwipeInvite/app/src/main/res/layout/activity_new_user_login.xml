@@ -1,0 +1,126 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.team16.swipeinvite.LoginActivity2">
+
+    <!-- Login progress -->
+    <LinearLayout android:id="@+id/status_new_login"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+        <ProgressBar style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"/>
+        <TextView
+            android:id="@+id/status_message_new_login"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:fontFamily="sans-serif-light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="@string/login_progress_signing_in" />
+    </LinearLayout>
+
+
+    <!-- Login form -->
+    <ScrollView
+        android:id="@+id/form_new_login"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        style="@style/AppTheme">
+
+        <LinearLayout style="@style/LoginFormContainer"
+            android:orientation="vertical">
+
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:ems="10"
+                android:id="@+id/username_new_login"
+                android:layout_gravity="center_horizontal"
+                android:hint="@string/username_hint_new_login"
+                android:layout_marginTop="20dp"
+                android:onClick="textFieldResponder" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:ems="10"
+                android:id="@+id/name_new_login"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:hint="@string/name_hint_new_login"
+                android:onClick="textFieldResponder"
+                android:nestedScrollingEnabled="false" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:ems="10"
+                android:id="@+id/email_new_login"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:hint="@string/email_hint_new_login"
+                android:onClick="textFieldResponder" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:ems="10"
+                android:id="@+id/password_new_login"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:hint="@string/password_hint_new_login"
+                android:password="false"
+                android:onClick="textFieldResponder" />
+
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/radioGroup_male_female"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp">
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radio_text_male"
+                    android:id="@+id/radiobutton_male"
+                    android:checked="false"
+                    android:onClick="onRadioButtonClicked" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radio_text_female"
+                    android:id="@+id/radiobutton_female"
+                    android:checked="false"
+                    android:onClick="onRadioButtonClicked" />
+
+            </RadioGroup>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/create_user_button_text"
+                android:id="@+id/create_user_button"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:onClick="createResponder"
+                android:nestedScrollingEnabled="false"
+                android:textStyle="bold"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</merge>

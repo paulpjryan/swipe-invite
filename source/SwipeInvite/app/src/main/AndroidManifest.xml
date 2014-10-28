@@ -76,6 +76,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.team16.swipeinvite.MainActivity" />
         </activity>
+        <activity
+            android:name=".NewUserLoginActivity"
+            android:label="@string/title_activity_new_user_login"
+            android:parentActivityName=".LoginActivity2" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.team16.swipeinvite.LoginActivity2" />
+        </activity>
     </application>
 
 </manifest>

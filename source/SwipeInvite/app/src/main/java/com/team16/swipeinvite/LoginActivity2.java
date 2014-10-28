@@ -54,6 +54,7 @@ public class LoginActivity2 extends Activity {
     @Override
     //Create any view instances here and try to recover a Request token
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(LOG_TAG, "onCreate called.");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_activity2);
 
@@ -61,8 +62,9 @@ public class LoginActivity2 extends Activity {
         if (savedInstanceState != null) {
             signInRT = savedInstanceState.getParcelable(SIGN_IN_TOKEN_KEY);
             modelRT = savedInstanceState.getParcelable(MODEL_TOKEN_KEY);
-            dataRT = savedInstanceState.getParcelable(DATA_TOKEN_KEY);
             friendRT = savedInstanceState.getParcelable(FRIEND_TOKEN_KEY);
+            groupRT = savedInstanceState.getParcelable(GROUP_TOKEN_KEY);
+            eventRT = savedInstanceState.getParcelable(EVENT_TOKEN_KEY);
             model = savedInstanceState.getParcelable(MODEL_KEY);
         }
 
@@ -90,9 +92,13 @@ public class LoginActivity2 extends Activity {
             modelRT.resume(onModelComplete);
             return;     //If this resumes, don't resume any further requests
         }
-        if (dataRT != null) {
+        if (groupRT != null) {
             showProgress(true);
-            dataRT.resume(onDataComplete);
+            groupRT.resume(onGroupComplete);
+        }
+        if (eventRT != null) {
+            showProgress(true);
+            eventRT.resume(onEventComplete);
         }
         if (friendRT != null) {
             showProgress(true);
@@ -111,9 +117,13 @@ public class LoginActivity2 extends Activity {
             modelRT.suspend();
             return;    //if this pauses, don't execute any further requests
         }
-        if (dataRT != null) {
+        if (groupRT != null) {
             showProgress(false);
-            dataRT.suspend();
+            groupRT.suspend();
+        }
+        if (eventRT != null) {
+            showProgress(false);
+            eventRT.suspend();
         }
         if (friendRT != null) {
             showProgress(false);
@@ -130,8 +140,11 @@ public class LoginActivity2 extends Activity {
             outState.putParcelable(MODEL_TOKEN_KEY, modelRT);
             return;     //If this pauses, don't save any further requests
         }
-        if (dataRT != null) {
-            outState.putParcelable(DATA_TOKEN_KEY, dataRT);
+        if (groupRT != null) {
+            outState.putParcelable(GROUP_TOKEN_KEY, groupRT);
+        }
+        if (eventRT != null) {
+            outState.putParcelable(EVENT_TOKEN_KEY, eventRT);
         }
         if (friendRT != null) {
             outState.putParcelable(FRIEND_TOKEN_KEY, friendRT);
@@ -174,11 +187,11 @@ public class LoginActivity2 extends Activity {
             passwordField.setError("Cannot be left blank");
             passwordField.requestFocus();
             return;
-        } else if (username.length() > 30 || username.length() < 1) {
+        } else if (username.length() > 30 || username.length() < 4) {
             //NOTIFY USER OF EMPTY FIELD
-            Log.d(LOG_TAG, "Username must be between 1 and 30 characters.");
+            Log.d(LOG_TAG, "Username must be between 4 and 30 characters.");
             showProgress(false);
-            usernameField.setError("Must be between 1 and 30 characters");
+            usernameField.setError("Must be between 4 and 30 characters");
             usernameField.requestFocus();
             return;
         } else if (password.length() < 6) {
@@ -187,6 +200,7 @@ public class LoginActivity2 extends Activity {
             showProgress(false);
             passwordField.setError("Must be greater than 6 characters");
             passwordField.requestFocus();
+            return;
         }
         //Create a current user object - not synced with server yet
         CurrentUser u = new CurrentUser(username, password);
@@ -197,6 +211,9 @@ public class LoginActivity2 extends Activity {
 
     public void newUserResponder(View v) {
         //Launch a new activity to deal with a new user registration
+        Intent intent = new Intent(this, NewUserLoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        startActivity(intent);
     }
 
     public void textFieldResponder(View v) {
@@ -286,7 +303,7 @@ public class LoginActivity2 extends Activity {
         } else if (r.size() == 0 || r.size() > 1) {
             //NO DATA TO RETRIEVE
             //THIS CASE SHOULD NEVER HAPPEN
-            Log.d(LOG_TAG, "Model object from server was not the correct size!");
+            Log.d(LOG_TAG, "Model object from server was not the correct size!: " + r.size());
             //launchMainActivity();
             return;
         }
@@ -301,15 +318,18 @@ public class LoginActivity2 extends Activity {
             launchMainActivity();
             return;
         }
-        if (model.getIdList().get(5).size() != 0) {
+        if (model.getIdList().get(4).size() != 0) {    //Check if the friend array is empty
             //There is friend profiles, retrieve them
             BaasQuery fquery = BaasQuery.builder().where("name=?").build();
             for (String s : model.getIdList().get(5)) {
                 fquery = fquery.buildUpon().whereParams(s).build();
             }
+            Log.d(LOG_TAG, "Friend list request sent.");
             friendRT = BaasUser.fetchAll(fquery.buildUpon().criteria(), onFriendComplete);
         }
+        /*
         if (!model.dataIsEmpty()) {
+
             //There is data, retrieve it
             BaasQuery query = BaasQuery.builder().where("id=?").build();      //Start the query for data
             for (int i = 0; i < (model.getIdList().size() - 1); i++) {
@@ -319,11 +339,90 @@ public class LoginActivity2 extends Activity {
             }
             //Launch the query
             dataRT = query.query(onDataComplete);
+        } */
+
+        if (model.getIdList().get(0).size() != 0) {   //Check if the group array is empty
+            BaasQuery queryG = BaasQuery.builder().build();
+            for (String y : model.getIdList().get(0)) {
+                Log.d(LOG_TAG, "Group added to query params: " + y);
+                queryG = queryG.buildUpon().or("id=" + "'" + y + "'").build();
+            }
+            Log.d(LOG_TAG, "Group list request sent.");
+            groupRT = BaasDocument.fetchAll("group", queryG.buildUpon().criteria(), onGroupComplete);
         }
+        //Check if the event arrays are empty
+        if (model.getIdList().get(1).size() != 0 || model.getIdList().get(2).size() != 0 || model.getIdList().get(3).size() != 0) {
+            ArrayList<String> evntIds = new ArrayList<String>();
+            for (int i = 1; i < (model.getIdList().size()-1); i++) {
+                for (String y : model.getIdList().get(i)) {
+                    Log.d(LOG_TAG, "Event added to query params: " + y);
+                    evntIds.add(y);
+                }
+            }
+            BaasQuery queryE = BaasQuery.builder().where("id=?").whereParams(evntIds.toArray()).build();
+            Log.d(LOG_TAG, "Event list request sent.");
+            eventRT = BaasDocument.fetchAll("group", queryE.buildUpon().criteria(), onEventComplete);
+        }
+
     }
     //endregion
 
 
+    //region Variables and methods to deal with ansync event pulldown
+    private static final String EVENT_TOKEN_KEY = "events";
+    private RequestToken eventRT;
+    private final BaasHandler<List<BaasDocument>> onEventComplete = new BaasHandler<List<BaasDocument>>() {
+        @Override
+        //This is the method that will receive the server return
+        public void handle(BaasResult<List<BaasDocument>> result) {
+            eventRT = null;
+            if (result.isFailed()) {
+                //NOTIFY USER OF ERROR
+                Log.d(LOG_TAG, "Server request error: " + result.error());
+                showProgress(false);
+                return;
+            } else if (result.isSuccess()) {
+                //COMPLETE THE EVENT PULLDOWN
+                Log.d(LOG_TAG, "Event list request received.");
+                completeData(result.value());
+                return;
+            }
+            Log.d(LOG_TAG, "Server request weird: " + result.toString());
+            showProgress(false);
+            return;
+        }
+    };
+    //endregion
+
+
+    //region Variables and methods to deal with ansync group pulldown
+    private static final String GROUP_TOKEN_KEY = "groups";
+    private RequestToken groupRT;
+    private final BaasHandler<List<BaasDocument>> onGroupComplete = new BaasHandler<List<BaasDocument>>() {
+        @Override
+        //This is the method that will receive the server return
+        public void handle(BaasResult<List<BaasDocument>> result) {
+            groupRT = null;
+            if (result.isFailed()) {
+                //NOTIFY USER OF ERROR
+                Log.d(LOG_TAG, "Server request error: " + result.error());
+                showProgress(false);
+                return;
+            } else if (result.isSuccess()) {
+                //COMPLETE THE GROUP PULLDOWN
+                Log.d(LOG_TAG, "Group list request received.");
+                completeData(result.value());
+                return;
+            }
+            Log.d(LOG_TAG, "Server request weird: " + result.toString());
+            showProgress(false);
+            return;
+        }
+    };
+    //endregion
+
+
+    /*
     //region Variables and methods to deal with ansync data pulldown
     private static final String DATA_TOKEN_KEY = "data";
     private RequestToken dataRT;
@@ -346,16 +445,19 @@ public class LoginActivity2 extends Activity {
             return;
         }
     };
-    //endregion
+    //endregion  */
 
 
     //region Method called after data request returns success
-    private void completeData(List<JsonObject> data) {
-        for (JsonObject x : data) {      //Figure out what to do with returned data objects
-            BaasDocument d = BaasDocument.from(x);    //Convert to BaasDocument
+    private void completeData(List<BaasDocument> data) {
+        Log.d(LOG_TAG, "Received list size: " + data.size());
+        for (BaasDocument d : data) {      //Figure out what to do with returned data objects
+            Log.d(LOG_TAG, "Iterating through received document list.");
+            //BaasDocument d = BaasDocument.from(x);    //Convert to BaasDocument
             if (d.getCollection().equals("group")) {
                 Group2 g = new Group2(d);     //Create group instance with BaasDocument
                 model.activeGroups.add(g);
+                Log.d(LOG_TAG, "Added group to active group list.");
             } else if (d.getCollection().equals("event")) {
                 Event e = new Event(d);     //Create event instance with BaasDocument
                 for (int i = 1; i < (model.getIdList().size()-1); i++) {     //Iterate through all event lists
@@ -363,23 +465,27 @@ public class LoginActivity2 extends Activity {
                         switch (i) {
                             case 1:
                                 model.acceptedEvents.add(e);
+                                Log.d(LOG_TAG, "Added event to accepted.");
                                 break;
                             case 2:
                                 model.waitingEvents.add(e);
+                                Log.d(LOG_TAG, "Added event to waiting.");
                                 break;
                             case 3:
                                 model.rejectedEvents.add(e);
+                                Log.d(LOG_TAG, "Added event to rejected.");
                                 break;
                             default:
                                 Log.d(LOG_TAG, "Event not placed: " + e.toString());
                         }
                     }
                 }
+            } else {
+                Log.d(LOG_TAG, "Data object was not group or event: " + d.toString());
             }
-            Log.d(LOG_TAG, "Data object was not group or event: " + d.toString());
         }
         //Launch main activity if the friend pulldowns are done
-        if (friendRT == null) {
+        if (friendRT == null && eventRT == null && groupRT == null) {
             launchMainActivity();
         }
     }
@@ -411,14 +517,16 @@ public class LoginActivity2 extends Activity {
     };
     //endregion
 
+
     //region Method called after friend request returns success
     private void completeFriends(List<BaasUser> f) {
         //Convert all received user profiles to local objects and store them
         for (BaasUser u : f) {
             Acquaintence a = new Acquaintence(u);
             model.friends.add(a);
+            Log.d(LOG_TAG, "Added friends to list.");
         }
-        if (dataRT == null) {
+        if (groupRT == null && eventRT == null) {
             launchMainActivity();
         }
     }
@@ -427,6 +535,7 @@ public class LoginActivity2 extends Activity {
 
     //region Method to launch the main activity with the current local model object
     private void launchMainActivity() {
+        Log.d(LOG_TAG, "Launching main activity.");
         showProgress(false);
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

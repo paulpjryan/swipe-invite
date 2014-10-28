@@ -104,12 +104,12 @@ class Group2 implements Parcelable {
     private void initializeEventAdminArray() {
         JsonArray j = new JsonArray();
         j.add(BaasUser.current().getName());
-        this.group.put(MEMBER_ARRAY_KEY, j);
+        this.group.put(EVENT_ADMIN_ARRAY_KEY, j);
     }
     private void initializeMemberAdminArray() {
         JsonArray j = new JsonArray();
         j.add(BaasUser.current().getName());
-        this.group.put(MEMBER_ARRAY_KEY, j);
+        this.group.put(MEMBER_ADMIN_ARRAY_KEY, j);
     }
     //endregion
 

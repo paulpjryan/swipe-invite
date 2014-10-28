@@ -35,6 +35,7 @@ class Model implements Parcelable {
     protected ArrayList<Event> rejectedEvents;   //List of events that the user has rejected
     protected ArrayList<Acquaintence> friends;   //List of users that the user has invited or been in a group with
     protected CurrentUser currentUser;    //The current user object
+    private ArrayList<BaasDocument> modelList;    //This is just for easy passing of model object
     //endregion
 
 
@@ -50,8 +51,11 @@ class Model implements Parcelable {
         out.writeTypedList(waitingEvents);
         out.writeTypedList(rejectedEvents);
         out.writeTypedList(friends);
-        out.writeValue(currentUser);
-        out.writeParcelable(model, flags);
+        //out.writeValue(currentUser);
+        modelList = new ArrayList<BaasDocument>();
+        modelList.add(model);
+        out.writeTypedList(modelList);
+        //out.writeParcelable(model, flags);
     }
 
     public int describeContents() {
@@ -70,6 +74,12 @@ class Model implements Parcelable {
     };
 
     private Model(Parcel in) {   //Have to check for null object references
+        activeGroups = new ArrayList<Group2>();
+        acceptedEvents = new ArrayList<Event>();
+        waitingEvents = new ArrayList<Event>();
+        rejectedEvents = new ArrayList<Event>();
+        friends = new ArrayList<Acquaintence>();
+        modelList = new ArrayList<BaasDocument>();
         try {
             in.readTypedList(activeGroups, Group2.CREATOR);
         } catch (NullPointerException e) {
@@ -100,8 +110,14 @@ class Model implements Parcelable {
             friends = new ArrayList<Acquaintence>();
             Log.d(LOG_TAG, "New friend array created.");
         }
-        currentUser = in.readParcelable(CurrentUser.class.getClassLoader());
-        model = in.readParcelable(BaasDocument.class.getClassLoader());
+        try {
+            in.readTypedList(modelList, BaasDocument.CREATOR);
+        } catch (NullPointerException e) {
+            modelList = new ArrayList<BaasDocument>();
+            Log.d(LOG_TAG, "New model created, this is bad.");
+        }
+        currentUser = new CurrentUser(BaasUser.current());
+        model = modelList.get(0);
     }
 
     //endregion
@@ -214,11 +230,11 @@ class Model implements Parcelable {
         for (Object x : model.getArray(ACQUAINTENCE_KEY)) {
             frnds.add((String) x);
         }
-        idList.set(0, grps);
-        idList.set(1, accpdEvents);
-        idList.set(2, wtgEvents);
-        idList.set(3, rjdEvents);
-        idList.set(4, frnds);
+        idList.add(0, grps);
+        idList.add(1, accpdEvents);
+        idList.add(2, wtgEvents);
+        idList.add(3, rjdEvents);
+        idList.add(4, frnds);
     }
     //endregion
 
