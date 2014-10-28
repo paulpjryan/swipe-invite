@@ -28,6 +28,12 @@ import com.baasbox.android.RequestToken;
 import com.baasbox.android.Role;
 
 public class GroupCreationActivity extends ActionBarActivity {
+    /* -------------------- LOG TAG CONSTANTS --------------------------- */
+    private final static String LOG_TAG = "GROUP_CREATE_ACT";
+    /* -------------------- END LOG TAG CONSTANTS ----------------------- */
+
+
+
     /* ------------------ BAAS-SERVER TOKEN SECTION ------------------------------ */
     private String rememberId;
     private final static String REMEMBER_ID_KEY = "id";
@@ -60,6 +66,7 @@ public class GroupCreationActivity extends ActionBarActivity {
     //onCreate is called when the activity is first started
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+        Log.d(LOG_TAG, "onCreate called");
 
         //DO NOT ADD ANY VIEW ACTIVITY CODE ABOVE HERE
         //Loading any previous server requests if the activity was closed
@@ -103,6 +110,7 @@ public class GroupCreationActivity extends ActionBarActivity {
 	@Override
     //Method to add options to the options menu for the activity
 	public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d(LOG_TAG, "onCreateOptionsMenu called");
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.group_creation, menu);
 		return true;
@@ -111,6 +119,7 @@ public class GroupCreationActivity extends ActionBarActivity {
 	@Override
     //Method to determine which option menu item was selected
 	public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d(LOG_TAG, "onOptionsItemSelected called");
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
@@ -130,24 +139,21 @@ public class GroupCreationActivity extends ActionBarActivity {
     //onPause is called when the activity leaves the user's view
     public void onPause() {
         super.onPause();
+        Log.d(LOG_TAG, "onPause called");
     }
 
     @Override
     //onResume is called when the activity comes back to the user's view
     public void onResume() {
         super.onResume();
-        /*OBSOLETE
-        if (savingRequestToken != null) {
-            //Need to resume token, only instance variable needed
-            showProgress(true);
-            savingRequestToken.resume(onComplete);
-        } */
+        Log.d(LOG_TAG, "onResume called");
     }
 
     @Override
     //Method called when the system asks the activity to save any simple data to a bundle state
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        Log.d(LOG_TAG, "onSaveInstanceState called");
         if (savingRequestToken != null) {
             //Need to suspend and save this token in the bundle
             savingRequestToken.suspendAndSave(outState, SAVING_TOKEN_KEY);
@@ -169,7 +175,7 @@ public class GroupCreationActivity extends ActionBarActivity {
         public void handle(BaasResult<BaasDocument> result) {
             savingRequestToken = null;
             if (result.isFailed()) {
-                Log.d("ERROR","ERROR",result.error());
+                Log.d(LOG_TAG,"ERROR",result.error());
             }
             completeCreate(result);
         }
@@ -181,7 +187,7 @@ public class GroupCreationActivity extends ActionBarActivity {
         public void handle(BaasResult<Void> result) {
             grantingRequestToken = null;
             if (result.isFailed()) {
-                Log.d("ERROR","ERROR",result.error());
+                Log.d(LOG_TAG,"ERROR",result.error());
             }
             completeGrant(result);
         }
@@ -232,7 +238,7 @@ public class GroupCreationActivity extends ActionBarActivity {
         //Check for null entries
         if ((ispriv == -1) || (n == null) || (d == null)) {
             //ACTUALLY NEED TO NOTIFY USER OF ISSUE
-            Log.d("Log", "Cannot submit, fields are required.");
+            Log.d(LOG_TAG, "Cannot submit, fields are required.");
             showProgress(false);
             return;
         }
@@ -248,18 +254,18 @@ public class GroupCreationActivity extends ActionBarActivity {
         //Check for unsatisfactory entries
         if (n.charAt(0) == ' ') {
             //ACTUALLY NEED TO NOTIFY USER OF ISSUE
-            Log.d("Log", "Cannot submit, name cannot begin with space.");
+            Log.d(LOG_TAG, "Cannot submit, name cannot begin with space.");
             showProgress(false);
             return;
         }
         else if (n.length() < 2) {
             //ACTUALLY NEED TO NOTIFY USER OF ISSUE
-            Log.d("Log", "Cannot submit, name to short.");
+            Log.d(LOG_TAG, "Cannot submit, name to short.");
             showProgress(false);
             return;
         } else if ((d.length() < 2) || (d.length() > 100)) {
             //ACTUALLY NEED TO NOTIFY USER OF ISSUE
-            Log.d("Log", "Cannot submit, description invalid.");
+            Log.d(LOG_TAG, "Cannot submit, description invalid.");
             showProgress(false);
             return;
         }
@@ -280,15 +286,15 @@ public class GroupCreationActivity extends ActionBarActivity {
         g.setDescription(d);
         g.addUser(((StartUp) this.getApplication()).getActiveUser());
 
-        //Try to send group to the server
-        //Log.d("LOG", "So far so good.");  JUST A CHECK
-        //showProgress(false);   JUST A CHECK
+        //Forwarding the local instance to the Backend of the application for processing
+        ((StartUp) this.getApplication()).createNewGroup(g);
+
 
         //Package new group object into BaasDocument
-        BaasDocument newDoc = Group.getBaasGroup(g);
+        //BaasDocument newDoc = Group.getBaasGroup(g);
 
         //Try to send Group Document object to server
-        savingRequestToken = newDoc.save(onComplete);
+        //savingRequestToken = newDoc.save(onComplete);
 
     }
 

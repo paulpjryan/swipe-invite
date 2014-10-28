@@ -22,6 +22,8 @@ public class GroupsFragment extends Fragment {
 
     private ArrayAdapter<String> mArrayAdapter;
 
+    private Model m;
+
     public GroupsFragment() {
         // Empty constructor required for fragment subclasses
     }

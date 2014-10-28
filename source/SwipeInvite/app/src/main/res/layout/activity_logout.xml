@@ -1,0 +1,65 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.team16.swipeinvite.LoginActivity2">
+
+    <!-- Login progress -->
+    <LinearLayout android:id="@+id/status_logout"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+        <ProgressBar style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"/>
+        <TextView
+            android:id="@+id/status_message_logout"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:fontFamily="sans-serif-light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="@string/logout_progress_signing_out" />
+    </LinearLayout>
+
+
+    <!-- Login form -->
+    <ScrollView
+        android:id="@+id/form_logout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        style="@style/AppTheme">
+
+        <LinearLayout style="@style/LoginFormContainer"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/logout_prompt_text"
+                android:id="@+id/logout_text_prompt"
+                android:layout_marginTop="50dp"
+                android:layout_gravity="center_horizontal"
+                android:inputType="none" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/logout_button_text"
+                android:id="@+id/logout_button"
+                android:layout_gravity="center_horizontal"
+                android:onClick="logoutButtonResponder"
+                android:nestedScrollingEnabled="true"
+                android:layout_marginTop="30dp"
+                android:textStyle="bold"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</merge>

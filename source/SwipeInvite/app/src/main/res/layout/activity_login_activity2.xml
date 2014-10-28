@@ -1,0 +1,96 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.team16.swipeinvite.LoginActivity2">
+
+    <!-- Login progress -->
+    <LinearLayout android:id="@+id/status_login"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+        <ProgressBar style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"/>
+        <TextView
+            android:id="@+id/status_message_login"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:fontFamily="sans-serif-light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="@string/login_progress_signing_in" />
+    </LinearLayout>
+
+
+    <!-- Login form -->
+    <ScrollView
+        android:id="@+id/form_login"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        style="@style/AppTheme">
+
+        <LinearLayout style="@style/LoginFormContainer"
+            android:orientation="vertical">
+
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/username"
+                android:layout_gravity="center_horizontal"
+                android:autoText="false"
+                android:editable="true"
+                android:hint="@string/hint_login"
+                android:inputType="textPersonName"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:layout_marginTop="10dp"
+                android:onClick="textFieldResponder"
+                android:clickable="true"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:ems="10"
+                android:id="@+id/password2"
+                android:layout_gravity="center_horizontal"
+                android:password="true"
+                android:hint="@string/hint_password"
+                android:layout_marginTop="10dp"
+                android:onClick="textFieldResponder"
+                android:clickable="true"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/login_button_text"
+                android:id="@+id/login_button"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="15dp"
+                android:nestedScrollingEnabled="false"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:onClick="loginResponder" />
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/signup_button_text"
+                android:id="@+id/new_user_button"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="15dp"
+                android:textStyle="italic"
+                android:textSize="16sp"
+                android:onClick="newUserResponder"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</merge>

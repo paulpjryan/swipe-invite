@@ -37,8 +37,7 @@
         android:id="@+id/textView_new_group"
         android:layout_weight="8"
         android:maxLength="35"
-        android:maxLines="2"
-        />
+        android:maxLines="2" />
 
     </LinearLayout>
 
