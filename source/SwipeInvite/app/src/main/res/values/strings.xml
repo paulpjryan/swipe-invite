@@ -103,21 +103,4 @@
     <string name="radio_text_male">Male</string>
     <string name="radio_text_female">Female</string>
 
-    <!-- Logout Activity Strings -->
-    <string name="title_activity_logout">LogoutActivity</string>
-    <string name="logout_prompt_text">Are you sure?</string>
-    <string name="logout_button_text">Logout</string>
-    <string name="logout_progress_signing_out">Signing out…</string>
-    <string name="title_activity_new_user_login">NewUserLoginActivity</string>
-
-    <!-- New User Login Activity Strings-->
-    <string name="new_login_progress_signing_in">Creating new user…</string>
-    <string name="username_hint_new_login">Username</string>
-    <string name="name_hint_new_login">Common Name</string>
-    <string name="email_hint_new_login">Email@service.com</string>
-    <string name="password_hint_new_login">Password</string>
-    <string name="create_user_button_text">Create</string>
-    <string name="radio_text_male">Male</string>
-    <string name="radio_text_female">Female</string>
-
 </resources>
