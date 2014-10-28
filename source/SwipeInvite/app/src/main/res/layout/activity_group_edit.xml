@@ -136,7 +136,9 @@
         android:layout_below="@+id/textView2"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="15dp" />
+        android:layout_marginTop="15dp"
+        android:smoothScrollbar="true"
+        android:focusableInTouchMode="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -164,7 +166,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:text="Submit"
-    android:id="@+id/submit"
+    android:id="@+id/group_edit_submit"
     android:layout_below="@+id/listView_group_member"
     android:layout_alignParentBottom="true"
     android:layout_alignRight="@+id/listView_group_member"

@@ -24,22 +24,25 @@
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" >
         </activity>
+
         <activity
             android:name=".Add_person2group"
-            android:label="@string/title_activity_add_person2group" >
+            android:label="@string/title_activity_add_person2group"
+            android:parentActivityName="com.team16.swipeinvite.GroupEditActivity" >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.team16.swipeinvite.GroupEditActivity" />
         </activity>
+
         <activity
             android:name=".UserProfileActivity"
             android:label="@string/title_activity_user_profile" >
         </activity>
         <activity
             android:name=".GroupCreationActivity"
-            android:label="@string/title_activity_group_creation"
-            android:parentActivityName="com.team16.swipeinvite.MainActivity" >
-            <!-- Parent activity meta-data to support 4.0 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.team16.swipeinvite.MainActivity" />
+            android:label="@string/title_activity_group_creation" >
+
         </activity>
         <activity
             android:name=".SearchGroupActivity"
@@ -49,6 +52,8 @@
             android:name=".LoginActivity"
             android:label="@string/title_activity_login" >
         </activity>
+
+
         <activity
             android:name=".GroupEditActivity"
             android:label="@string/title_activity_group_edit"
@@ -61,3 +66,5 @@
     </application>
 
 </manifest>
+
+

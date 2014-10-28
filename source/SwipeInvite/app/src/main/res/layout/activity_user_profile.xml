@@ -12,7 +12,8 @@
     <LinearLayout
         android:id="@+id/linearLayout_profile_name"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:weightSum="10">
 
 	  		<TextView
 	        android:id="@+id/textView_user_username"
@@ -27,9 +28,15 @@
 		    <EditText
 		        android:id="@+id/editText_user_username"
 		        android:layout_weight="7"
-		        android:layout_width="wrap_content"
+		        android:layout_width="0dp"
 		        android:layout_height="wrap_content"
-                android:autoText="false" />
+                android:autoText="true"
+                android:hint="Not Edibale "
+
+                android:gravity="center"
+                android:singleLine="true"
+                android:maxLength="20"
+                android:enabled="false" />
 		      
 		        
     </LinearLayout>
@@ -51,9 +58,15 @@
  	  		<EditText
 		        android:id="@+id/editText_user_password"
 		        android:layout_weight="7"
-		        android:layout_width="wrap_content"
+		        android:layout_width="0dp"
 		        android:layout_height="wrap_content"
- 	  		    android:inputType="textPassword">
+ 	  		    android:inputType="textPassword"
+                android:singleLine="true"
+                android:gravity="center"
+
+                android:hint="Not Ediable"
+                android:maxLength="20"
+                android:enabled="false">
 
  	  		  
  	  		</EditText>
@@ -78,9 +91,12 @@
  	  		<EditText
 		        android:id="@+id/editText_user_name"
 		        android:layout_weight="7"
-		        android:layout_width="wrap_content"
+		        android:layout_width="0dp"
 		        android:layout_height="wrap_content"
- 	  		    android:inputType="textPersonName" />
+ 	  		    android:inputType="textPersonName"
+                android:gravity="center"
+                android:singleLine="true"
+                android:maxLength="20" />
       
     </LinearLayout>
     
@@ -103,9 +119,12 @@
  	  		<EditText
 		        android:id="@+id/editText_user_email"
 		        android:layout_weight="7"
-		        android:layout_width="wrap_content"
+		        android:layout_width="0dp"
 		        android:layout_height="wrap_content"
-		        android:inputType="textEmailAddress"/>
+		        android:inputType="textEmailAddress"
+                android:gravity="center"
+                android:singleLine="true"
+                android:maxLength="20" />
 
     	</LinearLayout>
     	

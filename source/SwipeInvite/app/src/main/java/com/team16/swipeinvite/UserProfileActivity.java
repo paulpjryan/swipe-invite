@@ -1,9 +1,12 @@
 package com.team16.swipeinvite;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 public class UserProfileActivity extends ActionBarActivity {
 
@@ -32,6 +35,19 @@ public class UserProfileActivity extends ActionBarActivity {
         //activeUser = new User(fullname, username, password);
         //activeUser.setEmail(mail);
         //activeUser.setGender(ismale);
+
+        Button tut1 = (Button)findViewById(R.id.button_user_submit);
+        tut1.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent mainIntent = new Intent(UserProfileActivity.this, MainActivity.class);
+
+                startActivity(mainIntent);
+
+
+            }
+        });
 	}
 	
 	@Override
