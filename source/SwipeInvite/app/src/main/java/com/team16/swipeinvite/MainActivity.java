@@ -28,6 +28,8 @@ public class MainActivity extends ActionBarActivity {
     private final static String LOG_TAG = "MAIN_ACT";
     /* -------------------- END LOG TAG CONSTANTS ----------------------- */
 
+    
+    //region Local instance variables for the View elements
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -36,9 +38,15 @@ public class MainActivity extends ActionBarActivity {
     private CharSequence mTitle;
 
     private String[] drawerTitleList;
+    //endregion
 
+
+    //region Local variable for the model
     private Model model;
+    //endregion
 
+
+    //region Lifecycle methods for the main activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,10 +61,6 @@ public class MainActivity extends ActionBarActivity {
         }
         Log.d(LOG_TAG, "Getting model from intent.");
         model = getIntent().getParcelableExtra("model_data");
-
-        if (savedInstanceState != null) {
-            logoutToken = RequestToken.loadAndResume(savedInstanceState,LOGOUT_TOKEN_KEY,logoutHandler);
-        }
 
         setContentView(R.layout.activity_main);
 
@@ -109,7 +113,16 @@ public class MainActivity extends ActionBarActivity {
         }
 
     }
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
+    }
+    //endregion
 
+
+    //region Method to start the login screen, either on new startup or on logout button push
     //This method is called at the startup of onCreate
     //It will direct the user to a login activity
     private void startLoginScreen(){
@@ -124,14 +137,10 @@ public class MainActivity extends ActionBarActivity {
             startActivity(intent);
         }
     }
+    //endregion
 
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        // Sync the toggle state after onRestoreInstanceState has occurred.
-        mDrawerToggle.syncState();
-    }
 
+    //region Methods for the options menus and drawers
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -221,38 +230,10 @@ public class MainActivity extends ActionBarActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
-    /* LOGOUT METHOD SECTION */
-    private final static String LOGOUT_TOKEN_KEY = "logout";
-    private void onLogout(){
-        //Remove active user data from our model
-        //DUMP ALL USER DATA
-        ((StartUp) this.getApplication()).resetActiveUser();
-
-        //Go back to logout screen
-        startLoginScreen();
-    }
-
-    private RequestToken logoutToken;
-    private final BaasHandler<Void> logoutHandler =
-            new BaasHandler<Void>() {
-                @Override
-                public void handle(BaasResult<Void> voidBaasResult) {
-                    logoutToken=null;
-                    onLogout();
-                }
-            };
-    /* END LOGOUT SECTION */
+    //endregion
 
 
-    /* The click listner for ListView in the navigation drawer */
-    private class DrawerItemClickListener implements ListView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            selectItem(position);
-        }
-    }
-
+    //region Methods for fragment management
     private void selectItem(int position) {
         // update the main content by replacing fragments
         Fragment fragment;
@@ -273,4 +254,17 @@ public class MainActivity extends ActionBarActivity {
 
         mDrawerLayout.closeDrawer(mDrawerList);
     }
+    //endregion
+
+
+    //region Nested class for drawer click listeners
+    /* The click listner for ListView in the navigation drawer */
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            selectItem(position);
+        }
+    }
+    //endregion
+
 }
