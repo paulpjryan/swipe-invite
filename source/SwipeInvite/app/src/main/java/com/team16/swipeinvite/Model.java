@@ -2,10 +2,12 @@ package com.team16.swipeinvite;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.baasbox.android.BaasDocument;
 import com.baasbox.android.BaasUser;
 import com.baasbox.android.json.JsonArray;
+import com.baasbox.android.json.JsonObject;
 
 import java.util.ArrayList;
 
@@ -13,6 +15,8 @@ import java.util.ArrayList;
  * Created by kylekrynski on 10/23/14.
  */
 class Model implements Parcelable {
+    private static final String LOG_TAG = "MODEL";
+
     //region Constants to wrap the model data into a BaasDocument for later pulldown
     private static final String COLLECTION_NAME = "model";
     private static final String ACTIVE_GROUPS_KEY = "active_groups";
@@ -31,6 +35,7 @@ class Model implements Parcelable {
     protected ArrayList<Event> rejectedEvents;   //List of events that the user has rejected
     protected ArrayList<Acquaintence> friends;   //List of users that the user has invited or been in a group with
     protected CurrentUser currentUser;    //The current user object
+    private ArrayList<BaasDocument> modelList;    //This is just for easy passing of model object
     //endregion
 
 
@@ -46,8 +51,11 @@ class Model implements Parcelable {
         out.writeTypedList(waitingEvents);
         out.writeTypedList(rejectedEvents);
         out.writeTypedList(friends);
-        out.writeValue(currentUser);
-        out.writeParcelable(model, flags);
+        //out.writeValue(currentUser);
+        modelList = new ArrayList<BaasDocument>();
+        modelList.add(model);
+        out.writeTypedList(modelList);
+        //out.writeParcelable(model, flags);
     }
 
     public int describeContents() {
@@ -65,14 +73,51 @@ class Model implements Parcelable {
         }
     };
 
-    private Model(Parcel in) {
-        in.readTypedList(activeGroups, Group2.CREATOR);
-        in.readTypedList(acceptedEvents, Event.CREATOR);
-        in.readTypedList(waitingEvents, Event.CREATOR);
-        in.readTypedList(rejectedEvents, Event.CREATOR);
-        in.readTypedList(friends, Acquaintence.CREATOR);
-        currentUser = in.readParcelable(CurrentUser.class.getClassLoader());
-        model = in.readParcelable(BaasDocument.class.getClassLoader());
+    private Model(Parcel in) {   //Have to check for null object references
+        activeGroups = new ArrayList<Group2>();
+        acceptedEvents = new ArrayList<Event>();
+        waitingEvents = new ArrayList<Event>();
+        rejectedEvents = new ArrayList<Event>();
+        friends = new ArrayList<Acquaintence>();
+        modelList = new ArrayList<BaasDocument>();
+        try {
+            in.readTypedList(activeGroups, Group2.CREATOR);
+        } catch (NullPointerException e) {
+            activeGroups = new ArrayList<Group2>();
+            Log.d(LOG_TAG, "New active group array created.");
+        }
+        try {
+            in.readTypedList(acceptedEvents, Event.CREATOR);
+        } catch (NullPointerException e) {
+            acceptedEvents = new ArrayList<Event>();
+            Log.d(LOG_TAG, "New accepted event array created.");
+        }
+        try {
+            in.readTypedList(waitingEvents, Event.CREATOR);
+        } catch (NullPointerException e) {
+            waitingEvents = new ArrayList<Event>();
+            Log.d(LOG_TAG, "New waiting event array created.");
+        }
+        try {
+            in.readTypedList(rejectedEvents, Event.CREATOR);
+        } catch (NullPointerException e) {
+            rejectedEvents = new ArrayList<Event>();
+            Log.d(LOG_TAG, "New rejected event array created.");
+        }
+        try {
+            in.readTypedList(friends, Acquaintence.CREATOR);
+        } catch (NullPointerException e) {
+            friends = new ArrayList<Acquaintence>();
+            Log.d(LOG_TAG, "New friend array created.");
+        }
+        try {
+            in.readTypedList(modelList, BaasDocument.CREATOR);
+        } catch (NullPointerException e) {
+            modelList = new ArrayList<BaasDocument>();
+            Log.d(LOG_TAG, "New model created, this is bad.");
+        }
+        currentUser = new CurrentUser(BaasUser.current());
+        model = modelList.get(0);
     }
 
     //endregion
@@ -97,18 +142,18 @@ class Model implements Parcelable {
         if (model == null) {
             model = new BaasDocument(COLLECTION_NAME);
         }
-        model.putArray(ACTIVE_GROUPS_KEY, getJAofGroups(activeGroups));
-        model.putArray(ACCEPTED_EVENTS_KEY, getJAofEvents(acceptedEvents));
-        model.putArray(WAITING_EVENTS_KEY, getJAofEvents(waitingEvents));
-        model.putArray(REJECTED_EVENTS_KEY, getJAofEvents(rejectedEvents));
-        model.putArray(ACQUAINTENCE_KEY, getJAofFriends(friends));
+        model.put(ACTIVE_GROUPS_KEY, getJAofGroups(activeGroups));
+        model.put(ACCEPTED_EVENTS_KEY, getJAofEvents(acceptedEvents));
+        model.put(WAITING_EVENTS_KEY, getJAofEvents(waitingEvents));
+        model.put(REJECTED_EVENTS_KEY, getJAofEvents(rejectedEvents));
+        model.put(ACQUAINTENCE_KEY, getJAofFriends(friends));
         return model;
     }
 
     private static JsonArray getJAofGroups(ArrayList<Group2> g) {
         JsonArray ja = new JsonArray();
         for (Group2 x : g) {
-            ja.addString(x.getId());
+            ja.add(x.getId());
         }
         return ja;
     }
@@ -116,7 +161,7 @@ class Model implements Parcelable {
     private static JsonArray getJAofEvents(ArrayList<Event> e) {
         JsonArray ja = new JsonArray();
         for (Event x : e) {
-            ja.addString(x.getId());
+            ja.add(x.getId());
         }
         return ja;
     }
@@ -124,20 +169,74 @@ class Model implements Parcelable {
     private static JsonArray getJAofFriends(ArrayList<Acquaintence> a) {
         JsonArray ja = new JsonArray();
         for (Acquaintence x : a) {
-            ja.addString(x.getUsername());
+            ja.add(x.getUsername());
         }
         return ja;
     }
     //endregion
 
 
-    //region Methods for setting and getting the raw server model object
+    //region Methods for setting and getting the raw server model object  -- LOGIN ONLY
     //ONLY USE THESE METHODS AT LOGIN
     protected void setServerVersion(BaasDocument d) {
         if(!d.getCollection().equals(COLLECTION_NAME)) throw new ModelException("Document is not a model: " + d.toString());
         model = d;
-
+        extractIDs();
     }
+
+    //region Method and instance variable used to hold a list of IDS for retrieval  -- LOGIN ONLY
+    private ArrayList<ArrayList<String>> idList;
+    protected ArrayList<ArrayList<String>> getIdList() {
+        return idList;
+    }
+    protected boolean idListEmpty() {
+        if (idList == null) return true;
+        for (int i = 0; i < (idList.size()); i++) {
+            if (!idList.get(i).isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+    protected boolean dataIsEmpty() {
+        if (idList == null) return true;
+        for (int i = 0; i < (idList.size()-1); i++) {     //account for only document id's
+            if (!idList.get(i).isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+    //should only be used upon login and setting of a server version
+    private void extractIDs() {
+        idList = new ArrayList<ArrayList<String>>(5);
+        ArrayList<String> grps = new ArrayList<String>();
+        for (Object x : model.getArray(ACTIVE_GROUPS_KEY)) {
+            grps.add((String) x);
+        }
+        ArrayList<String> accpdEvents = new ArrayList<String>();
+        for (Object x : model.getArray(ACCEPTED_EVENTS_KEY)) {
+            accpdEvents.add((String) x);
+        }
+        ArrayList<String> wtgEvents = new ArrayList<String>();
+        for (Object x : model.getArray(WAITING_EVENTS_KEY)) {
+            wtgEvents.add((String) x);
+        }
+        ArrayList<String> rjdEvents = new ArrayList<String>();
+        for (Object x : model.getArray(REJECTED_EVENTS_KEY)) {
+            rjdEvents.add((String) x);
+        }
+        ArrayList<String> frnds = new ArrayList<String>();
+        for (Object x : model.getArray(ACQUAINTENCE_KEY)) {
+            frnds.add((String) x);
+        }
+        idList.add(0, grps);
+        idList.add(1, accpdEvents);
+        idList.add(2, wtgEvents);
+        idList.add(3, rjdEvents);
+        idList.add(4, frnds);
+    }
+    //endregion
 
     protected BaasDocument getServerVersion() {
         return model;

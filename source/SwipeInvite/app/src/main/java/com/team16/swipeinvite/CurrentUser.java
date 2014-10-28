@@ -78,7 +78,7 @@ class CurrentUser implements Parcelable {
     //region Getter and setter for common name of user
     //SET IN THE REGISTERED SCOPE OF A USER OBJECT
     protected void setCommonName(String name) {
-        this.user.getScope(BaasUser.Scope.REGISTERED).putString(COMMON_NAME_KEY, name);
+        this.user.getScope(BaasUser.Scope.REGISTERED).put(COMMON_NAME_KEY, name);
     }
     protected String getCommonName() {
         return this.user.getScope(BaasUser.Scope.REGISTERED).getString(COMMON_NAME_KEY);
@@ -89,7 +89,7 @@ class CurrentUser implements Parcelable {
     //region Getter and setter for the user email
     //SET IN THE PROVATE SCOPE OF A USER OBJECT
     protected void setEmail(String email) {
-        this.user.getScope(BaasUser.Scope.PRIVATE).putString(EMAIL_KEY, email);
+        this.user.getScope(BaasUser.Scope.PRIVATE).put(EMAIL_KEY, email);
     }
     protected String getEmail() {
         return this.user.getScope(BaasUser.Scope.PRIVATE).getString(EMAIL_KEY);
@@ -99,7 +99,7 @@ class CurrentUser implements Parcelable {
 
     //region Getter and setter for user gender
     protected void setMale(boolean male) {
-        this.user.getScope(BaasUser.Scope.REGISTERED).putBoolean(GENDER_KEY, male);
+        this.user.getScope(BaasUser.Scope.REGISTERED).put(GENDER_KEY, male);
     }
     protected boolean isMale() {
         return this.user.getScope(BaasUser.Scope.REGISTERED).getBoolean(GENDER_KEY);

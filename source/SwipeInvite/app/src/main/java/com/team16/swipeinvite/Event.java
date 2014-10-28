@@ -64,11 +64,11 @@ class Event implements Parcelable {
     protected Event(String name, String description, String location, String begdate, String enddate) {
         this.event = new BaasDocument(COLLECTION_NAME);
         initializeAdminArray();
-        this.event.putString(NAME_KEY, name);
-        this.event.putString(DESCRIPTION_KEY, description);
-        this.event.putString(LOCATION_KEY, location);
-        this.event.putString(BEGIN_DATE_KEY, begdate);
-        this.event.putString(END_DATE_KEY, enddate);
+        this.event.put(NAME_KEY, name);
+        this.event.put(DESCRIPTION_KEY, description);
+        this.event.put(LOCATION_KEY, location);
+        this.event.put(BEGIN_DATE_KEY, begdate);
+        this.event.put(END_DATE_KEY, enddate);
     }
 
     //Create a brand new group object from an existing BaasDocument
@@ -86,8 +86,8 @@ class Event implements Parcelable {
     //region Methods to initialize arrays upon creation of an event
     private void initializeAdminArray() {
         JsonArray ja = new JsonArray();
-        ja.addString(BaasUser.current().getName());
-        this.event.putArray(ADMIN_ARRAY_KEY, ja);
+        ja.add(BaasUser.current().getName());
+        this.event.put(ADMIN_ARRAY_KEY, ja);
     }
     //endregion
 
@@ -129,7 +129,7 @@ class Event implements Parcelable {
     //region Getter and setter for event name
     protected void setName(String name) throws EventException {
         if (!hasPermission()) throw new EventException("User does not have permission to edit event.");
-        this.event.putString(NAME_KEY, name);
+        this.event.put(NAME_KEY, name);
     }
 
     protected String getName() {
@@ -141,7 +141,7 @@ class Event implements Parcelable {
     //region Getter and setter for event description
     protected void setDescription(String description) throws EventException {
         if (!hasPermission()) throw new EventException("User does not have permission to edit event.");
-        this.event.putString(DESCRIPTION_KEY, description);
+        this.event.put(DESCRIPTION_KEY, description);
     }
 
     protected String getDescription() {
@@ -153,7 +153,7 @@ class Event implements Parcelable {
     //region Getter and setter for location
     protected void setLocation(String location) throws EventException {
         if (!hasPermission()) throw new EventException("User does not have permission to edit event.");
-        this.event.putString(LOCATION_KEY, location);
+        this.event.put(LOCATION_KEY, location);
     }
 
     protected String getLocation() {
@@ -165,7 +165,7 @@ class Event implements Parcelable {
     //region Getter and setter for begin date
     protected void setBeginDate(String date) throws EventException {
         if (!hasPermission()) throw new EventException("User does not have permission to edit event.");
-        this.event.putString(BEGIN_DATE_KEY, date);
+        this.event.put(BEGIN_DATE_KEY, date);
     }
 
     protected String getBeginDate() {
@@ -177,7 +177,7 @@ class Event implements Parcelable {
     //region Getter and setter for end date
     protected void setEndDate(String date) throws EventException {
         if (!hasPermission()) throw new EventException("User does not have permission to edit event.");
-        this.event.putString(END_DATE_KEY, date);
+        this.event.put(END_DATE_KEY, date);
     }
 
     protected String getEndDate() {
@@ -198,8 +198,8 @@ class Event implements Parcelable {
         if (!hasPermission()) throw new EventException("User does not have permission to edit event.");
         if (containsAdmin(username)) return;
         JsonArray ja = this.event.getArray(ADMIN_ARRAY_KEY);
-        ja.addString(username);
-        this.event.putArray(ADMIN_ARRAY_KEY, ja);
+        ja.add(username);
+        this.event.put(ADMIN_ARRAY_KEY, ja);
     }
 
     protected void removeAdmin(String username) throws EventException {
@@ -215,7 +215,7 @@ class Event implements Parcelable {
                 ja.remove(i);
             }
         }
-        this.event.putArray(ADMIN_ARRAY_KEY, ja);
+        this.event.put(ADMIN_ARRAY_KEY, ja);
     }
 
     protected int getAdminCount() {
@@ -231,7 +231,7 @@ class Event implements Parcelable {
     //region Methods for dealing with the server ID for a specific group
     //Method to check if the current group instance is on the server
     protected boolean isOnServer() {
-        if (this.event.getId() != null) {
+        if (this.event != null && this.event.getId() != null) {
             return true;
         }
         return false;

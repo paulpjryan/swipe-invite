@@ -37,6 +37,8 @@ public class MainActivity extends ActionBarActivity {
 
     private String[] drawerTitleList;
 
+    private Model model;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +51,9 @@ public class MainActivity extends ActionBarActivity {
             startLoginScreen();
             return;
         }
+        Log.d(LOG_TAG, "Getting model from intent.");
+        model = getIntent().getParcelableExtra("model_data");
+
         if (savedInstanceState != null) {
             logoutToken = RequestToken.loadAndResume(savedInstanceState,LOGOUT_TOKEN_KEY,logoutHandler);
         }
@@ -108,10 +113,17 @@ public class MainActivity extends ActionBarActivity {
     //This method is called at the startup of onCreate
     //It will direct the user to a login activity
     private void startLoginScreen(){
-        Intent intent = new Intent(this,LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-        finish();
+        if (model == null) {     //Absolutely no data to save, must be first time startup
+            Intent intent = new Intent(this, LoginActivity2.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+        } else {
+            Intent intent = new Intent(this, LogoutActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            intent.putExtra("model_data", model);
+            startActivity(intent);
+        }
     }
 
     @Override
@@ -167,7 +179,8 @@ public class MainActivity extends ActionBarActivity {
                     Toast.makeText(this, "Action unavailable", Toast.LENGTH_LONG).show();
                 }
                 */
-                BaasUser.current().logout(logoutHandler);
+                //BaasUser.current().logout(logoutHandler);
+                startLoginScreen();
                 return true;
             case R.id.action_create_group:
 
@@ -190,6 +203,7 @@ public class MainActivity extends ActionBarActivity {
     private final static String LOGOUT_TOKEN_KEY = "logout";
     private void onLogout(){
         //Remove active user data from our model
+        //DUMP ALL USER DATA
         ((StartUp) this.getApplication()).resetActiveUser();
 
         //Go back to logout screen
