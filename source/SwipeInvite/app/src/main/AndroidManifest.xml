@@ -2,10 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.team16.swipeinvite" >
 
-    <uses-sdk
-        android:minSdkVersion="14"
-        android:targetSdkVersion="20" />
-
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -28,10 +24,17 @@
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" >
         </activity>
+
         <activity
             android:name=".Add_person2group"
-            android:label="@string/title_activity_add_person2group" >
+            android:label="@string/title_activity_add_person2group"
+            android:parentActivityName="com.team16.swipeinvite.GroupEditActivity" >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.team16.swipeinvite.GroupEditActivity" />
         </activity>
+
         <activity
             android:name=".UserProfileActivity"
             android:label="@string/title_activity_user_profile" >
@@ -45,7 +48,7 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.team16.swipeinvite.MainActivity" />
-        </activity>
+      </activity>
         <activity
             android:name=".SearchGroupActivity"
             android:label="@string/title_activity_search_group" >
@@ -54,6 +57,8 @@
             android:name=".LoginActivity"
             android:label="@string/title_activity_login" >
         </activity>
+
+
         <activity
             android:name=".GroupEditActivity"
             android:label="@string/title_activity_group_edit"
@@ -87,3 +92,5 @@
     </application>
 
 </manifest>
+
+

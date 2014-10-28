@@ -3,6 +3,7 @@ package com.team16.swipeinvite;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -17,6 +18,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.baasbox.android.BaasDocument;
 import com.baasbox.android.BaasHandler;
@@ -83,11 +85,24 @@ public class GroupCreationActivity extends ActionBarActivity {
         this.nameview = (EditText) findViewById(R.id.textView_group_name);
 		this.descview = (EditText) findViewById(R.id.textView_group_description);
         this.radgroup = (RadioGroup) findViewById(R.id.radioGroup);
-        this.submit = (Button) findViewById(R.id.button_submit);
+        this.submit = (Button) findViewById(R.id.button_submit_groupCreation);
 
         //Status View creation to local variables
         this.groupStatusView = (View) findViewById(R.id.group_create_status);
         this.statusMessage = (TextView) findViewById(R.id.group_create_status_message);
+
+        //Submit button
+        Button submit_bt = (Button)findViewById(R.id.button_submit_groupCreation);
+        submit_bt.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Toast words = Toast.makeText(GroupCreationActivity.this,"Sucessfully create a group",Toast.LENGTH_LONG);
+                words.show();
+                Intent intent_sg = new Intent(GroupCreationActivity.this,MainActivity.class);
+                startActivity(intent_sg);
+            }
+        });
 
 	}
 

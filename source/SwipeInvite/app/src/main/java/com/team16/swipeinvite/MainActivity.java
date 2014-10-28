@@ -181,6 +181,30 @@ public class MainActivity extends ActionBarActivity {
                 //BaasUser.current().logout(logoutHandler);
                 startLoginScreen();
                 return true;
+            // User profile
+            case R.id.action_profile:
+                Intent intent_profile = new Intent(this,UserProfileActivity.class);
+                if (intent_profile.resolveActivity(getPackageManager()) != null) {
+                    intent_profile.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent_profile);
+                } else {
+                    Toast.makeText(this, "Action unavailable", Toast.LENGTH_LONG).show();
+                }
+                return true;
+
+            // Search Group
+
+            case R.id.action_search_group:
+                Intent intent_sg = new Intent(this,Add_person2group.class);
+                if (intent_sg.resolveActivity(getPackageManager()) != null) {
+
+                    startActivity(intent_sg);
+                } else {
+                    Toast.makeText(this, "Action unavailable", Toast.LENGTH_LONG).show();
+                }
+                return true;
+
+
             case R.id.action_create_group:
 
                 // create intent to perform web search for this planet
