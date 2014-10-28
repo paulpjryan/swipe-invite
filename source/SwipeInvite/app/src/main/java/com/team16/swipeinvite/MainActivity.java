@@ -120,7 +120,6 @@ public class MainActivity extends ActionBarActivity {
             finish();
         } else {
             Intent intent = new Intent(this, LogoutActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             intent.putExtra("model_data", model);
             startActivity(intent);
         }
