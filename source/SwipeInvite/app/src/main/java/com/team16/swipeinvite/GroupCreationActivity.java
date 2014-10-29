@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,9 +24,11 @@ import android.widget.Toast;
 import com.baasbox.android.BaasDocument;
 import com.baasbox.android.BaasHandler;
 import com.baasbox.android.BaasResult;
+import com.baasbox.android.BaasUser;
 import com.baasbox.android.Grant;
 import com.baasbox.android.RequestToken;
 import com.baasbox.android.Role;
+import com.baasbox.android.SaveMode;
 
 public class GroupCreationActivity extends ActionBarActivity {
     /* -------------------- LOG TAG CONSTANTS --------------------------- */
@@ -33,36 +36,30 @@ public class GroupCreationActivity extends ActionBarActivity {
     /* -------------------- END LOG TAG CONSTANTS ----------------------- */
 
 
-
-    /* ------------------ BAAS-SERVER TOKEN SECTION ------------------------------ */
-    private String rememberId;
-    private final static String REMEMBER_ID_KEY = "id";
-    private RequestToken savingRequestToken;
-    private final static String SAVING_TOKEN_KEY = "saving";
-    private RequestToken grantingRequestToken;
-    private final static String GRANTING_TOKEN_KEY = "granting";
-    /* ------------------- END TOKEN SECTION -------------------------------------- */
-
-
-
-    /* ------------------- LOCAL VARIALBES FOR VIEW ELEMENTS -------------------------- */
+    //region Local instance variables for view elements
     //Variables for form view
     private View groupCreateView;  //View with form
-    private int ispriv = -1;  //start at -1 to represent nothing checked
     private EditText nameview;
     private EditText descview;
     private RadioGroup radgroup;
     private Button submit;
-
     //Variables for status bar view
     private View groupStatusView;  //View with status bar
     private TextView statusMessage;
-    /* -------------------- END VARIABLES FOR VIEW ELEMENTS SECTION --------------------- */
+    //endregion
 
 
+    //region Local variable for the model
+    private Model model;
+    private static final String MODEL_KEY = "model_d";
+    private static final String MODEL_INTENT_KEY = "model_data";
+    private Group2 newGroup;
+    private static final String GROUP_KEY = "new_group";
+    //endregion
 
-    /* ------------------ OVERRIDE METHODS FOR ANDROID ACTIVITY ------------------------ */
-	@Override
+
+    //region Lifecycle methods
+    @Override
     //onCreate is called when the activity is first started
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -71,9 +68,15 @@ public class GroupCreationActivity extends ActionBarActivity {
         //DO NOT ADD ANY VIEW ACTIVITY CODE ABOVE HERE
         //Loading any previous server requests if the activity was closed
         if (savedInstanceState != null) {
-            savingRequestToken = RequestToken.loadAndResume(savedInstanceState, SAVING_TOKEN_KEY, onComplete);
-            grantingRequestToken = RequestToken.loadAndResume(savedInstanceState, GRANTING_TOKEN_KEY, onGrantComplete);
-            rememberId = savedInstanceState.getString(REMEMBER_ID_KEY);
+            Log.d(LOG_TAG, "Got model from saved instance.");
+            saveRT = savedInstanceState.getParcelable(SAVE_TOKEN_KEY);
+            readRT = savedInstanceState.getParcelable(READ_TOKEN_KEY);
+            updateRT = savedInstanceState.getParcelable(UPDATE_TOKEN_KEY);
+            model = savedInstanceState.getParcelable(MODEL_KEY);
+            newGroup = savedInstanceState.getParcelable(GROUP_KEY);
+        } else {
+            model = getIntent().getParcelableExtra(MODEL_INTENT_KEY);
+            Log.d(LOG_TAG, "Got model from intent, size: " + model.activeGroups.size());
         }
 
         //Setting the content view and support action bar
@@ -90,20 +93,6 @@ public class GroupCreationActivity extends ActionBarActivity {
         //Status View creation to local variables
         this.groupStatusView = (View) findViewById(R.id.group_create_status);
         this.statusMessage = (TextView) findViewById(R.id.group_create_status_message);
-
-        //Submit button
-        Button submit_bt = (Button)findViewById(R.id.button_submit_groupCreation);
-        submit_bt.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Toast words = Toast.makeText(GroupCreationActivity.this,"Sucessfully create a group",Toast.LENGTH_LONG);
-                words.show();
-                Intent intent_sg = new Intent(GroupCreationActivity.this,MainActivity.class);
-                startActivity(intent_sg);
-            }
-        });
-
 	}
 
 
@@ -129,6 +118,10 @@ public class GroupCreationActivity extends ActionBarActivity {
 		}
         else if(id == android.R.id.home)
         {
+            Log.d(LOG_TAG, "Navigating away from group creation, return CANCEL.");
+            showProgress(false);
+            Intent returnIntent = new Intent();
+            setResult(RESULT_CANCELED, returnIntent);
             NavUtils.navigateUpFromSameTask(this);
             return true;
         }
@@ -140,6 +133,18 @@ public class GroupCreationActivity extends ActionBarActivity {
     public void onPause() {
         super.onPause();
         Log.d(LOG_TAG, "onPause called");
+        if (saveRT != null) {
+            showProgress(false);
+            saveRT.suspend();
+        }
+        if (readRT != null) {
+            showProgress(false);
+            readRT.suspend();
+        }
+        if (updateRT != null) {
+            showProgress(false);
+            updateRT.suspend();
+        }
     }
 
     @Override
@@ -147,6 +152,18 @@ public class GroupCreationActivity extends ActionBarActivity {
     public void onResume() {
         super.onResume();
         Log.d(LOG_TAG, "onResume called");
+        if (saveRT != null) {
+            showProgress(true);
+            saveRT.resume(onSaveComplete);
+        }
+        if (readRT != null) {
+            showProgress(true);
+            readRT.resume(onReadComplete);
+        }
+        if (updateRT != null) {
+            showProgress(true);
+            updateRT.resume(onUpdateComplete);
+        }
     }
 
     @Override
@@ -154,53 +171,40 @@ public class GroupCreationActivity extends ActionBarActivity {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Log.d(LOG_TAG, "onSaveInstanceState called");
-        if (savingRequestToken != null) {
-            //Need to suspend and save this token in the bundle
-            savingRequestToken.suspendAndSave(outState, SAVING_TOKEN_KEY);
+        if (saveRT != null) {
+            outState.putParcelable(SAVE_TOKEN_KEY, saveRT);
         }
-        if (grantingRequestToken != null) {
-            //Need to suspend and save this token in the bundle
-            grantingRequestToken.suspendAndSave(outState, GRANTING_TOKEN_KEY);
-            outState.putString(REMEMBER_ID_KEY, rememberId);
+        if (readRT != null) {
+            outState.putParcelable(READ_TOKEN_KEY, readRT);
+        }
+        if (updateRT != null) {
+            outState.putParcelable(UPDATE_TOKEN_KEY, updateRT);
+        }
+        if (model != null) {
+            outState.putParcelable(MODEL_KEY, model);
+        }
+        if (newGroup != null) {
+            outState.putParcelable(GROUP_KEY, newGroup);
         }
     }
-    /* ------------------------ END OVERRIDE METHOD SECTION ---------------------------------- */
+    @Override
+    public void onStop() {
+        super.onStop();
+        /*  NEED TO MOVE THIS TO THE BACK BUTTON SECTION
+        Log.d(LOG_TAG, "onStop called");
+        showProgress(false);
+        Intent returnIntent = new Intent();
+        setResult(RESULT_CANCELED, returnIntent);
+        finish();
+        */
+    }
+    //endregion
 
 
-
-    /* ----------------------- METHODS FOR BAASHANDLERS --------------------------------- */
-    //handler for sending a request to the server for Group
-    private final BaasHandler<BaasDocument> onComplete = new BaasHandler<BaasDocument>() {
-        @Override
-        public void handle(BaasResult<BaasDocument> result) {
-            savingRequestToken = null;
-            if (result.isFailed()) {
-                Log.d(LOG_TAG,"ERROR",result.error());
-            }
-            completeCreate(result);
-        }
-    };
-
-    //handler for sending a grant to the server for Group
-    private final BaasHandler<Void> onGrantComplete = new BaasHandler<Void>() {
-        @Override
-        public void handle(BaasResult<Void> result) {
-            grantingRequestToken = null;
-            if (result.isFailed()) {
-                Log.d(LOG_TAG,"ERROR",result.error());
-            }
-            completeGrant(result);
-        }
-    };
-
-    /* ------------------------ END BAASHANDLER SECTION ------------------------------ */
-
-
-
-    /* --------------------- RADIO GROUP RESPONDER SECTION ----------------------------- */
-
+    //region Radio Group responder
     //Method to respond to the radio button clicked
     //Listener set in the xml
+    private int ispriv = -1;  //start at -1 to represent nothing checked
     public void onRadioButtonClicked(View v) {
         // Is the button now checked?
         boolean checked = ((RadioButton) v).isChecked();
@@ -218,151 +222,226 @@ public class GroupCreationActivity extends ActionBarActivity {
         }
         return;
     }
-
-    /* ------------------------ END RADIO GROUP SECTION --------------------------------- */
-
+    //endregion
 
 
-    /* ------------------------ SUBMIT BUTTON RESPONDER SECTION ---------------------------- */
-
+    //region Submit button responder
     //Method to respond to the actual button click
     //Listener is set in the xml
     public void submitResponder(View v) {
         //Change the views
         showProgress(true);
 
-        //Getting user inputs from views and Check their null conditions
-        Editable n = this.nameview.getText();
-        Editable d = this.descview.getText();
+        //Getting user inputs from views
+        String name = nameview.getText().toString();
+        String description  = descview.getText().toString();
 
         //Check for null entries
-        if ((ispriv == -1) || (n == null) || (d == null)) {
-            //ACTUALLY NEED TO NOTIFY USER OF ISSUE
-            Log.d(LOG_TAG, "Cannot submit, fields are required.");
+        if (TextUtils.isEmpty(name)) {
+            Log.d(LOG_TAG, "Name field cannot be blank.");
             showProgress(false);
+            nameview.setError("Cannot be left blank");
+            nameview.requestFocus();
             return;
-        }
-
-        //Switch to strings and bool
-        String name = n.toString();
-        String descrip = d.toString();
-        boolean priv = false;
-        if (ispriv == 1) {
-            priv = true;
-        }
-
-        //Check for unsatisfactory entries
-        if (n.charAt(0) == ' ') {
-            //ACTUALLY NEED TO NOTIFY USER OF ISSUE
-            Log.d(LOG_TAG, "Cannot submit, name cannot begin with space.");
+        } else if (TextUtils.isEmpty(description)) {
+            Log.d(LOG_TAG, "Description field cannot be blank.");
             showProgress(false);
+            descview.setError("Cannot be left blank");
+            descview.requestFocus();
             return;
-        }
-        else if (n.length() < 2) {
-            //ACTUALLY NEED TO NOTIFY USER OF ISSUE
-            Log.d(LOG_TAG, "Cannot submit, name to short.");
+        } else if (ispriv == -1) {
+            Log.d(LOG_TAG, "Privacy field cannot be blank.");
             showProgress(false);
+            radgroup.requestFocus();
             return;
-        } else if ((d.length() < 2) || (d.length() > 100)) {
-            //ACTUALLY NEED TO NOTIFY USER OF ISSUE
-            Log.d(LOG_TAG, "Cannot submit, description invalid.");
+        } else if (name.length() > 20 ) {
+            Log.d(LOG_TAG, "Name field cannot be longer than 20 characters.");
             showProgress(false);
+            nameview.setError("Cannot be longer than 20 characters");
+            nameview.requestFocus();
+            return;
+        } else if (description.length() > 100 || description.length() <= 3) {
+            Log.d(LOG_TAG, "Description field not within range.");
+            showProgress(false);
+            descview.setError("Must be between 4 and 100 characters");
+            descview.requestFocus();
             return;
         }
 
         //Proceed to create new group with information
-        createNewGroup(name, descrip, priv);
+        boolean priv = true;
+        if (ispriv == 0) {
+            priv = false;
+        }
+        Log.d(LOG_TAG, "Saving group to server.");
+        Group2 g = new Group2(name, description, priv);
+        saveRT = g.getBaasDocument().save(SaveMode.IGNORE_VERSION, onSaveComplete);
 
         return;
     }
-    /* ---------------------- END SUBMIT BUTTON SECTION ----------------------- */
-
-
-
-    /* ---------------------- GROUP CREATION SECTION ------------------------------- */
-    private void createNewGroup(String n, String d, boolean p) {
-        //Creating local instance of the group
-        Group g = new Group(((StartUp) this.getApplication()).getActiveUser(), n, p);
-        g.setDescription(d);
-        g.addUser(((StartUp) this.getApplication()).getActiveUser());
-
-        //Forwarding the local instance to the Backend of the application for processing
-        ((StartUp) this.getApplication()).createNewGroup(g);
-
-
-        //Package new group object into BaasDocument
-        //BaasDocument newDoc = Group.getBaasGroup(g);
-
-        //Try to send Group Document object to server
-        //savingRequestToken = newDoc.save(onComplete);
-
+    public void textFieldResponder(View v) {
+        //Reset the error messages if you click the text views
+        nameview.setError(null);
+        descview.setError(null);
     }
+    //endregion
 
-    //Method called after a server request token finishes
-    private void completeCreate(final BaasResult<BaasDocument> result) {
-        //Reset token to null
-        savingRequestToken = null;
-        saveGroup(result.value());
-        //Check if successful result
-        if (result.isSuccess()) {
-            //Try to grant permission if not private
-            if(!(result.value().getBoolean("isprivate"))){
-                //Launch grant request and put result group id in global variable
-                rememberId = result.value().getId();
-                result.value().grantAll(Grant.READ, Role.REGISTERED, onGrantComplete);
-            } else {
-                //TRY TO FINISH ACTIVITY, remove progress wheel
-                //save group locally to active user
+
+    //region Variables and methods to deal with ansync creation request
+    private static final String SAVE_TOKEN_KEY = "save";
+    private RequestToken saveRT;
+    private final BaasHandler<BaasDocument> onSaveComplete = new BaasHandler<BaasDocument>() {
+        @Override
+        //This is the method that will receive the server return
+        public void handle(BaasResult<BaasDocument> result) {
+            saveRT = null;
+            if (result.isFailed()) {
+                //NOTIFY USER OF ERROR
+                Log.d(LOG_TAG, "Server request error: " + result.error());
                 showProgress(false);
-                finish();
+                //CREATION FAIL
+                failedSave();
+                return;
+            } else if (result.isSuccess()) {
+                //MOVE ON TO EDITING PERMISSIONS IF NEEDED
+                completeSave(result.value());
+                return;
             }
-        } else {
-            Log.d("LOG", "**ERROR**", result.error());
+            Log.d(LOG_TAG, "Server request weird: " + result.toString());
             showProgress(false);
+            return;
         }
+    };
+    //endregion
+
+
+    //region Methods that handle a server response for a save
+    private void completeSave(BaasDocument d) {
+        Log.d(LOG_TAG, "Recieved successful group creation response.");
+        //Create group from BaasDocument
+        newGroup = new Group2(d);
+
+        //Decide whether or not to make public
+        if (newGroup.isPrivate()) {
+            Log.d(LOG_TAG, "Created private group.");
+            //Update model, return to main activity
+            model.activeGroups.add(newGroup);
+            returnToMainSuccess();
+            return;
+        }
+        //Else, grant read and update access to all users
+        Log.d(LOG_TAG, "Creating public group, sending grants.");
+        readRT = newGroup.getBaasDocument().grantAll(Grant.READ, Role.REGISTERED, onReadComplete);
+        updateRT = newGroup.getBaasDocument().grantAll(Grant.UPDATE, Role.REGISTERED, onUpdateComplete);
+    }
+    private void failedSave() {
+        showProgress(false);
+        //Notify user of error
+        Toast.makeText(getApplicationContext(), "Group could not be created", Toast.LENGTH_SHORT).show();
         return;
     }
-
-    /* -------------------------- END GROUP CREATION SECTION ----------------------------- */
-
+    //endregion
 
 
-    /* -------------------------- GRANT COMPLETION SECTION ------------------------------- */
-    private void completeGrant(BaasResult<Void> result) {
-        grantingRequestToken = null;
-        //Checking to see if grant went through
-        if (result.isSuccess()) {
-            //Nothing to fix, just exit
-            rememberId = null;
-            showProgress(false);
-            finish();
-        } else {
-            //Fix unsync
-            for (Group x : ((StartUp) this.getApplication()).getActiveUser().groups) {
-                if (x.getGroupDoc().getId().equals(rememberId)) {
-                    ((StartUp) this.getApplication()).getActiveUser().removeGroup(x);
-                    Log.d("LOG", "FIXED SYNC ISSUE BY DELETING GROUP");
-                }
+    //region Variables and methods to deal with ansync read grant
+    private static final String READ_TOKEN_KEY = "read";
+    private RequestToken readRT;
+    private static final int READ_ID = 0;
+    private final BaasHandler<Void> onReadComplete = new BaasHandler<Void>() {
+        @Override
+        //This is the method that will receive the server return
+        public void handle(BaasResult<Void> result) {
+            readRT = null;
+            if (result.isFailed()) {
+                //NOTIFY USER OF ERROR
+                Log.d(LOG_TAG, "Server request error: " + result.error());
+                //GRANT FAIL
+                failedGrant(READ_ID);
+                return;
+            } else if (result.isSuccess()) {
+                //MOVE ON TO COMPLETION
+                completeGrant();
+                return;
             }
+            Log.d(LOG_TAG, "Server request weird: " + result.toString());
             showProgress(false);
+            return;
         }
-        rememberId = null;
+    };
+    //endregion
+
+
+    //region Variables and methods to deal with ansync read grant
+    private static final String UPDATE_TOKEN_KEY = "update";
+    private RequestToken updateRT;
+    private static final int UPDATE_ID = 1;
+    private final BaasHandler<Void> onUpdateComplete = new BaasHandler<Void>() {
+        @Override
+        //This is the method that will receive the server return
+        public void handle(BaasResult<Void> result) {
+            updateRT = null;
+            if (result.isFailed()) {
+                //NOTIFY USER OF ERROR
+                Log.d(LOG_TAG, "Server request error: " + result.error());
+                //GRANT FAIL
+                failedGrant(UPDATE_ID);
+                return;
+            } else if (result.isSuccess()) {
+                //MOVE ON TO COMPLETION
+                completeGrant();
+                return;
+            }
+            Log.d(LOG_TAG, "Server request weird: " + result.toString());
+            showProgress(false);
+            return;
+        }
+    };
+    //endregion
+
+
+    //region Methods to handle grant responses
+    private void completeGrant() {
+        //Check if both grants have finished
+        if (readRT == null && updateRT == null) {
+            Log.d(LOG_TAG, "Created public group.");
+            model.activeGroups.add(newGroup);
+            returnToMainSuccess();
+            return;
+        }
     }
-    /* --------------------------- END GRANT SECTION ---------------------------------- */
 
-
-    
-    /* -------------------------- LOCAL SAVING SECTION -------------------------------- */
-    private void saveGroup(BaasDocument result) {
-        Group n = new Group(result);
-        ((StartUp) this.getApplication()).getActiveUser().addGroup(n);
-
+    //FIX THIS METHOD LATER, ON SERVER FAIL IT WILL INFINITE LOOP
+    private void failedGrant(int id) {
+        showProgress(false);
+        //Figure out which grant failed
+        switch (id) {
+            case READ_ID:    //Try to resend proper grants
+                Log.d(LOG_TAG, "Retrying read grant.");
+                readRT = newGroup.getBaasDocument().grantAll(Grant.READ, Role.REGISTERED, onReadComplete);
+                break;
+            case UPDATE_ID:
+                Log.d(LOG_TAG, "Retrying update grant.");
+                updateRT = newGroup.getBaasDocument().grantAll(Grant.UPDATE, Role.REGISTERED, onUpdateComplete);
+                break;
+            default:
+                break;
+        }
     }
-    /* -------------------------- END LOCAL SAVING SECTION ---------------------------- */
+    //endregion
 
 
+    //region Methods to return to main
+    private void returnToMainSuccess() {
+        showProgress(false);
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra(MODEL_INTENT_KEY, model);
+        setResult(RESULT_OK, returnIntent);
+        finish();
+    }
+    //endregion
 
-    /* --------------------------- SHOW SEND PROGRESS SECTION ----------------------------- */
+
+    //region Method to show the progress wheel
     //This method just loads a different view with a transition of fading
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
@@ -400,6 +479,6 @@ public class GroupCreationActivity extends ActionBarActivity {
             groupCreateView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
-    /* ------------------------ END SHOWING PROGRESS SECTION ----------------------------- */
+    //endregion
 
 }

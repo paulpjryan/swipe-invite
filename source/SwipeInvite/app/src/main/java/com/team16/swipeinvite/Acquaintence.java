@@ -95,6 +95,21 @@ class Acquaintence implements Parcelable{
     //endregion
 
 
+    //region Methods for checking equality
+    protected boolean equals(Acquaintence other) {
+        return equals(other.getUsername());
+    }
+
+    protected boolean equals(String id) {
+        try {
+            return this.getUsername().equals(id);
+        } catch (NullPointerException e) {
+            return false;
+        }
+    }
+    //endregion
+
+
     //region Nested class for user exceptions
     protected class UserException extends RuntimeException {
         public UserException(String message) {

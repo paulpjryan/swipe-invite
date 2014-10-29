@@ -422,6 +422,21 @@ class Group2 implements Parcelable {
     //endregion
 
 
+    //region Methods for checking equality
+    protected boolean equals(Group2 other) {
+        return equals(other.getId());
+    }
+
+    protected boolean equals(String id) {
+        try {
+            return this.getId().equals(id);
+        } catch (NullPointerException e) {
+            return false;
+        }
+    }
+    //endregion
+
+
     //region Nested class for group exceptions to be thrown
     protected class GroupException extends RuntimeException {
 

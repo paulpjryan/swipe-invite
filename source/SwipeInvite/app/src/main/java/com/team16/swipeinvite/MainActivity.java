@@ -43,6 +43,8 @@ public class MainActivity extends ActionBarActivity {
 
     //region Local variable for the model
     private Model model;
+    private static final String MODEL_KEY = "model_d";
+    private static final String MODEL_INTENT_KEY = "model_data";
     //endregion
 
 
@@ -59,8 +61,12 @@ public class MainActivity extends ActionBarActivity {
             startLoginScreen();
             return;
         }
-        Log.d(LOG_TAG, "Getting model from intent.");
-        model = getIntent().getParcelableExtra("model_data");
+        model = getIntent().getParcelableExtra(MODEL_INTENT_KEY);
+        if (model != null) {
+            Log.d(LOG_TAG, "Getting model from intent, size: " + model.activeGroups.size());
+        } else {
+            Log.d(LOG_TAG, "Model got messed up.");
+        }
 
         setContentView(R.layout.activity_main);
 
@@ -140,6 +146,38 @@ public class MainActivity extends ActionBarActivity {
     //endregion
 
 
+    //region Method to start the group creation activty
+    private void startGroupCreate() {
+        Intent intent = new Intent(this, GroupCreationActivity.class);
+        intent.putExtra(MODEL_INTENT_KEY, model);   //pass the model object to the group
+        startActivityForResult(intent, GROUP_CREATE_REQUEST_CODE);
+    }
+    //endregion
+
+
+    //region Method to handle returning results from side activities around the main
+    private static final int GROUP_CREATE_REQUEST_CODE = 1;
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //Figure out which activity is returning a result
+        switch (requestCode) {
+            case GROUP_CREATE_REQUEST_CODE:    //Group Create activity result
+                if(resultCode == RESULT_OK){
+                    Log.d(LOG_TAG, "Got ok result from group creation.");
+                    //SET THE MODEL WITH THE RETURNED MODEL OBJECT
+                    model = data.getParcelableExtra(MODEL_INTENT_KEY);
+                } else if (resultCode == RESULT_CANCELED) {
+                    Log.d(LOG_TAG, "Got canceled result from group creation.");
+                    //DO NOTHING
+                }
+                break;
+            default:
+                Log.d(LOG_TAG, "Request code not set.");
+                break;
+        }
+    }
+    //endregion
+
+
     //region Methods for the options menus and drawers
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -174,20 +212,6 @@ public class MainActivity extends ActionBarActivity {
         // Handle action buttons
         switch(item.getItemId()) {
             case R.id.action_logout:
-                /* CODE TO LOGOUT GOES IN HERE. THIS OTHER STUFF IS JUST PLACEHOLDER
-
-
-                // create intent to perform web search for this planet
-                Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
-                intent.putExtra(SearchManager.QUERY, getActionBar().getTitle());
-                // catch event that there's no activity to handle intent
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(this, "Action unavailable", Toast.LENGTH_LONG).show();
-                }
-                */
-                //BaasUser.current().logout(logoutHandler);
                 startLoginScreen();
                 return true;
             // User profile
@@ -215,7 +239,10 @@ public class MainActivity extends ActionBarActivity {
 
 
             case R.id.action_create_group:
-
+                //Start the group creation activity
+                startGroupCreate();
+                return true;
+                /*
                 // create intent to perform web search for this planet
                 Intent intent = new Intent(this, GroupCreationActivity.class);
                 //intent.putExtra(SearchManager.QUERY, getActionBar().getTitle());
@@ -225,7 +252,8 @@ public class MainActivity extends ActionBarActivity {
                 } else {
                     Toast.makeText(this, "Action unavailable", Toast.LENGTH_LONG).show();
                 }
-                return true;
+                return true; */
+
             default:
                 return super.onOptionsItemSelected(item);
         }

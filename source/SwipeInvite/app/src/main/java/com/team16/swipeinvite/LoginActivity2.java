@@ -34,6 +34,7 @@ public class LoginActivity2 extends Activity {
     //region Instance of the model class
     private Model model;
     private static final String MODEL_KEY = "model_d";
+    private static final String MODEL_INTENT_KEY = "model_data";
     //endregion
 
 
@@ -422,32 +423,6 @@ public class LoginActivity2 extends Activity {
     //endregion
 
 
-    /*
-    //region Variables and methods to deal with ansync data pulldown
-    private static final String DATA_TOKEN_KEY = "data";
-    private RequestToken dataRT;
-    private final BaasHandler<List<JsonObject>> onDataComplete = new BaasHandler<List<JsonObject>>() {
-        @Override
-        //This is the method that will receive the server return
-        public void handle(BaasResult<List<JsonObject>> result) {
-            dataRT = null;
-            if (result.isFailed()) {
-                //NOTIFY USER OF ERROR
-                Log.d(LOG_TAG, "Server request error: " + result.error());
-                showProgress(false);
-                return;
-            } else if (result.isSuccess()) {
-                completeData(result.value());
-                return;
-            }
-            Log.d(LOG_TAG, "Server request weird: " + result.toString());
-            showProgress(false);
-            return;
-        }
-    };
-    //endregion  */
-
-
     //region Method called after data request returns success
     private void completeData(List<BaasDocument> data) {
         Log.d(LOG_TAG, "Received list size: " + data.size());
@@ -540,7 +515,7 @@ public class LoginActivity2 extends Activity {
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.putExtra("model_data", model);
+        intent.putExtra(MODEL_INTENT_KEY, model);
         startActivity(intent);
         finish();
     }

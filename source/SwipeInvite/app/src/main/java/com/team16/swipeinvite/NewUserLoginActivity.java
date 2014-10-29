@@ -85,10 +85,13 @@ public class NewUserLoginActivity extends Activity {
     protected void onResume() {
         super.onResume();
         if (signInRT != null) {
+            showProgress(true);
             signInRT.resume(onComplete);
         } else if (groupRT != null) {
+            showProgress(true);
             groupRT.resume(onGroupComplete);
         } else if (modelRT != null) {
+            showProgress(true);
             modelRT.resume(onModelComplete);
         }
     }
@@ -97,10 +100,13 @@ public class NewUserLoginActivity extends Activity {
     protected void onPause() {
         super.onPause();
         if (signInRT != null) {
+            showProgress(false);
             signInRT.suspend();
         } else if (groupRT != null) {
+            showProgress(false);
             groupRT.suspend();
         } else if (modelRT != null) {
+            showProgress(false);
             modelRT.suspend();
         }
     }
