@@ -145,7 +145,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Group Member:"
+        android:text="Group Members:"
         android:id="@+id/textView_groupMember"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -171,7 +171,8 @@
     android:layout_below="@+id/listView_group_member"
     android:layout_alignParentBottom="true"
     android:layout_alignRight="@+id/listView_group_member"
-    android:layout_alignEnd="@+id/listView_group_member" />
+    android:layout_alignEnd="@+id/listView_group_member"
+    android:onClick="submitListener"/>
 
     <Button
         android:layout_width="wrap_content"
@@ -181,6 +182,7 @@
         android:layout_below="@+id/listView_group_member"
         android:layout_alignParentBottom="true"
         android:layout_alignLeft="@+id/listView_group_member"
+
          />
 
 
