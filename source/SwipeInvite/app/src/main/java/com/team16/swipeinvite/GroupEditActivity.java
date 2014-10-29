@@ -23,7 +23,9 @@ import java.util.List;
 public class GroupEditActivity extends ActionBarActivity {
 
     private ListView mainListView;
+    private ListView mainListView2;
     private ArrayAdapter<String> ListAdapter;
+    private ArrayAdapter<String> ListAdapter2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +59,9 @@ public class GroupEditActivity extends ActionBarActivity {
         });
 
 
-        //show event list view
+
+
+        //region event list view
         mainListView = (ListView) findViewById(R.id.listView_events_group);
         String[] data = {
                 "Having fun Halloween - 4:30pm",
@@ -75,6 +79,33 @@ public class GroupEditActivity extends ActionBarActivity {
         ListAdapter = new ArrayAdapter<String>(this,R.layout.list_item_event,EventList);
 
         mainListView.setAdapter(ListAdapter);
+        //endregion
+
+
+        //region Group member Listview
+        mainListView2 = (ListView) findViewById(R.id.listView_group_member);
+        String[] data2 = {
+                "Having fun Halloween - 4:30pm",
+                "Party - 6:15pm",
+                "CS free toturial - 11:30am",
+                "RANDOM DANCING - ALL THE TIME",
+                "RANDOM DANCING - ALL THE TIME",
+                "RANDOM DANCING - ALL THE TIME",
+                "RANDOM DANCING - ALL THE TIME",
+                "RANDOM DANCING - ALL THE TIME",
+        };
+
+        ArrayList<String> EventList2 = new ArrayList<String>();
+        EventList2.addAll(Arrays.asList(data));
+
+
+        ListAdapter2 = new ArrayAdapter<String>(this,R.layout.list_item_group_member,R.id.list_add_person_tv,data2);
+
+        mainListView2.setAdapter(ListAdapter2);
+        //endregion
+
+
+
 
 
 
