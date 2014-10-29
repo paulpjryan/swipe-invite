@@ -27,6 +27,7 @@ import com.baasbox.android.RequestToken;
  * Created by Andrea Tortorella on 24/01/14.
  * Taken from free github project by Team 16 on 16/08/14.
  */
+//THIS CLASS IS NOW OBSOLETE
 public class LoginActivity extends ActionBarActivity {
     private final static String SIGNUP_TOKEN_KEY = "signup_token_key";
     public static final String EXTRA_USERNAME = "com.baasbox.deardiary.username.EXTRA";
@@ -118,7 +119,7 @@ public class LoginActivity extends ActionBarActivity {
         mSignupOrLogin = null;
         if (success) {
             //Set the current user to our active user model
-            ((StartUp) this.getApplication()).setActiveUser(BaasUser.current());
+            /* ((StartUp) this.getApplication()).setActiveUser(BaasUser.current()); */
             //Go to main activity
             Intent intent = new Intent(this,MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -251,10 +252,10 @@ public class LoginActivity extends ActionBarActivity {
         switch(view.getId()) {
             case R.id.checkbox_login_remember:
                 if (checked) {
-                    ((StartUp) this.getApplication()).setRemember(true);
+                    /* ((StartUp) this.getApplication()).setRemember(true); */
                 }
                 else {
-                    ((StartUp) this.getApplication()).setRemember(false);
+                    /* ((StartUp) this.getApplication()).setRemember(false); */
                 }
                 break;
         }

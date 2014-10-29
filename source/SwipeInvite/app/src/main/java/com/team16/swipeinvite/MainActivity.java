@@ -61,9 +61,17 @@ public class MainActivity extends ActionBarActivity {
             startLoginScreen();
             return;
         }
-        model = getIntent().getParcelableExtra(MODEL_INTENT_KEY);
+
+        //Load in the model
+        if (savedInstanceState != null) {
+            model = savedInstanceState.getParcelable(MODEL_KEY);
+            Log.d(LOG_TAG, "Got model from saved state.");
+        } else {
+            model = getIntent().getParcelableExtra(MODEL_INTENT_KEY);
+            Log.d(LOG_TAG, "Got model from intent.");
+        }
         if (model != null) {
-            Log.d(LOG_TAG, "Getting model from intent, size: " + model.activeGroups.size());
+            Log.d(LOG_TAG, "Model active group size: " + model.activeGroups.size());
         } else {
             Log.d(LOG_TAG, "Model got messed up.");
         }
@@ -118,6 +126,29 @@ public class MainActivity extends ActionBarActivity {
 
         }
 
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(LOG_TAG, "onResume called");
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(LOG_TAG, "onPause called");
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(LOG_TAG, "onStop called");
+    }
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d(LOG_TAG, "onSaveInstanceState called");
+        if (model != null) {
+            outState.putParcelable(MODEL_KEY, model);
+        }
     }
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -237,22 +268,10 @@ public class MainActivity extends ActionBarActivity {
                 }
                 return true;
 
-
             case R.id.action_create_group:
                 //Start the group creation activity
                 startGroupCreate();
                 return true;
-                /*
-                // create intent to perform web search for this planet
-                Intent intent = new Intent(this, GroupCreationActivity.class);
-                //intent.putExtra(SearchManager.QUERY, getActionBar().getTitle());
-                // catch event that there's no activity to handle intent
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(this, "Action unavailable", Toast.LENGTH_LONG).show();
-                }
-                return true; */
 
             default:
                 return super.onOptionsItemSelected(item);
