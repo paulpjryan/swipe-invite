@@ -61,8 +61,12 @@ public class MainActivity extends ActionBarActivity {
             startLoginScreen();
             return;
         }
-        Log.d(LOG_TAG, "Getting model from intent.");
         model = getIntent().getParcelableExtra(MODEL_INTENT_KEY);
+        if (model != null) {
+            Log.d(LOG_TAG, "Getting model from intent, size: " + model.activeGroups.size());
+        } else {
+            Log.d(LOG_TAG, "Model got messed up.");
+        }
 
         setContentView(R.layout.activity_main);
 
@@ -208,20 +212,6 @@ public class MainActivity extends ActionBarActivity {
         // Handle action buttons
         switch(item.getItemId()) {
             case R.id.action_logout:
-                /* CODE TO LOGOUT GOES IN HERE. THIS OTHER STUFF IS JUST PLACEHOLDER
-
-
-                // create intent to perform web search for this planet
-                Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
-                intent.putExtra(SearchManager.QUERY, getActionBar().getTitle());
-                // catch event that there's no activity to handle intent
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(this, "Action unavailable", Toast.LENGTH_LONG).show();
-                }
-                */
-                //BaasUser.current().logout(logoutHandler);
                 startLoginScreen();
                 return true;
             // User profile

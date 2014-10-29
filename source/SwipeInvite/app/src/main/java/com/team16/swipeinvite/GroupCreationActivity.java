@@ -70,11 +70,13 @@ public class GroupCreationActivity extends ActionBarActivity {
         if (savedInstanceState != null) {
             Log.d(LOG_TAG, "Got model from saved instance.");
             saveRT = savedInstanceState.getParcelable(SAVE_TOKEN_KEY);
+            readRT = savedInstanceState.getParcelable(READ_TOKEN_KEY);
+            updateRT = savedInstanceState.getParcelable(UPDATE_TOKEN_KEY);
             model = savedInstanceState.getParcelable(MODEL_KEY);
             newGroup = savedInstanceState.getParcelable(GROUP_KEY);
         } else {
-            Log.d(LOG_TAG, "Got model from intent.");
             model = getIntent().getParcelableExtra(MODEL_INTENT_KEY);
+            Log.d(LOG_TAG, "Got model from intent, size: " + model.activeGroups.size());
         }
 
         //Setting the content view and support action bar
@@ -91,19 +93,6 @@ public class GroupCreationActivity extends ActionBarActivity {
         //Status View creation to local variables
         this.groupStatusView = (View) findViewById(R.id.group_create_status);
         this.statusMessage = (TextView) findViewById(R.id.group_create_status_message);
-
-        //Submit button
-        Button submit_bt = (Button)findViewById(R.id.button_submit_groupCreation);
-        submit_bt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast words = Toast.makeText(GroupCreationActivity.this,"Sucessfully create a group",Toast.LENGTH_LONG);
-                words.show();
-                Intent intent_sg = new Intent(GroupCreationActivity.this,MainActivity.class);
-                startActivity(intent_sg);
-            }
-        });
-
 	}
 
 
@@ -129,6 +118,10 @@ public class GroupCreationActivity extends ActionBarActivity {
 		}
         else if(id == android.R.id.home)
         {
+            Log.d(LOG_TAG, "Navigating away from group creation, return CANCEL.");
+            showProgress(false);
+            Intent returnIntent = new Intent();
+            setResult(RESULT_CANCELED, returnIntent);
             NavUtils.navigateUpFromSameTask(this);
             return true;
         }
@@ -141,7 +134,16 @@ public class GroupCreationActivity extends ActionBarActivity {
         super.onPause();
         Log.d(LOG_TAG, "onPause called");
         if (saveRT != null) {
+            showProgress(false);
             saveRT.suspend();
+        }
+        if (readRT != null) {
+            showProgress(false);
+            readRT.suspend();
+        }
+        if (updateRT != null) {
+            showProgress(false);
+            updateRT.suspend();
         }
     }
 
@@ -151,7 +153,16 @@ public class GroupCreationActivity extends ActionBarActivity {
         super.onResume();
         Log.d(LOG_TAG, "onResume called");
         if (saveRT != null) {
+            showProgress(true);
             saveRT.resume(onSaveComplete);
+        }
+        if (readRT != null) {
+            showProgress(true);
+            readRT.resume(onReadComplete);
+        }
+        if (updateRT != null) {
+            showProgress(true);
+            updateRT.resume(onUpdateComplete);
         }
     }
 
@@ -163,12 +174,29 @@ public class GroupCreationActivity extends ActionBarActivity {
         if (saveRT != null) {
             outState.putParcelable(SAVE_TOKEN_KEY, saveRT);
         }
+        if (readRT != null) {
+            outState.putParcelable(READ_TOKEN_KEY, readRT);
+        }
+        if (updateRT != null) {
+            outState.putParcelable(UPDATE_TOKEN_KEY, updateRT);
+        }
         if (model != null) {
             outState.putParcelable(MODEL_KEY, model);
         }
         if (newGroup != null) {
             outState.putParcelable(GROUP_KEY, newGroup);
         }
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        /*  NEED TO MOVE THIS TO THE BACK BUTTON SECTION
+        Log.d(LOG_TAG, "onStop called");
+        showProgress(false);
+        Intent returnIntent = new Intent();
+        setResult(RESULT_CANCELED, returnIntent);
+        finish();
+        */
     }
     //endregion
 
@@ -245,6 +273,7 @@ public class GroupCreationActivity extends ActionBarActivity {
         if (ispriv == 0) {
             priv = false;
         }
+        Log.d(LOG_TAG, "Saving group to server.");
         Group2 g = new Group2(name, description, priv);
         saveRT = g.getBaasDocument().save(SaveMode.IGNORE_VERSION, onSaveComplete);
 
@@ -288,23 +317,115 @@ public class GroupCreationActivity extends ActionBarActivity {
 
     //region Methods that handle a server response for a save
     private void completeSave(BaasDocument d) {
+        Log.d(LOG_TAG, "Recieved successful group creation response.");
         //Create group from BaasDocument
         newGroup = new Group2(d);
 
         //Decide whether or not to make public
         if (newGroup.isPrivate()) {
+            Log.d(LOG_TAG, "Created private group.");
             //Update model, return to main activity
             model.activeGroups.add(newGroup);
             returnToMainSuccess();
             return;
         }
         //Else, grant read and update access to all users
+        Log.d(LOG_TAG, "Creating public group, sending grants.");
+        readRT = newGroup.getBaasDocument().grantAll(Grant.READ, Role.REGISTERED, onReadComplete);
+        updateRT = newGroup.getBaasDocument().grantAll(Grant.UPDATE, Role.REGISTERED, onUpdateComplete);
     }
     private void failedSave() {
         showProgress(false);
         //Notify user of error
         Toast.makeText(getApplicationContext(), "Group could not be created", Toast.LENGTH_SHORT).show();
         return;
+    }
+    //endregion
+
+
+    //region Variables and methods to deal with ansync read grant
+    private static final String READ_TOKEN_KEY = "read";
+    private RequestToken readRT;
+    private static final int READ_ID = 0;
+    private final BaasHandler<Void> onReadComplete = new BaasHandler<Void>() {
+        @Override
+        //This is the method that will receive the server return
+        public void handle(BaasResult<Void> result) {
+            readRT = null;
+            if (result.isFailed()) {
+                //NOTIFY USER OF ERROR
+                Log.d(LOG_TAG, "Server request error: " + result.error());
+                //GRANT FAIL
+                failedGrant(READ_ID);
+                return;
+            } else if (result.isSuccess()) {
+                //MOVE ON TO COMPLETION
+                completeGrant();
+                return;
+            }
+            Log.d(LOG_TAG, "Server request weird: " + result.toString());
+            showProgress(false);
+            return;
+        }
+    };
+    //endregion
+
+
+    //region Variables and methods to deal with ansync read grant
+    private static final String UPDATE_TOKEN_KEY = "update";
+    private RequestToken updateRT;
+    private static final int UPDATE_ID = 1;
+    private final BaasHandler<Void> onUpdateComplete = new BaasHandler<Void>() {
+        @Override
+        //This is the method that will receive the server return
+        public void handle(BaasResult<Void> result) {
+            updateRT = null;
+            if (result.isFailed()) {
+                //NOTIFY USER OF ERROR
+                Log.d(LOG_TAG, "Server request error: " + result.error());
+                //GRANT FAIL
+                failedGrant(UPDATE_ID);
+                return;
+            } else if (result.isSuccess()) {
+                //MOVE ON TO COMPLETION
+                completeGrant();
+                return;
+            }
+            Log.d(LOG_TAG, "Server request weird: " + result.toString());
+            showProgress(false);
+            return;
+        }
+    };
+    //endregion
+
+
+    //region Methods to handle grant responses
+    private void completeGrant() {
+        //Check if both grants have finished
+        if (readRT == null && updateRT == null) {
+            Log.d(LOG_TAG, "Created public group.");
+            model.activeGroups.add(newGroup);
+            returnToMainSuccess();
+            return;
+        }
+    }
+
+    //FIX THIS METHOD LATER, ON SERVER FAIL IT WILL INFINITE LOOP
+    private void failedGrant(int id) {
+        showProgress(false);
+        //Figure out which grant failed
+        switch (id) {
+            case READ_ID:    //Try to resend proper grants
+                Log.d(LOG_TAG, "Retrying read grant.");
+                readRT = newGroup.getBaasDocument().grantAll(Grant.READ, Role.REGISTERED, onReadComplete);
+                break;
+            case UPDATE_ID:
+                Log.d(LOG_TAG, "Retrying update grant.");
+                updateRT = newGroup.getBaasDocument().grantAll(Grant.UPDATE, Role.REGISTERED, onUpdateComplete);
+                break;
+            default:
+                break;
+        }
     }
     //endregion
 

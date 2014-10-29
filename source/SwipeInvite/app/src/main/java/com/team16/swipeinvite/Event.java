@@ -252,6 +252,21 @@ class Event implements Parcelable {
     //endregion
 
 
+    //region Methods for checking equality
+    protected boolean equals(Event other) {
+        return equals(other.getId());
+    }
+
+    protected boolean equals(String id) {
+        try {
+            return this.getId().equals(id);
+        } catch (NullPointerException e) {
+            return false;
+        }
+    }
+    //endregion
+
+
     //region Nested class for exceptions with events
     protected class EventException extends RuntimeException {
 
