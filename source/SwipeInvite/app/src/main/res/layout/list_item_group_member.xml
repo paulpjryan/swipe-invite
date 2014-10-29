@@ -17,7 +17,7 @@
             android:minHeight="?android:attr/listPreferredItemHeight"
             android:gravity="center_vertical"
             android:layout_gravity="center_vertical"
-            android:layout_weight="0.95"
+            android:layout_weight="0.999999"
             android:paddingLeft="15dp"
             android:paddingRight="1dp"/>
 
@@ -28,6 +28,10 @@
             android:gravity="center_vertical"
             android:id="@+id/search_group_checkBox"
             android:layout_gravity="center_vertical"
+            android:layout_alignParentLeft="true"
+            android:layout_weight="0.000000001"
+
+
             android:textSize="15dp" />
 
 
