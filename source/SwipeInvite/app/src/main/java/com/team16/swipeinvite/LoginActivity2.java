@@ -34,6 +34,7 @@ public class LoginActivity2 extends Activity {
     //region Instance of the model class
     private Model model;
     private static final String MODEL_KEY = "model_d";
+    private static final String MODEL_INTENT_KEY = "model_data";
     //endregion
 
 
@@ -540,7 +541,7 @@ public class LoginActivity2 extends Activity {
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.putExtra("model_data", model);
+        intent.putExtra(MODEL_INTENT_KEY, model);
         startActivity(intent);
         finish();
     }

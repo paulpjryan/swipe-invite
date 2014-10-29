@@ -58,7 +58,8 @@
             android:ems="8"
             android:inputType="textMultiLine"
             android:maxLines="2"
-            android:maxLength="35" />
+            android:maxLength="35"
+            android:onClick="textFieldResponder" />
 
     </LinearLayout>
 
@@ -155,7 +156,8 @@
             android:layout_alignRight="@+id/group_create_group_des"
             android:layout_alignEnd="@+id/group_create_group_des"
             android:maxLines="6"
-            android:maxLength="800"/>
+            android:maxLength="800"
+            android:onClick="textFieldResponder" />
 
     </RelativeLayout>
 
