@@ -176,7 +176,7 @@
 
     <Button
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_height="10dp"
     android:text="Submit"
     android:id="@+id/group_edit_submit"
     android:layout_below="@+id/listView_group_member"
@@ -186,11 +186,12 @@
 
     <Button
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="10dp"
         android:text="Add members"
         android:id="@+id/bt_add_member"
         android:layout_below="@+id/listView_group_member"
         android:layout_alignParentBottom="true"
+
         android:layout_alignLeft="@+id/listView_group_member"
          />
 
