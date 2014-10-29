@@ -148,7 +148,8 @@
             <RadioGroup
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="160dp">
+                android:layout_marginRight="160dp"
+                android:id="@+id/RadioGroup_gender">
 
                 <RadioButton
                    android:id="@+id/Radiobutton_user_male"
@@ -177,7 +178,9 @@
 
         android:text="Submit"
         android:layout_marginTop="40dp"
-        android:layout_gravity="right" />
+        android:layout_gravity="right"
+        android:onClick="onClickListener"
+        />
 
 
 </LinearLayout>
