@@ -1,42 +1,46 @@
 package com.team16.swipeinvite;
 
-import android.app.Fragment;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
-import android.view.LayoutInflater;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 
 public class GroupEditActivity extends ActionBarActivity {
 
+    private static final String LOG_TAG = "GROUPEDIT";
+
     private ListView mainListView;
     private ListView mainListView2;
     private ArrayAdapter<String> ListAdapter;
+
+    private TextView groupnameField;
+    private TextView descriptionField;
+
     private ArrayAdapter<String> ListAdapter2;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_edit);
-
+        groupnameField = (TextView) findViewById(R.id.textView_new_group);
+        descriptionField = (TextView) findViewById(R.id.et_edit_group_des);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //Submit button
 
-        Button submit_bt = (Button)findViewById(R.id.group_edit_submit);
+       /* Button submit_bt = (Button)findViewById(R.id.group_edit_submit);
         submit_bt.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -44,11 +48,11 @@ public class GroupEditActivity extends ActionBarActivity {
                 Toast words = Toast.makeText(GroupEditActivity.this,"Sucessful",Toast.LENGTH_LONG);
                 words.show();
             }
-        });
+        });*/
 
         //Add member
 
-        Button add_bt = (Button)findViewById(R.id.bt_add_member);
+        /*Button add_bt = (Button)findViewById(R.id.bt_add_member);
         add_bt.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -56,7 +60,7 @@ public class GroupEditActivity extends ActionBarActivity {
                 Intent intent_add_person2group = new Intent(GroupEditActivity.this, Add_person2group.class);
                 startActivity(intent_add_person2group);
             }
-        });
+        }); */
 
 
 
@@ -177,4 +181,46 @@ public class GroupEditActivity extends ActionBarActivity {
 
     }
 */
+
+    public void submitListener(View v)
+    {
+        //showprogress here ***************************************
+        Log.d(LOG_TAG, "Button Pressed.");
+        String groupname = groupnameField.getText().toString();
+        String description = descriptionField.getText().toString();
+
+       if (TextUtils.isEmpty(groupname)) {
+            //NOTIFY USER OF EMPTY FIELD
+            Log.d(LOG_TAG, "Username cannot be empty");
+            //showProgress(false); *******************************
+            groupnameField.setError("Cannot be left blank");
+            groupnameField.requestFocus();
+            return;
+        } else if (TextUtils.isEmpty(description)) {
+            //NOTIFY USER OF EMPTY FIELD
+            Log.d(LOG_TAG, "Password cannot be empty");
+            //showProgress(false); *******************************
+            descriptionField.setError("Cannot be left blank");
+            descriptionField.requestFocus();
+            return;
+        } else if (groupname.length() > 20) {
+            //NOTIFY USER OF EMPTY FIELD
+            Log.d(LOG_TAG, "Username must be between 4 and 30 characters.");
+            //showProgress(false); *******************************
+            groupnameField.setError("Must be between 4 and 30 characters");
+            groupnameField.requestFocus();
+            return;
+        } else if (description.length() > 100 || description.length() <= 3) {
+            //NOTIFY USER OF EMPTY FIELD
+            Log.d(LOG_TAG, "Password must be more than 6 characters.");
+            //showProgress(false); *******************************
+            descriptionField.setError("Must be greater than 6 characters");
+            descriptionField.requestFocus();
+            return;
+        }
+
+
+
+    }
+
 }
