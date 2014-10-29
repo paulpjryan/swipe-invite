@@ -41,8 +41,7 @@
         </activity>
         <activity
             android:name=".GroupCreationActivity"
-
-    android:label="@string/title_activity_group_creation"
+            android:label="@string/title_activity_group_creation"
             android:parentActivityName=".MainActivity" >
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
