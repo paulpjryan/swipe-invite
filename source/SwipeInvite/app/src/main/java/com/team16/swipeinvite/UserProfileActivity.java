@@ -90,6 +90,7 @@ public class UserProfileActivity extends ActionBarActivity {
         String email = emailField.getText().toString();
         int selectedid = genderGroup.getCheckedRadioButtonId();
         boolean ismale = false;
+        // need to fix if none of them are checked**********************************
         genderButton = (RadioButton) findViewById(selectedid);
         String gender = genderButton.getText().toString();
 
