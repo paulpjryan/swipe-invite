@@ -61,9 +61,17 @@ public class MainActivity extends ActionBarActivity {
             startLoginScreen();
             return;
         }
-        model = getIntent().getParcelableExtra(MODEL_INTENT_KEY);
+
+        //Load in the model
+        if (savedInstanceState != null) {
+            model = savedInstanceState.getParcelable(MODEL_KEY);
+            Log.d(LOG_TAG, "Got model from saved state.");
+        } else {
+            model = getIntent().getParcelableExtra(MODEL_INTENT_KEY);
+            Log.d(LOG_TAG, "Got model from intent.");
+        }
         if (model != null) {
-            Log.d(LOG_TAG, "Getting model from intent, size: " + model.activeGroups.size());
+            Log.d(LOG_TAG, "Model active group size: " + model.activeGroups.size());
         } else {
             Log.d(LOG_TAG, "Model got messed up.");
         }
@@ -120,6 +128,29 @@ public class MainActivity extends ActionBarActivity {
 
     }
     @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(LOG_TAG, "onResume called");
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(LOG_TAG, "onPause called");
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(LOG_TAG, "onStop called");
+    }
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d(LOG_TAG, "onSaveInstanceState called");
+        if (model != null) {
+            outState.putParcelable(MODEL_KEY, model);
+        }
+    }
+    @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
@@ -155,19 +186,38 @@ public class MainActivity extends ActionBarActivity {
     //endregion
 
 
+    //region Method to start the profile edit activity
+    private void startProfileEdit() {
+        //Create the intent and put the model in it
+        Intent intent = new Intent(this, UserProfileActivity.class);
+        intent.putExtra(MODEL_INTENT_KEY, model);
+        startActivityForResult(intent, PROFILE_EDIT_REQUEST_CODE);
+    }
+    //endregion
+
+
     //region Method to handle returning results from side activities around the main
     private static final int GROUP_CREATE_REQUEST_CODE = 1;
+    private static final int PROFILE_EDIT_REQUEST_CODE = 2;
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //Figure out which activity is returning a result
         switch (requestCode) {
             case GROUP_CREATE_REQUEST_CODE:    //Group Create activity result
-                if(resultCode == RESULT_OK){
+                if(resultCode == RESULT_OK) {
                     Log.d(LOG_TAG, "Got ok result from group creation.");
                     //SET THE MODEL WITH THE RETURNED MODEL OBJECT
                     model = data.getParcelableExtra(MODEL_INTENT_KEY);
                 } else if (resultCode == RESULT_CANCELED) {
                     Log.d(LOG_TAG, "Got canceled result from group creation.");
                     //DO NOTHING
+                }
+                break;
+            case PROFILE_EDIT_REQUEST_CODE:    //Profile Edit activity result
+                if (resultCode == RESULT_OK) {
+                    Log.d(LOG_TAG, "Got ok result from profile edit.");
+                    model = data.getParcelableExtra(MODEL_INTENT_KEY);
+                } else if (resultCode == RESULT_CANCELED) {
+                    Log.d(LOG_TAG, "Got canceled result from profile edit, bad.");
                 }
                 break;
             default:
@@ -216,13 +266,15 @@ public class MainActivity extends ActionBarActivity {
                 return true;
             // User profile
             case R.id.action_profile:
+                startProfileEdit();
+                /*
                 Intent intent_profile = new Intent(this,UserProfileActivity.class);
                 if (intent_profile.resolveActivity(getPackageManager()) != null) {
                     intent_profile.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent_profile);
                 } else {
                     Toast.makeText(this, "Action unavailable", Toast.LENGTH_LONG).show();
-                }
+                } */
                 return true;
 
             // Search Group
@@ -237,22 +289,10 @@ public class MainActivity extends ActionBarActivity {
                 }
                 return true;
 
-
             case R.id.action_create_group:
                 //Start the group creation activity
                 startGroupCreate();
                 return true;
-                /*
-                // create intent to perform web search for this planet
-                Intent intent = new Intent(this, GroupCreationActivity.class);
-                //intent.putExtra(SearchManager.QUERY, getActionBar().getTitle());
-                // catch event that there's no activity to handle intent
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(this, "Action unavailable", Toast.LENGTH_LONG).show();
-                }
-                return true; */
 
             default:
                 return super.onOptionsItemSelected(item);

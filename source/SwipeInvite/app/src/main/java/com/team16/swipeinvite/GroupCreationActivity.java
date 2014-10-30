@@ -130,7 +130,7 @@ public class GroupCreationActivity extends ActionBarActivity {
 
     @Override
     //onPause is called when the activity leaves the user's view
-    public void onPause() {
+    protected void onPause() {
         super.onPause();
         Log.d(LOG_TAG, "onPause called");
         if (saveRT != null) {
@@ -149,7 +149,7 @@ public class GroupCreationActivity extends ActionBarActivity {
 
     @Override
     //onResume is called when the activity comes back to the user's view
-    public void onResume() {
+    protected void onResume() {
         super.onResume();
         Log.d(LOG_TAG, "onResume called");
         if (saveRT != null) {
@@ -168,7 +168,7 @@ public class GroupCreationActivity extends ActionBarActivity {
 
     @Override
     //Method called when the system asks the activity to save any simple data to a bundle state
-    public void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Log.d(LOG_TAG, "onSaveInstanceState called");
         if (saveRT != null) {
@@ -188,15 +188,8 @@ public class GroupCreationActivity extends ActionBarActivity {
         }
     }
     @Override
-    public void onStop() {
+    protected void onStop() {
         super.onStop();
-        /*  NEED TO MOVE THIS TO THE BACK BUTTON SECTION
-        Log.d(LOG_TAG, "onStop called");
-        showProgress(false);
-        Intent returnIntent = new Intent();
-        setResult(RESULT_CANCELED, returnIntent);
-        finish();
-        */
     }
     //endregion
 
@@ -371,7 +364,7 @@ public class GroupCreationActivity extends ActionBarActivity {
     //endregion
 
 
-    //region Variables and methods to deal with ansync read grant
+    //region Variables and methods to deal with ansync update grant
     private static final String UPDATE_TOKEN_KEY = "update";
     private RequestToken updateRT;
     private static final int UPDATE_ID = 1;
