@@ -190,13 +190,6 @@ public class GroupCreationActivity extends ActionBarActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        /*  NEED TO MOVE THIS TO THE BACK BUTTON SECTION
-        Log.d(LOG_TAG, "onStop called");
-        showProgress(false);
-        Intent returnIntent = new Intent();
-        setResult(RESULT_CANCELED, returnIntent);
-        finish();
-        */
     }
     //endregion
 
@@ -371,7 +364,7 @@ public class GroupCreationActivity extends ActionBarActivity {
     //endregion
 
 
-    //region Variables and methods to deal with ansync read grant
+    //region Variables and methods to deal with ansync update grant
     private static final String UPDATE_TOKEN_KEY = "update";
     private RequestToken updateRT;
     private static final int UPDATE_ID = 1;

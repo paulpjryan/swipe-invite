@@ -186,19 +186,38 @@ public class MainActivity extends ActionBarActivity {
     //endregion
 
 
+    //region Method to start the profile edit activity
+    private void startProfileEdit() {
+        //Create the intent and put the model in it
+        Intent intent = new Intent(this, UserProfileActivity.class);
+        intent.putExtra(MODEL_INTENT_KEY, model);
+        startActivityForResult(intent, PROFILE_EDIT_REQUEST_CODE);
+    }
+    //endregion
+
+
     //region Method to handle returning results from side activities around the main
     private static final int GROUP_CREATE_REQUEST_CODE = 1;
+    private static final int PROFILE_EDIT_REQUEST_CODE = 2;
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //Figure out which activity is returning a result
         switch (requestCode) {
             case GROUP_CREATE_REQUEST_CODE:    //Group Create activity result
-                if(resultCode == RESULT_OK){
+                if(resultCode == RESULT_OK) {
                     Log.d(LOG_TAG, "Got ok result from group creation.");
                     //SET THE MODEL WITH THE RETURNED MODEL OBJECT
                     model = data.getParcelableExtra(MODEL_INTENT_KEY);
                 } else if (resultCode == RESULT_CANCELED) {
                     Log.d(LOG_TAG, "Got canceled result from group creation.");
                     //DO NOTHING
+                }
+                break;
+            case PROFILE_EDIT_REQUEST_CODE:    //Profile Edit activity result
+                if (resultCode == RESULT_OK) {
+                    Log.d(LOG_TAG, "Got ok result from profile edit.");
+                    model = data.getParcelableExtra(MODEL_INTENT_KEY);
+                } else if (resultCode == RESULT_CANCELED) {
+                    Log.d(LOG_TAG, "Got canceled result from profile edit, bad.");
                 }
                 break;
             default:
@@ -247,13 +266,15 @@ public class MainActivity extends ActionBarActivity {
                 return true;
             // User profile
             case R.id.action_profile:
+                startProfileEdit();
+                /*
                 Intent intent_profile = new Intent(this,UserProfileActivity.class);
                 if (intent_profile.resolveActivity(getPackageManager()) != null) {
                     intent_profile.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent_profile);
                 } else {
                     Toast.makeText(this, "Action unavailable", Toast.LENGTH_LONG).show();
-                }
+                } */
                 return true;
 
             // Search Group
