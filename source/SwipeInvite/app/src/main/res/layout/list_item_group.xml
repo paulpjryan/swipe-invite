@@ -6,6 +6,7 @@
     android:id="@+id/list_item_group_textview"
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:gravity="center_vertical"
-    android:paddingLeft="10dp">
+    >
 
 </TextView>
+

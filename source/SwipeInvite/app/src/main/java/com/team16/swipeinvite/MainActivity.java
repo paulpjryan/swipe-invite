@@ -9,6 +9,7 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,9 +23,13 @@ import com.baasbox.android.BaasResult;
 import com.baasbox.android.BaasUser;
 import com.baasbox.android.RequestToken;
 
-public class MainActivity extends ActionBarActivity
-{
+public class MainActivity extends ActionBarActivity {
+    /* -------------------- LOG TAG CONSTANTS --------------------------- */
+    private final static String LOG_TAG = "MAIN_ACT";
+    /* -------------------- END LOG TAG CONSTANTS ----------------------- */
 
+    
+    //region Local instance variables for the View elements
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -33,10 +38,21 @@ public class MainActivity extends ActionBarActivity
     private CharSequence mTitle;
 
     private String[] drawerTitleList;
+    //endregion
 
+
+    //region Local variable for the model
+    private Model model;
+    private static final String MODEL_KEY = "model_d";
+    private static final String MODEL_INTENT_KEY = "model_data";
+    //endregion
+
+
+    //region Lifecycle methods for the main activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(LOG_TAG, "onCreate called");
 
         //DO NOT ADD ANY CODE BEFORE THIS LINE PERTAINING TO THE MAIN ACTIVITY
         //This checks to see if there is a current user logged in or not
@@ -45,8 +61,11 @@ public class MainActivity extends ActionBarActivity
             startLoginScreen();
             return;
         }
-        if (savedInstanceState != null) {
-            logoutToken = RequestToken.loadAndResume(savedInstanceState,LOGOUT_TOKEN_KEY,logoutHandler);
+        model = getIntent().getParcelableExtra(MODEL_INTENT_KEY);
+        if (model != null) {
+            Log.d(LOG_TAG, "Getting model from intent, size: " + model.activeGroups.size());
+        } else {
+            Log.d(LOG_TAG, "Model got messed up.");
         }
 
         setContentView(R.layout.activity_main);
@@ -100,23 +119,66 @@ public class MainActivity extends ActionBarActivity
         }
 
     }
-
-    //This method is called at the startup of onCreate
-    //It will direct the user to a login activity
-    private void startLoginScreen(){
-        Intent intent = new Intent(this,LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-        finish();
-    }
-
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
         mDrawerToggle.syncState();
     }
+    //endregion
 
+
+    //region Method to start the login screen, either on new startup or on logout button push
+    //This method is called at the startup of onCreate
+    //It will direct the user to a login activity
+    private void startLoginScreen(){
+        if (model == null) {     //Absolutely no data to save, must be first time startup
+            Intent intent = new Intent(this, LoginActivity2.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+        } else {
+            Intent intent = new Intent(this, LogoutActivity.class);
+            intent.putExtra("model_data", model);
+            startActivity(intent);
+        }
+    }
+    //endregion
+
+
+    //region Method to start the group creation activty
+    private void startGroupCreate() {
+        Intent intent = new Intent(this, GroupCreationActivity.class);
+        intent.putExtra(MODEL_INTENT_KEY, model);   //pass the model object to the group
+        startActivityForResult(intent, GROUP_CREATE_REQUEST_CODE);
+    }
+    //endregion
+
+
+    //region Method to handle returning results from side activities around the main
+    private static final int GROUP_CREATE_REQUEST_CODE = 1;
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //Figure out which activity is returning a result
+        switch (requestCode) {
+            case GROUP_CREATE_REQUEST_CODE:    //Group Create activity result
+                if(resultCode == RESULT_OK){
+                    Log.d(LOG_TAG, "Got ok result from group creation.");
+                    //SET THE MODEL WITH THE RETURNED MODEL OBJECT
+                    model = data.getParcelableExtra(MODEL_INTENT_KEY);
+                } else if (resultCode == RESULT_CANCELED) {
+                    Log.d(LOG_TAG, "Got canceled result from group creation.");
+                    //DO NOTHING
+                }
+                break;
+            default:
+                Log.d(LOG_TAG, "Request code not set.");
+                break;
+        }
+    }
+    //endregion
+
+
+    //region Methods for the options menus and drawers
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -150,23 +212,37 @@ public class MainActivity extends ActionBarActivity
         // Handle action buttons
         switch(item.getItemId()) {
             case R.id.action_logout:
-                /* CODE TO LOGOUT GOES IN HERE. THIS OTHER STUFF IS JUST PLACEHOLDER
-
-
-                // create intent to perform web search for this planet
-                Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
-                intent.putExtra(SearchManager.QUERY, getActionBar().getTitle());
-                // catch event that there's no activity to handle intent
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(intent);
+                startLoginScreen();
+                return true;
+            // User profile
+            case R.id.action_profile:
+                Intent intent_profile = new Intent(this,UserProfileActivity.class);
+                if (intent_profile.resolveActivity(getPackageManager()) != null) {
+                    intent_profile.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent_profile);
                 } else {
                     Toast.makeText(this, "Action unavailable", Toast.LENGTH_LONG).show();
                 }
-                */
-                BaasUser.current().logout(logoutHandler);
                 return true;
-            case R.id.action_create_group:
 
+            // Search Group
+
+            case R.id.action_search_group:
+                Intent intent_sg = new Intent(this,Add_person2group.class);
+                if (intent_sg.resolveActivity(getPackageManager()) != null) {
+
+                    startActivity(intent_sg);
+                } else {
+                    Toast.makeText(this, "Action unavailable", Toast.LENGTH_LONG).show();
+                }
+                return true;
+
+
+            case R.id.action_create_group:
+                //Start the group creation activity
+                startGroupCreate();
+                return true;
+                /*
                 // create intent to perform web search for this planet
                 Intent intent = new Intent(this, GroupCreationActivity.class);
                 //intent.putExtra(SearchManager.QUERY, getActionBar().getTitle());
@@ -176,42 +252,16 @@ public class MainActivity extends ActionBarActivity
                 } else {
                     Toast.makeText(this, "Action unavailable", Toast.LENGTH_LONG).show();
                 }
-                return true;
+                return true; */
+
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
-
-    /* LOGOUT METHOD SECTION */
-    private final static String LOGOUT_TOKEN_KEY = "logout";
-    private void onLogout(){
-        //Remove active user data from our model
-        ((StartUp) this.getApplication()).resetActiveUser();
-
-        //Go back to logout screen
-        startLoginScreen();
-    }
-
-    private RequestToken logoutToken;
-    private final BaasHandler<Void> logoutHandler =
-            new BaasHandler<Void>() {
-                @Override
-                public void handle(BaasResult<Void> voidBaasResult) {
-                    logoutToken=null;
-                    onLogout();
-                }
-            };
-    /* END LOGOUT SECTION */
+    //endregion
 
 
-    /* The click listner for ListView in the navigation drawer */
-    private class DrawerItemClickListener implements ListView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            selectItem(position);
-        }
-    }
-
+    //region Methods for fragment management
     private void selectItem(int position) {
         // update the main content by replacing fragments
         Fragment fragment;
@@ -232,4 +282,17 @@ public class MainActivity extends ActionBarActivity
 
         mDrawerLayout.closeDrawer(mDrawerList);
     }
+    //endregion
+
+
+    //region Nested class for drawer click listeners
+    /* The click listner for ListView in the navigation drawer */
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            selectItem(position);
+        }
+    }
+    //endregion
+
 }

@@ -1,6 +1,0 @@
-INDEX VERSION 1.126+C:\Users\Tejaswi\Documents\GitHub\swipe-invite\source\SwipeInvite\app\src\.metadata\.plugins\org.eclipse.jdt.core
-3872055318.index
-3710400418.index
-3175655118.index
-2779629487.index
-59819158.index

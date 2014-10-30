@@ -32,9 +32,18 @@
         android:id="@+id/add_person_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/add_person2group_btn"
         android:layout_alignParentBottom="true"
-        android:layout_alignRight="@+id/linearLayout1"
-        android:layout_marginBottom="60dp"
-        android:text="@string/add_person2group_btn" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/add_person_listView"
+        android:layout_below="@+id/linearLayout1"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/add_person_button" />
 
 </RelativeLayout>

@@ -8,6 +8,7 @@
         <item name="colorPrimaryDark">#3f51b5</item>
     </style>
 
+    <!-- Special style for the login screen -->
     <style name="LoginFormContainer">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
