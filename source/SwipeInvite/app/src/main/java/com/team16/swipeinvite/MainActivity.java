@@ -264,14 +264,6 @@ public class MainActivity extends ActionBarActivity {
             // User profile
             case R.id.action_profile:
                 startProfileEdit();
-                /*
-                Intent intent_profile = new Intent(this,UserProfileActivity.class);
-                if (intent_profile.resolveActivity(getPackageManager()) != null) {
-                    intent_profile.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent_profile);
-                } else {
-                    Toast.makeText(this, "Action unavailable", Toast.LENGTH_LONG).show();
-                } */
                 return true;
 
             // Search Group
