@@ -39,7 +39,7 @@ public class MainActivity extends ActionBarActivity {
 
 
     //region Local variable for the model
-    private Model model;
+    protected Model model;
     private static final String MODEL_KEY = "model_d";
     private static final String MODEL_INTENT_KEY = "model_data";
     //endregion
@@ -302,9 +302,12 @@ public class MainActivity extends ActionBarActivity {
     private void selectItem(int position) {
         // update the main content by replacing fragments
         Fragment fragment;
-        switch (position) {
+        switch(position) {
             case 2:
                 fragment = new GroupsFragment();
+                Bundle args = new Bundle();
+                args.putParcelableArrayList("group_list", model.activeGroups);
+                fragment.setArguments(args);
                 break;
             default:
                 fragment = new EventsFragment();
