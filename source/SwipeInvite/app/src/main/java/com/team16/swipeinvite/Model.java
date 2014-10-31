@@ -1,5 +1,7 @@
 package com.team16.swipeinvite;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -8,6 +10,7 @@ import com.baasbox.android.BaasDocument;
 import com.baasbox.android.BaasUser;
 import com.baasbox.android.json.JsonArray;
 import com.baasbox.android.json.JsonObject;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
@@ -43,6 +46,27 @@ class Model implements Parcelable {
     private BaasDocument model;
     //endregion
 
+
+    //region Load/Save Model functions
+    void saveModel()
+    {
+        Gson gson = new Gson();
+        String gsonString = gson.toJson(this);
+        SharedPreferences sprefs = StartUp.getAppContext()
+                .getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE);
+        sprefs.edit().putString("model", gsonString);
+        sprefs.edit().commit();
+    }
+
+    static void loadModel( Model model )
+    {
+        Gson gson = new Gson();
+        SharedPreferences sprefs = StartUp.getAppContext()
+                .getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE);
+        String gsonString = sprefs.getString("model", null);
+        model = gson.fromJson(gsonString, Model.class);
+    }
+    //endregion
 
     //region Methods for Parcelable interface
     public void writeToParcel(Parcel out, int flags) {

@@ -1,6 +1,7 @@
 package com.team16.swipeinvite;
 
 import android.app.Application;
+import android.content.Context;
 import android.util.Log;
 import com.baasbox.android.*;
 
@@ -16,7 +17,13 @@ public class StartUp extends Application {
     private final static String LOG_TAG = "APPLICATION";
     /* -------------------- END LOG TAG CONSTANTS ----------------------- */
 
+    /* --------------------- CONTEXT ---------------------------------------*/
+    private static Context context;
 
+    public static Context getAppContext() {
+        return StartUp.context;
+    }
+    /* -------------------- END CONTEXT -------------------------------------- */
 
     /* ------------------ OVERRIDE METHODS FOR APPLICATION CLASS ---------------------- */
     //The onCreate method is where startup procedures should be run.
@@ -24,6 +31,9 @@ public class StartUp extends Application {
     public void onCreate() {
         super.onCreate();
         Log.d(LOG_TAG, "onCreate called");
+
+        // Get context for later use
+        StartUp.context = getApplicationContext();
 
         //Create a new BaasBox builder object to set the configs
         BaasBox.Builder b = new BaasBox.Builder(this);
