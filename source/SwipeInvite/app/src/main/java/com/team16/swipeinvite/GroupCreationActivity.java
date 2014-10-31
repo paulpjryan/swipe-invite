@@ -8,7 +8,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
-import android.text.Editable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -24,7 +23,6 @@ import android.widget.Toast;
 import com.baasbox.android.BaasDocument;
 import com.baasbox.android.BaasHandler;
 import com.baasbox.android.BaasResult;
-import com.baasbox.android.BaasUser;
 import com.baasbox.android.Grant;
 import com.baasbox.android.RequestToken;
 import com.baasbox.android.Role;
@@ -76,7 +74,8 @@ public class GroupCreationActivity extends ActionBarActivity {
             newGroup = savedInstanceState.getParcelable(GROUP_KEY);
         } else {
             model = getIntent().getParcelableExtra(MODEL_INTENT_KEY);
-            Log.d(LOG_TAG, "Got model from intent, size: " + model.activeGroups.size());
+            // This line is causing a NullPointerException for some reason
+            // Log.d(LOG_TAG, "Got model from intent, size: " + model.activeGroups.size());
         }
 
         //Setting the content view and support action bar
