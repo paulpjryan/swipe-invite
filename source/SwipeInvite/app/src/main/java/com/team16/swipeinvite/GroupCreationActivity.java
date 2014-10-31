@@ -75,7 +75,7 @@ public class GroupCreationActivity extends ActionBarActivity {
         } else {
             model = getIntent().getParcelableExtra(MODEL_INTENT_KEY);
             // This line is causing a NullPointerException for some reason
-             Log.d(LOG_TAG, "Got model from intent, size: " + model.activeGroups.size());
+            // Log.d(LOG_TAG, "Got model from intent, size: " + model.activeGroups.size());
         }
 
         //Setting the content view and support action bar
