@@ -263,7 +263,7 @@ public class MainActivity extends ActionBarActivity {
         // update the main content by replacing fragments
         Fragment fragment;
         switch (position) {
-            case 1:
+            case 2:
                 fragment = new GroupsFragment();
                 break;
             default:
