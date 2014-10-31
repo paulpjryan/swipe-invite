@@ -11,8 +11,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -20,7 +18,7 @@ import java.util.List;
  */
 public class GroupsFragment extends Fragment {
 
-    private ArrayAdapter<String> mArrayAdapter;
+    private ArrayAdapter<Group2> mArrayAdapter;
 
     private Model m;
 
@@ -48,13 +46,12 @@ public class GroupsFragment extends Fragment {
                 "CS 391"
         };
 
-        List<String> dummyData = new ArrayList<String>(Arrays.asList(data));
+        List<Group2> groupData = getArguments().getParcelableArrayList("group_list");
         mArrayAdapter =
-                new ArrayAdapter<String>(
+                new GroupsAdapter(
                         getActivity(), // The current context (this activity)
-                        R.layout.list_item_group, // The name of the layout ID.
-                        R.id.list_item_group_textview, // The ID of the textview to populate.
-                        dummyData);
+                        //R.layout.list_item_group, // The name of the layout ID.
+                        groupData);
 
 
         View rootView = inflater.inflate(R.layout.fragment_group, container, false);

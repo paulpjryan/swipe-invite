@@ -3,6 +3,16 @@
     package="com.team16.swipeinvite" >
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Permissions for Google Cloud Messaging for Push notifications-->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+    <permission android:name="com.team16.swipeinvite.gcm.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="com.team16.swipeinvite.gcm.permission.C2D_MESSAGE" />
+    <!-- -->
+
 
     <application
         android:name=".StartUp"
@@ -104,6 +114,17 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.team16.swipeinvite.LoginActivity2" />
         </activity>
+        <!--
+        <receiver
+            android:name=".GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="com.example.gcm" />
+            </intent-filter>
+        </receiver>
+        <service android:name=".GcmIntentService" /> -->
+
     </application>
 
 </manifest>

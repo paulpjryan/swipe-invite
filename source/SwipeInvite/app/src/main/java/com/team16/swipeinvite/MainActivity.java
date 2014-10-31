@@ -39,7 +39,7 @@ public class MainActivity extends ActionBarActivity {
 
 
     //region Local variable for the model
-    private Model model;
+    protected Model model;
     private static final String MODEL_KEY = "model_d";
     private static final String MODEL_INTENT_KEY = "model_data";
     //endregion
@@ -264,14 +264,6 @@ public class MainActivity extends ActionBarActivity {
             // User profile
             case R.id.action_profile:
                 startProfileEdit();
-                /*
-                Intent intent_profile = new Intent(this,UserProfileActivity.class);
-                if (intent_profile.resolveActivity(getPackageManager()) != null) {
-                    intent_profile.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent_profile);
-                } else {
-                    Toast.makeText(this, "Action unavailable", Toast.LENGTH_LONG).show();
-                } */
                 return true;
 
             // Search Group
@@ -302,9 +294,12 @@ public class MainActivity extends ActionBarActivity {
     private void selectItem(int position) {
         // update the main content by replacing fragments
         Fragment fragment;
-        switch (position) {
+        switch(position) {
             case 2:
                 fragment = new GroupsFragment();
+                Bundle args = new Bundle();
+                args.putParcelableArrayList("group_list", model.activeGroups);
+                fragment.setArguments(args);
                 break;
             default:
                 fragment = new EventsFragment();
