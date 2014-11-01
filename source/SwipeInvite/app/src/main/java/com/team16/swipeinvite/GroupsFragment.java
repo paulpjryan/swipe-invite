@@ -3,16 +3,16 @@ package com.team16.swipeinvite;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class GroupsFragment extends Fragment {
 
-    private ArrayAdapter<String> mArrayAdapter;
+    private GroupsAdapter mArrayAdapter;
 
     private Model m;
 
@@ -48,13 +48,12 @@ public class GroupsFragment extends Fragment {
                 "CS 391"
         };
 
-        List<String> dummyData = new ArrayList<String>(Arrays.asList(data));
+        List<Group2> groupData = getArguments().getParcelableArrayList("group_list");
         mArrayAdapter =
-                new ArrayAdapter<String>(
+                new GroupsAdapter(
                         getActivity(), // The current context (this activity)
-                        R.layout.list_item_group, // The name of the layout ID.
-                        R.id.list_item_group_textview, // The ID of the textview to populate.
-                        dummyData);
+                        //R.layout.list_item_group, // The name of the layout ID.
+                        groupData);
 
 
         View rootView = inflater.inflate(R.layout.fragment_group, container, false);
@@ -64,8 +63,29 @@ public class GroupsFragment extends Fragment {
         //mTextView = (TextView)getView().findViewById(R.id.textViewGroupsFragment);
         //mTextView.setText("Current User: " + BaasUser.current().getName() + " With PW: " + BaasUser.current().getPassword());
 
+        EditText inputSearch = (EditText) rootView.findViewById(R.id.et_search_group);
         ListView listView = (ListView) rootView.findViewById(R.id.listview_groups);
         listView.setAdapter(mArrayAdapter);
+
+        inputSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+                // When user changed the Text
+                mArrayAdapter.getFilter().filter(cs);
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+                                          int arg3) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable arg0) {
+                // TODO Auto-generated method stub
+            }
+        });
 
         //This just opens group_edit on tap. We should have some sort of edit action or button.
         listView.setOnItemClickListener(new OnItemClickListener() {
