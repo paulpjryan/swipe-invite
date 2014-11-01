@@ -3,12 +3,14 @@ package com.team16.swipeinvite;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.List;
@@ -18,7 +20,7 @@ import java.util.List;
  */
 public class GroupsFragment extends Fragment {
 
-    private ArrayAdapter<Group2> mArrayAdapter;
+    private GroupsAdapter mArrayAdapter;
 
     private Model m;
 
@@ -61,8 +63,29 @@ public class GroupsFragment extends Fragment {
         //mTextView = (TextView)getView().findViewById(R.id.textViewGroupsFragment);
         //mTextView.setText("Current User: " + BaasUser.current().getName() + " With PW: " + BaasUser.current().getPassword());
 
+        EditText inputSearch = (EditText) rootView.findViewById(R.id.et_search_group);
         ListView listView = (ListView) rootView.findViewById(R.id.listview_groups);
         listView.setAdapter(mArrayAdapter);
+
+        inputSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+                // When user changed the Text
+                mArrayAdapter.getFilter().filter(cs);
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+                                          int arg3) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable arg0) {
+                // TODO Auto-generated method stub
+            }
+        });
 
         //This just opens group_edit on tap. We should have some sort of edit action or button.
         listView.setOnItemClickListener(new OnItemClickListener() {
