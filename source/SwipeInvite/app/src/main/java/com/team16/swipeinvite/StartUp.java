@@ -32,6 +32,7 @@ public class StartUp extends Application {
         b.setApiDomain("128.46.66.236");  //IP of server holding DB
         b.setAppCode("1234567890");  //App code to verify client (personalize later)
         b.setPort(9000);  //Server port
+        b.setPushSenderId("151927917640");  //Push app registration
         box = b.init();  //Initialize the BaasBox object through a builder method
     }
     /* ------------------------------ END OVERRIDE METHODS ---------------------------- */

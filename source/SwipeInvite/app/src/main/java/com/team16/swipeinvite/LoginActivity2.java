@@ -16,6 +16,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.baasbox.android.BaasBox;
+import com.baasbox.android.BaasCloudMessagingService;
 import com.baasbox.android.BaasDocument;
 import com.baasbox.android.BaasHandler;
 import com.baasbox.android.BaasQuery;
@@ -66,6 +68,7 @@ public class LoginActivity2 extends Activity {
             friendRT = savedInstanceState.getParcelable(FRIEND_TOKEN_KEY);
             groupRT = savedInstanceState.getParcelable(GROUP_TOKEN_KEY);
             eventRT = savedInstanceState.getParcelable(EVENT_TOKEN_KEY);
+            cloudRT = savedInstanceState.getParcelable(CLOUD_TOKEN_KEY);
             model = savedInstanceState.getParcelable(MODEL_KEY);
         }
 
@@ -105,6 +108,10 @@ public class LoginActivity2 extends Activity {
             showProgress(true);
             friendRT.resume(onFriendComplete);
         }
+        if (cloudRT != null) {
+            showProgress(true);
+            cloudRT.resume(onCloudComplete);
+        }
     }
 
     @Override
@@ -130,6 +137,10 @@ public class LoginActivity2 extends Activity {
             showProgress(false);
             friendRT.suspend();
         }
+        if (cloudRT != null) {
+            showProgress(false);
+            cloudRT.suspend();
+        }
     }
 
     @Override
@@ -152,6 +163,9 @@ public class LoginActivity2 extends Activity {
         }
         if (model != null) {
             outState.putParcelable(MODEL_KEY, model);
+        }
+        if (cloudRT != null) {
+            outState.putParcelable(CLOUD_TOKEN_KEY, cloudRT);
         }
     }
     //endregion
@@ -262,7 +276,7 @@ public class LoginActivity2 extends Activity {
 
     private void failedLogin() {
         //TELL THE USER THAT THE LOGIN FAILED BECAUSE THE PASSWORD WAS INCORRECT
-        passwordField.setError("Incorrect password");
+        passwordField.setError("Incorrect username or password");
         passwordField.requestFocus();
     }
     //endregion
@@ -321,26 +335,13 @@ public class LoginActivity2 extends Activity {
         }
         if (model.getIdList().get(4).size() != 0) {    //Check if the friend array is empty
             //There is friend profiles, retrieve them
-            BaasQuery fquery = BaasQuery.builder().where("name=?").build();
+            BaasQuery fquery = BaasQuery.builder().build();
             for (String s : model.getIdList().get(5)) {
-                fquery = fquery.buildUpon().whereParams(s).build();
+                fquery = fquery.buildUpon().or("name=" + "'" + s + "'").build();
             }
             Log.d(LOG_TAG, "Friend list request sent.");
             friendRT = BaasUser.fetchAll(fquery.buildUpon().criteria(), onFriendComplete);
         }
-        /*
-        if (!model.dataIsEmpty()) {
-
-            //There is data, retrieve it
-            BaasQuery query = BaasQuery.builder().where("id=?").build();      //Start the query for data
-            for (int i = 0; i < (model.getIdList().size() - 1); i++) {
-                for (String y : model.getIdList().get(i)) {
-                    query = query.buildUpon().whereParams(y).build();      //Put every id into the query
-                }
-            }
-            //Launch the query
-            dataRT = query.query(onDataComplete);
-        } */
 
         if (model.getIdList().get(0).size() != 0) {   //Check if the group array is empty
             BaasQuery queryG = BaasQuery.builder().build();
@@ -353,19 +354,51 @@ public class LoginActivity2 extends Activity {
         }
         //Check if the event arrays are empty
         if (model.getIdList().get(1).size() != 0 || model.getIdList().get(2).size() != 0 || model.getIdList().get(3).size() != 0) {
-            ArrayList<String> evntIds = new ArrayList<String>();
+            BaasQuery queryE = BaasQuery.builder().build();
             for (int i = 1; i < (model.getIdList().size()-1); i++) {
                 for (String y : model.getIdList().get(i)) {
                     Log.d(LOG_TAG, "Event added to query params: " + y);
-                    evntIds.add(y);
+                    queryE = queryE.buildUpon().or("id=" + "'" + y + "'").build();
                 }
             }
-            BaasQuery queryE = BaasQuery.builder().where("id=?").whereParams(evntIds.toArray()).build();
             Log.d(LOG_TAG, "Event list request sent.");
             eventRT = BaasDocument.fetchAll("group", queryE.buildUpon().criteria(), onEventComplete);
         }
 
+        //Signup current user for push notifications
+        BaasCloudMessagingService box = BaasBox.messagingService();
+        cloudRT = box.enable(onCloudComplete);
+
     }
+    //endregion
+
+
+    //region Variables and methods to deal with cloud signup
+    private static final String CLOUD_TOKEN_KEY = "cloud";
+    private RequestToken cloudRT;
+    private final BaasHandler<Void> onCloudComplete = new BaasHandler<Void>() {
+        @Override
+        public void handle(BaasResult<Void> result) {
+            cloudRT = null;
+            if (result.isFailed()) {
+                //NOTIFY USER OF ERROR
+                Log.d(LOG_TAG, "Server request error: " + result.error());
+                showProgress(false);
+                return;
+            } else if (result.isSuccess()) {
+                //COMPLETE THE  CLOUD SIGNUP
+                Log.d(LOG_TAG, "Cloud request received.");
+                //Launch main activity if the all pulldowns are done
+                if (friendRT == null && eventRT == null && groupRT == null && cloudRT == null) {
+                    launchMainActivity();
+                }
+                return;
+            }
+            Log.d(LOG_TAG, "Server request weird: " + result.toString());
+            showProgress(false);
+            return;
+        }
+    };
     //endregion
 
 
@@ -460,7 +493,7 @@ public class LoginActivity2 extends Activity {
             }
         }
         //Launch main activity if the friend pulldowns are done
-        if (friendRT == null && eventRT == null && groupRT == null) {
+        if (friendRT == null && eventRT == null && groupRT == null && cloudRT == null) {
             launchMainActivity();
         }
     }
@@ -501,7 +534,7 @@ public class LoginActivity2 extends Activity {
             model.friends.add(a);
             Log.d(LOG_TAG, "Added friends to list.");
         }
-        if (groupRT == null && eventRT == null) {
+        if (friendRT == null && eventRT == null && groupRT == null && cloudRT == null) {
             launchMainActivity();
         }
     }

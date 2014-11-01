@@ -221,6 +221,11 @@ public class MainActivity extends ActionBarActivity {
                 Log.d(LOG_TAG, "Request code not set.");
                 break;
         }
+        try {
+            Log.d(LOG_TAG, "Model size: " + model.activeGroups.size());
+        } catch (NullPointerException e) {
+            Log.d(LOG_TAG, "Model got messed up after returned activity.");
+        }
     }
     //endregion
 
