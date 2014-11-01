@@ -14,6 +14,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.baasbox.android.BaasBox;
+import com.baasbox.android.BaasCloudMessagingService;
 import com.baasbox.android.BaasDocument;
 import com.baasbox.android.BaasHandler;
 import com.baasbox.android.BaasResult;
@@ -54,6 +56,7 @@ public class LogoutActivity extends Activity {
         if (savedInstanceState != null) {
             model = savedInstanceState.getParcelable(MODEL_KEY);
             modelRT = savedInstanceState.getParcelable(MODEL_TOKEN_KEY);
+            cloudRT = savedInstanceState.getParcelable(CLOUD_TOKEN_KEY);
             logoutRT = savedInstanceState.getParcelable(LOGOUT_TOKEN_KEY);
         } else {
             model = getIntent().getParcelableExtra("model_data");
@@ -74,6 +77,9 @@ public class LogoutActivity extends Activity {
         if (modelRT != null) {
             showProgress(true);
             modelRT.resume(onModelSave);
+        } else if (cloudRT != null) {
+            showProgress(true);
+            cloudRT.resume(onCloudComplete);
         } else if (logoutRT != null) {
             showProgress(true);
             logoutRT.resume(onLogout);
@@ -85,6 +91,9 @@ public class LogoutActivity extends Activity {
         if (modelRT != null) {
             showProgress(false);
             modelRT.suspend();
+        } else if (cloudRT != null) {
+            showProgress(false);
+            cloudRT.suspend();
         } else if (logoutRT != null) {
             showProgress(false);
             logoutRT.suspend();
@@ -96,11 +105,14 @@ public class LogoutActivity extends Activity {
         outState.putParcelable(MODEL_KEY, model);
         if (modelRT != null) {
             outState.putParcelable(MODEL_TOKEN_KEY, modelRT);
+        } else if (cloudRT != null) {
+            outState.putParcelable(CLOUD_TOKEN_KEY, cloudRT);
         } else if (logoutRT != null) {
             outState.putParcelable(LOGOUT_TOKEN_KEY, logoutRT);
         }
     }
     //endregion
+
 
     //region Method to respond to logout button
     public void logoutButtonResponder(View v) {
@@ -127,10 +139,40 @@ public class LogoutActivity extends Activity {
                 showProgress(false);
                 return;
             } else if (result.isSuccess()) {
-                logoutRT = BaasUser.current().logout(onLogout);
+                //logoutRT = BaasUser.current().logout(onLogout);
+                //Disable current user for push notifications
+                BaasCloudMessagingService box = BaasBox.messagingService();
+                cloudRT = box.disable(onCloudComplete);
                 return;
             }
             Log.d(LOG_TAG, "Server save weird: " + result.toString());
+            showProgress(false);
+            return;
+        }
+    };
+    //endregion
+
+
+    //region Variables and methods to deal with cloud signup
+    private static final String CLOUD_TOKEN_KEY = "cloud";
+    private RequestToken cloudRT;
+    private final BaasHandler<Void> onCloudComplete = new BaasHandler<Void>() {
+        @Override
+        public void handle(BaasResult<Void> result) {
+            cloudRT = null;
+            if (result.isFailed()) {
+                //NOTIFY USER OF ERROR
+                Log.d(LOG_TAG, "Server request error: " + result.error());
+                showProgress(false);
+                return;
+            } else if (result.isSuccess()) {
+                //COMPLETE THE  CLOUD SIGNUP
+                Log.d(LOG_TAG, "Cloud request received.");
+                //Continue to Logout
+                logoutRT = BaasUser.current().logout(onLogout);
+                return;
+            }
+            Log.d(LOG_TAG, "Server request weird: " + result.toString());
             showProgress(false);
             return;
         }
