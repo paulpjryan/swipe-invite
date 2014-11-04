@@ -3,14 +3,13 @@ package com.team16.swipeinvite;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,13 +23,11 @@ import com.baasbox.android.BaasQuery;
 import com.baasbox.android.BaasResult;
 import com.baasbox.android.BaasUser;
 import com.baasbox.android.RequestToken;
-import com.baasbox.android.json.JsonObject;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
-public class LoginActivity2 extends Activity {
+public class LoginActivity2 extends ActionBarActivity {
     private static final String LOG_TAG = "LOGIN_ACTIVITY";
 
     //region Instance of the model class

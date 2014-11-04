@@ -3,10 +3,10 @@ package com.team16.swipeinvite;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,10 +23,8 @@ import com.baasbox.android.BaasUser;
 import com.baasbox.android.RequestToken;
 import com.baasbox.android.SaveMode;
 
-import org.w3c.dom.Text;
 
-
-public class LogoutActivity extends Activity {
+public class LogoutActivity extends ActionBarActivity {
     private static final String LOG_TAG = "LOGOUT_ACTIVITY";
 
     //region Local instance of the model
