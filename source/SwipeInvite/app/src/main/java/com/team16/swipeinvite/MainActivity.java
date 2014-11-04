@@ -128,6 +128,11 @@ public class MainActivity extends ActionBarActivity {
     protected void onResume() {
         super.onResume();
         Log.d(LOG_TAG, "onResume called");
+        if (BaasUser.current() == null){    //Check if somehow the user got logged out
+            model = null;    //nullify the model because something bad has happened to the user
+            startLoginScreen();
+            return;
+        }
     }
     @Override
     protected void onPause() {
