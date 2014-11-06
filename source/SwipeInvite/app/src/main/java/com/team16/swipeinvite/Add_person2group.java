@@ -3,6 +3,7 @@ package com.team16.swipeinvite;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,7 +19,7 @@ import java.util.Observer;
 
 
 
-public class Add_person2group extends Activity implements Observer, OnClickListener{
+public class Add_person2group extends ActionBarActivity implements Observer, OnClickListener{
 
     private Group group;
     private Button ivButton;
