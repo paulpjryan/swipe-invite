@@ -144,7 +144,8 @@
             android:layout_height="wrap_content"
             android:datePickerMode="spinner"
             android:calendarViewShown="false"
-            android:id="@+id/event_start_date"></DatePicker>
+            android:id="@+id/event_start_date"
+            android:onClick="onDateChangedListener"></DatePicker>
 
         <TimePicker
             android:layout_width="wrap_content"
