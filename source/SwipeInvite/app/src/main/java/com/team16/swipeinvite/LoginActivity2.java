@@ -175,6 +175,10 @@ public class LoginActivity2 extends ActionBarActivity {
         getMenuInflater().inflate(R.menu.login, menu);    //adds a menu layout to the menu bar
         return true;
     }
+    @Override
+    public void onBackPressed() {
+        return;
+    }
     //endregion
 
 
