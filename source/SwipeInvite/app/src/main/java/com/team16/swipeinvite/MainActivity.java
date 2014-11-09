@@ -19,6 +19,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.baasbox.android.BaasUser;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 
 public class MainActivity extends ActionBarActivity {
     /* -------------------- LOG TAG CONSTANTS --------------------------- */
@@ -127,6 +129,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        checkPlayServices();    //Make sure user still has valid play service
         Log.d(LOG_TAG, "onResume called");
         if (BaasUser.current() == null){    //Check if somehow the user got logged out
             model = null;    //nullify the model because something bad has happened to the user
@@ -334,6 +337,25 @@ public class MainActivity extends ActionBarActivity {
         mTitle = drawerTitleList[position];
 
         mDrawerLayout.closeDrawer(mDrawerList);
+    }
+    //endregion
+
+
+    //region Method and variables to check if a valid Google play services is found
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Log.i(LOG_TAG, "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
     }
     //endregion
 

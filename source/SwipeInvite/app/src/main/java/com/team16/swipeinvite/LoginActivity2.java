@@ -23,6 +23,8 @@ import com.baasbox.android.BaasQuery;
 import com.baasbox.android.BaasResult;
 import com.baasbox.android.BaasUser;
 import com.baasbox.android.RequestToken;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import java.util.List;
 
@@ -69,6 +71,11 @@ public class LoginActivity2 extends ActionBarActivity {
             model = savedInstanceState.getParcelable(MODEL_KEY);
         }
 
+        //Check for google play services
+        if (!checkPlayServices()) {
+            return;
+        }
+
         //Instantiate the local view variables correctly
         formView = (View) findViewById(R.id.form_login);
         usernameField = (EditText) findViewById(R.id.username);
@@ -85,6 +92,7 @@ public class LoginActivity2 extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        checkPlayServices();   //Need to check for valid google play services
         if (signInRT != null) {
             showProgress(true);
             signInRT.resume(onComplete);
@@ -552,6 +560,25 @@ public class LoginActivity2 extends ActionBarActivity {
         intent.putExtra(MODEL_INTENT_KEY, model);
         startActivity(intent);
         finish();
+    }
+    //endregion
+
+
+    //region Method and variables to check if a valid Google play services is found
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Log.i(LOG_TAG, "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
     }
     //endregion
 
