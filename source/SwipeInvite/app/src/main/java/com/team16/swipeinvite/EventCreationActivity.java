@@ -45,7 +45,7 @@ public class EventCreationActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_creation);
-
+        c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DATE);
@@ -53,7 +53,7 @@ public class EventCreationActivity extends ActionBarActivity {
         int minute = c.get(Calendar.MINUTE);
 
 
-        c = Calendar.getInstance();
+
         startdateField = (DatePicker) findViewById(R.id.event_start_date);
         starttimeField = (TimePicker) findViewById(R.id.event_start_time);
         enddateField = (DatePicker) findViewById(R.id.event_end_date);
