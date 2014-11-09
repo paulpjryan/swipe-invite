@@ -71,8 +71,17 @@
         <activity
             android:name=".SearchGroupActivity"
             android:label="@string/title_activity_search_group"
-            android:windowSoftInputMode="stateHidden" >
+            android:windowSoftInputMode="stateHidden"
+            android:parentActivityName=".MainActivity">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.team16.swipeinvite.MainActivity" />
+
+
         </activity>
+
+
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"

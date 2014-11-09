@@ -279,7 +279,7 @@ public class MainActivity extends ActionBarActivity {
             // Search Group
 
             case R.id.action_search_group:
-                Intent intent_sg = new Intent(this,Add_person2group.class);
+                Intent intent_sg = new Intent(this,SearchGroupActivity.class);
                 if (intent_sg.resolveActivity(getPackageManager()) != null) {
 
                     startActivity(intent_sg);

@@ -8,11 +8,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 
 import java.security.acl.Group;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -25,6 +30,9 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
     private Button ivButton;
     private EditText nameText;
     private ImageButton scButton;
+    private ListView ListView_add_people;
+    private ArrayAdapter<String> ListAdapter;
+
 
 
 
@@ -33,11 +41,12 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_person2group);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
 
         //Problem for model
         //group = new Group();
-
 
         ivButton = (Button)findViewById(R.id.add_person_button);
         nameText = (EditText)findViewById(R.id.add_person);
@@ -72,10 +81,22 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
         {
             case R.id.add_person_button:
                 //to do
+
+
                 break;
             case R.id.add_person_searchBtn:
-                //todo
+                //to do
 
+                // Add sql server search data here
+                String[] data = {
+                        "Name: Joseph",
+                };
+
+                ListView_add_people = (ListView) findViewById(R.id.add_person_listView);
+                ArrayList<String> GroupList = new ArrayList<String>();
+                GroupList.addAll(Arrays.asList(data));
+                ListAdapter = new ArrayAdapter<String>(Add_person2group.this,R.layout.list_add_person2group_withouticon,GroupList);
+                ListView_add_people.setAdapter(ListAdapter);
                 break;
 
         }
