@@ -293,6 +293,17 @@ public class MainActivity extends ActionBarActivity {
                 startGroupCreate();
                 return true;
 
+            case R.id.action_event_creation:
+                Intent intent_sg2 = new Intent(this,EventCreationActivity.class);
+                if (intent_sg2.resolveActivity(getPackageManager()) != null) {
+
+                    startActivity(intent_sg2);
+                } else {
+                    Toast.makeText(this, "Action unavailable", Toast.LENGTH_LONG).show();
+                }
+                return true;
+
+
             default:
                 return super.onOptionsItemSelected(item);
         }

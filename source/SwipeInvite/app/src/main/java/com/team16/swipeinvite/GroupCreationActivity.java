@@ -223,7 +223,7 @@ public class GroupCreationActivity extends ActionBarActivity {
     //region Submit button responder
     //Method to respond to the actual button click
     //Listener is set in the xml
-    public void submitResponder(View v) {
+    protected void submitResponder(View v) {
         //Change the views
         showProgress(true);
 

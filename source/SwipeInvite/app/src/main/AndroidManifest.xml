@@ -134,6 +134,18 @@
         </receiver>
         <service android:name=".GcmIntentService" /> -->
 
+        <activity
+            android:name=".EventCreationActivity"
+            android:label="@string/title_activity_event_creation"
+            android:parentActivityName=".MainActivity" >
+
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.team16.swipeinvite.MainActivity" />
+        </activity>
+
+
     </application>
 
 </manifest>
