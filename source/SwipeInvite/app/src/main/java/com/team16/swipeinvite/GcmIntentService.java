@@ -13,6 +13,7 @@ import android.util.Log;
 import com.baasbox.android.BaasDocument;
 import com.baasbox.android.BaasHandler;
 import com.baasbox.android.BaasResult;
+import com.baasbox.android.BaasUser;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 /**
@@ -23,7 +24,7 @@ public class GcmIntentService extends IntentService {
 
 
     //region Local instance variable for the model
-    private Model model;
+    //private Model model;
     //endregion
 
 
@@ -100,7 +101,7 @@ public class GcmIntentService extends IntentService {
         //Put BaasDocument into Group class and handle the model
         Group2 g = new Group2(d);
         Log.d(LOG_TAG, "Received group: " + g.getName());
-        Model.loadModel(model);    //load the model from the shared prefs
+        Model model = Model.getInstance(getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE));    //load the model from the shared prefs
 
         //Go through the model and find the group that was downloaded if there is one
         int i = 0;
@@ -119,7 +120,7 @@ public class GcmIntentService extends IntentService {
         }
 
         //Save the changed model
-        model.saveModel();
+        Model.saveModel(getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE));
 
         //Notify the user of the change
         String title;

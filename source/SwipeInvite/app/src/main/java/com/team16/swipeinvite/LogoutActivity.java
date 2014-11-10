@@ -3,6 +3,7 @@ package com.team16.swipeinvite;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -52,13 +53,15 @@ public class LogoutActivity extends ActionBarActivity {
 
         //Check for resumed states and retrieve model from somewhere
         if (savedInstanceState != null) {
-            model = savedInstanceState.getParcelable(MODEL_KEY);
+            //model = savedInstanceState.getParcelable(MODEL_KEY);
             modelRT = savedInstanceState.getParcelable(MODEL_TOKEN_KEY);
             cloudRT = savedInstanceState.getParcelable(CLOUD_TOKEN_KEY);
             logoutRT = savedInstanceState.getParcelable(LOGOUT_TOKEN_KEY);
-        } else {
+        } /*else {
             model = getIntent().getParcelableExtra("model_data");
-        }
+        } */
+        model = Model.getInstance(getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE));
+        Log.d(LOG_TAG, "Model active group size: " + model.activeGroups.size());
 
         //Setup the form views
         formLogout = findViewById(R.id.form_logout);
@@ -82,6 +85,10 @@ public class LogoutActivity extends ActionBarActivity {
             showProgress(true);
             logoutRT.resume(onLogout);
         }
+        if (model == null) {
+            model = Model.getInstance(getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE));
+            Log.d(LOG_TAG, "Model active group size: " + model.activeGroups.size());
+        }
     }
     @Override
     protected void onPause() {
@@ -100,7 +107,7 @@ public class LogoutActivity extends ActionBarActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(MODEL_KEY, model);
+        //outState.putParcelable(MODEL_KEY, model);
         if (modelRT != null) {
             outState.putParcelable(MODEL_TOKEN_KEY, modelRT);
         } else if (cloudRT != null) {
@@ -207,6 +214,7 @@ public class LogoutActivity extends ActionBarActivity {
     private void launchLoginActivity() {
         Intent intent = new Intent(this, LoginActivity2.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Model.dumpInstance();   //Delete the model from singleton
         startActivity(intent);
         finish();
     }

@@ -2,6 +2,7 @@ package com.team16.swipeinvite;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -62,18 +63,15 @@ public class MainActivity extends ActionBarActivity {
         }
 
         //Load in the model
-        if (savedInstanceState != null) {
+        /*if (savedInstanceState != null) {
             model = savedInstanceState.getParcelable(MODEL_KEY);
             Log.d(LOG_TAG, "Got model from saved state.");
         } else {
             model = getIntent().getParcelableExtra(MODEL_INTENT_KEY);
             Log.d(LOG_TAG, "Got model from intent.");
-        }
-        if (model != null) {
-            Log.d(LOG_TAG, "Model active group size: " + model.activeGroups.size());
-        } else {
-            Log.d(LOG_TAG, "Model got messed up.");
-        }
+        }*/
+        model = Model.getInstance(getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE));
+        Log.d(LOG_TAG, "Model active group size: " + model.activeGroups.size());
 
         setContentView(R.layout.activity_main);
 
@@ -129,8 +127,12 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        checkPlayServices();    //Make sure user still has valid play service
         Log.d(LOG_TAG, "onResume called");
+        checkPlayServices();    //Make sure user still has valid play service
+        if (model == null) {
+            model = Model.getInstance(getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE));
+            Log.d(LOG_TAG, "Model active group size: " + model.activeGroups.size());
+        }
         if (BaasUser.current() == null){    //Check if somehow the user got logged out
             model = null;    //nullify the model because something bad has happened to the user
             startLoginScreen();
@@ -152,7 +154,8 @@ public class MainActivity extends ActionBarActivity {
         super.onSaveInstanceState(outState);
         Log.d(LOG_TAG, "onSaveInstanceState called");
         if (model != null) {
-            outState.putParcelable(MODEL_KEY, model);
+            //outState.putParcelable(MODEL_KEY, model);
+            //model.saveModel();    NO NEED TO SAVE, NO MODIFICATIONS WERE MADE
         }
     }
     @Override
@@ -175,7 +178,8 @@ public class MainActivity extends ActionBarActivity {
             finish();
         } else {
             Intent intent = new Intent(this, LogoutActivity.class);
-            intent.putExtra("model_data", model);
+            //intent.putExtra("model_data", model);
+            //model.saveModel();    NO NEED TO SAVE, NO MODIFICATIONS WERE MADE
             startActivity(intent);
         }
     }

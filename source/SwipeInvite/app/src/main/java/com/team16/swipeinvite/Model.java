@@ -48,25 +48,50 @@ class Model implements Parcelable {
 
 
     //region Load/Save Model functions
-    void saveModel()
+    protected static void saveModel(SharedPreferences sprefs)
     {
+        if (BaasUser.current() == null) {    //Need to make sure there is a valid user
+            Log.d(LOG_TAG, "No current user, cannot save model.");
+            return;
+        }
+        //context = context.getApplicationContext();
         Gson gson = new Gson();
-        String gsonString = gson.toJson(this);
-        SharedPreferences sprefs = StartUp.getAppContext()
-                .getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE);
+        String gsonString = gson.toJson(theModel);
+        Log.d(LOG_TAG, "Model saved: " + gsonString);
+        //String gsonString = gson.toJson(this);
+        //Log.d(LOG_TAG, "Context: " + context.toString());
+        //SharedPreferences sprefs = context.getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE);
+        Log.d(LOG_TAG, "Shared Prefs: " + sprefs.toString());
+        sprefs.edit().clear();
         sprefs.edit().putString("model", gsonString);
-        sprefs.edit().commit();
+        boolean check = sprefs.edit().commit();
+        Log.d(LOG_TAG, "Commit success: " + check);
+        Log.d(LOG_TAG, "Saved model for user: " + BaasUser.current().getName());
     }
 
-    static void loadModel( Model model )
+    private static Model loadModel(SharedPreferences sprefs)
     {
+        if (BaasUser.current() == null) {    //Need to make sure there is a valid user
+            Log.d(LOG_TAG, "No current user, cannot load model.");
+            return null;
+        }
+        //context = context.getApplicationContext();
         Gson gson = new Gson();
-        SharedPreferences sprefs = StartUp.getAppContext()
-                .getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE);
+        //Log.d(LOG_TAG, "Context: " + context.toString());
+        //SharedPreferences sprefs = context.getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE);
+        Log.d(LOG_TAG, "Shared Prefs: " + sprefs.toString());
         String gsonString = sprefs.getString("model", null);
-        model = gson.fromJson(gsonString, Model.class);
+        if (gsonString == null) {
+            Log.d(LOG_TAG, "No local data for current user: " + BaasUser.current().getName());
+            return null;
+        }
+        Log.d(LOG_TAG, "Model loaded: " + gsonString);
+        Model model = gson.fromJson(gsonString, Model.class);
+        Log.d(LOG_TAG, "Loaded model for user: " + BaasUser.current().getName());
+        return model;
     }
     //endregion
+
 
     //region Methods for Parcelable interface
     public void writeToParcel(Parcel out, int flags) {
@@ -149,7 +174,7 @@ class Model implements Parcelable {
 
     //region Constructor methods
     //Constructor for a model object for a user logging in, under any circumstance
-    protected Model() throws ModelException {
+    private Model() throws ModelException {
         if (BaasUser.current() == null) throw new ModelException("No logged in user.");
         activeGroups = new ArrayList<Group2>();
         acceptedEvents = new ArrayList<Event>();
@@ -157,6 +182,26 @@ class Model implements Parcelable {
         rejectedEvents = new ArrayList<Event>();
         friends = new ArrayList<Acquaintence>();
         currentUser = new CurrentUser(BaasUser.current());
+    }
+    //endregion
+
+
+    //region Singleton methods and motifs
+    private static Model theModel;
+    protected static Model getInstance(SharedPreferences sprefs) {
+        if (theModel == null) {
+            Log.d(LOG_TAG, "The singeton model object was null.");
+            theModel = Model.loadModel(sprefs);
+            Log.d(LOG_TAG, "The singeton model repopulated from shared prefs.");
+            if (theModel == null) {
+                Log.d(LOG_TAG, "Loading from shared prefs failed, creating new model instance");
+                theModel = new Model();
+            }
+        }
+        return theModel;
+    }
+    protected static void dumpInstance() {
+        theModel = null;
     }
     //endregion
 

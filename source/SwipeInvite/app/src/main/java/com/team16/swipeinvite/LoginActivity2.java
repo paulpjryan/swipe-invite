@@ -3,6 +3,7 @@ package com.team16.swipeinvite;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.baasbox.android.BaasBox;
 import com.baasbox.android.BaasCloudMessagingService;
@@ -68,7 +70,8 @@ public class LoginActivity2 extends ActionBarActivity {
             groupRT = savedInstanceState.getParcelable(GROUP_TOKEN_KEY);
             eventRT = savedInstanceState.getParcelable(EVENT_TOKEN_KEY);
             cloudRT = savedInstanceState.getParcelable(CLOUD_TOKEN_KEY);
-            model = savedInstanceState.getParcelable(MODEL_KEY);
+            //model = savedInstanceState.getParcelable(MODEL_KEY);
+            model = Model.getInstance(getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE));
         }
 
         //Check for google play services
@@ -151,6 +154,7 @@ public class LoginActivity2 extends ActionBarActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        Log.d(LOG_TAG, "onSaveInstanceState called.");
         if (signInRT != null) {
             outState.putParcelable(SIGN_IN_TOKEN_KEY, signInRT);
         } else if (modelRT != null) {
@@ -167,7 +171,8 @@ public class LoginActivity2 extends ActionBarActivity {
             outState.putParcelable(FRIEND_TOKEN_KEY, friendRT);
         }
         if (model != null) {
-            outState.putParcelable(MODEL_KEY, model);
+            //outState.putParcelable(MODEL_KEY, model);
+            Model.saveModel(getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE));
         }
         if (cloudRT != null) {
             outState.putParcelable(CLOUD_TOKEN_KEY, cloudRT);
@@ -277,7 +282,8 @@ public class LoginActivity2 extends ActionBarActivity {
     //region Method called after login request returns success
     private void completeLogin(BaasUser u) {
         //Create a new instance of the model, this will auto create the current user correctly
-        model = new Model();
+        //model = new Model();
+        model = Model.getInstance(getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE));   //Switch to singleton methodology
 
         //Attempt to retrieve the current user's model from the server
         modelRT = BaasDocument.fetchAll("model", onModelComplete);
@@ -328,6 +334,8 @@ public class LoginActivity2 extends ActionBarActivity {
             //NO DATA TO RETRIEVE
             //THIS CASE SHOULD NEVER HAPPEN
             Log.d(LOG_TAG, "Model object from server was not the correct size!: " + r.size());
+            Toast.makeText(this, "Your data is corrupted, contact server admin.", Toast.LENGTH_SHORT).show();
+            showProgress(false);
             //launchMainActivity();
             return;
         }
@@ -557,7 +565,8 @@ public class LoginActivity2 extends ActionBarActivity {
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.putExtra(MODEL_INTENT_KEY, model);
+        //intent.putExtra(MODEL_INTENT_KEY, model);
+        Model.saveModel(getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE));
         startActivity(intent);
         finish();
     }
