@@ -27,8 +27,18 @@
             android:layout_weight="1"
             android:src="@drawable/abc_ic_search" />
     </LinearLayout>
-    
-    
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/lv_search_group"
+        android:layout_below="@+id/linearLayout_searchgroup"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/button_searchgroup_search"/>
+
+
+
 
     <Button
         android:id="@+id/button_searchgroup_search"
@@ -37,6 +47,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignRight="@+id/linearLayout_searchgroup"
         android:layout_marginBottom="25dp"
+
         android:text="@string/search_group_find" />
     
     
@@ -46,7 +57,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignLeft="@+id/linearLayout_searchgroup"
+
         android:layout_marginBottom="25dp"
         android:text="@string/search_group_request" />
+
 
 </RelativeLayout>

@@ -2,10 +2,13 @@ package com.team16.swipeinvite;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -52,6 +55,31 @@ public class EventsFragment extends Fragment {
 
         ListView listView = (ListView) rootView.findViewById(R.id.listview_events);
         listView.setAdapter(mArrayAdapter);
+
+
+        EditText inputSearch = (EditText) rootView.findViewById(R.id.et_search_group);
+
+        inputSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+                // When user changed the Text
+                mArrayAdapter.getFilter().filter(cs);
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+                                          int arg3) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable arg0) {
+                // TODO Auto-generated method stub
+            }
+        });
+
+
 
         //getActivity().setTitle("TEST");
         return rootView;
