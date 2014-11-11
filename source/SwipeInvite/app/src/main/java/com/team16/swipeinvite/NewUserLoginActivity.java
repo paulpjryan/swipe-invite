@@ -66,7 +66,6 @@ public class NewUserLoginActivity extends Activity {
             signInRT = savedInstanceState.getParcelable(SIGN_IN_TOKEN_KEY);
             groupRT = savedInstanceState.getParcelable(GROUP_TOKEN_KEY);
             modelRT = savedInstanceState.getParcelable(MODEL_TOKEN_KEY);
-            //model = savedInstanceState.getParcelable(MODEL_KEY);
             model = Model.getInstance(this);
         }
 
@@ -126,7 +125,6 @@ public class NewUserLoginActivity extends Activity {
             outState.putParcelable(MODEL_TOKEN_KEY, modelRT);
         }
         if (model != null) {
-            //outState.putParcelable(MODEL_KEY, model);
             Model.saveModel(this);
         }
     }
@@ -365,7 +363,6 @@ public class NewUserLoginActivity extends Activity {
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        //intent.putExtra("model_data", model);
         Model.saveModel(this);
         startActivity(intent);
         finish();

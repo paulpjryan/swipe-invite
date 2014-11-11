@@ -70,7 +70,6 @@ public class LoginActivity2 extends ActionBarActivity {
             groupRT = savedInstanceState.getParcelable(GROUP_TOKEN_KEY);
             eventRT = savedInstanceState.getParcelable(EVENT_TOKEN_KEY);
             cloudRT = savedInstanceState.getParcelable(CLOUD_TOKEN_KEY);
-            //model = savedInstanceState.getParcelable(MODEL_KEY);
             model = Model.getInstance(this);
         }
 
@@ -171,7 +170,6 @@ public class LoginActivity2 extends ActionBarActivity {
             outState.putParcelable(FRIEND_TOKEN_KEY, friendRT);
         }
         if (model != null) {
-            //outState.putParcelable(MODEL_KEY, model);
             Model.saveModel(this);
         }
         if (cloudRT != null) {
@@ -282,7 +280,6 @@ public class LoginActivity2 extends ActionBarActivity {
     //region Method called after login request returns success
     private void completeLogin(BaasUser u) {
         //Create a new instance of the model, this will auto create the current user correctly
-        //model = new Model();
         model = Model.resetInstance();
         //model = Model.getInstance(this);   //Switch to singleton methodology
 
@@ -566,7 +563,6 @@ public class LoginActivity2 extends ActionBarActivity {
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        //intent.putExtra(MODEL_INTENT_KEY, model);
         Model.saveModel(this);
         startActivity(intent);
         finish();

@@ -62,14 +62,7 @@ public class MainActivity extends ActionBarActivity {
             return;
         }
 
-        //Load in the model
-        /*if (savedInstanceState != null) {
-            model = savedInstanceState.getParcelable(MODEL_KEY);
-            Log.d(LOG_TAG, "Got model from saved state.");
-        } else {
-            model = getIntent().getParcelableExtra(MODEL_INTENT_KEY);
-            Log.d(LOG_TAG, "Got model from intent.");
-        }*/
+        //Load the model
         model = Model.getInstance(this);
         Log.d(LOG_TAG, "Model active group size: " + model.activeGroups.size());
 
@@ -153,10 +146,6 @@ public class MainActivity extends ActionBarActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Log.d(LOG_TAG, "onSaveInstanceState called");
-        if (model != null) {
-            //outState.putParcelable(MODEL_KEY, model);
-            //model.saveModel();    NO NEED TO SAVE, NO MODIFICATIONS WERE MADE
-        }
     }
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -178,8 +167,6 @@ public class MainActivity extends ActionBarActivity {
             finish();
         } else {
             Intent intent = new Intent(this, LogoutActivity.class);
-            //intent.putExtra("model_data", model);
-            //model.saveModel();    NO NEED TO SAVE, NO MODIFICATIONS WERE MADE
             startActivity(intent);
         }
     }
@@ -189,7 +176,6 @@ public class MainActivity extends ActionBarActivity {
     //region Method to start the group creation activty
     private void startGroupCreate() {
         Intent intent = new Intent(this, GroupCreationActivity.class);
-        //intent.putExtra(MODEL_INTENT_KEY, model);   //pass the model object to the group
         startActivityForResult(intent, GROUP_CREATE_REQUEST_CODE);
     }
     //endregion
@@ -197,9 +183,8 @@ public class MainActivity extends ActionBarActivity {
 
     //region Method to start the profile edit activity
     private void startProfileEdit() {
-        //Create the intent and put the model in it
+        //Create the intent
         Intent intent = new Intent(this, UserProfileActivity.class);
-        intent.putExtra(MODEL_INTENT_KEY, model);
         startActivityForResult(intent, PROFILE_EDIT_REQUEST_CODE);
     }
     //endregion
@@ -214,8 +199,8 @@ public class MainActivity extends ActionBarActivity {
             case GROUP_CREATE_REQUEST_CODE:    //Group Create activity result
                 if(resultCode == RESULT_OK) {
                     Log.d(LOG_TAG, "Got ok result from group creation.");
-                    //SET THE MODEL WITH THE RETURNED MODEL OBJECT
-                    model = data.getParcelableExtra(MODEL_INTENT_KEY);
+                    //NEED TO REPOPULATE FRAGMENT IF IT IS ACTIVE
+                    selectItem(2);
                 } else if (resultCode == RESULT_CANCELED) {
                     Log.d(LOG_TAG, "Got canceled result from group creation.");
                     //DO NOTHING
@@ -224,7 +209,6 @@ public class MainActivity extends ActionBarActivity {
             case PROFILE_EDIT_REQUEST_CODE:    //Profile Edit activity result
                 if (resultCode == RESULT_OK) {
                     Log.d(LOG_TAG, "Got ok result from profile edit.");
-                    model = data.getParcelableExtra(MODEL_INTENT_KEY);
                 } else if (resultCode == RESULT_CANCELED) {
                     Log.d(LOG_TAG, "Got canceled result from profile edit, bad.");
                 }
@@ -233,11 +217,7 @@ public class MainActivity extends ActionBarActivity {
                 Log.d(LOG_TAG, "Request code not set.");
                 break;
         }
-        try {
-            Log.d(LOG_TAG, "Model size: " + model.activeGroups.size());
-        } catch (NullPointerException e) {
-            Log.d(LOG_TAG, "Model got messed up after returned activity.");
-        }
+        Log.d(LOG_TAG, "Model active group size: " + model.activeGroups.size());
     }
     //endregion
 
@@ -325,9 +305,6 @@ public class MainActivity extends ActionBarActivity {
         switch(position) {
             case 2:
                 fragment = new GroupsFragment();
-                Bundle args = new Bundle();
-                args.putParcelableArrayList("group_list", model.activeGroups);
-                fragment.setArguments(args);
                 break;
             default:
                 fragment = new EventsFragment();
