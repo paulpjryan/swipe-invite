@@ -48,7 +48,8 @@ public class GroupsFragment extends Fragment {
                 "CS 391"
         };
 
-        List<Group2> groupData = getArguments().getParcelableArrayList("group_list");
+        m = Model.getInstance(getActivity());
+        List<Group2> groupData = m.activeGroups;
         mArrayAdapter =
                 new GroupsAdapter(
                         getActivity(), // The current context (this activity)

@@ -96,7 +96,7 @@ public class EventCreationActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    protected void onEventSubmit(View v)
+    public void onEventSubmit(View v)
     {
         //showprogress(true)
 
