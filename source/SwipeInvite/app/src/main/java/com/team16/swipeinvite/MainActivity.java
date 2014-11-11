@@ -200,7 +200,7 @@ public class MainActivity extends ActionBarActivity {
                 if(resultCode == RESULT_OK) {
                     Log.d(LOG_TAG, "Got ok result from group creation.");
                     //NEED TO REPOPULATE FRAGMENT IF IT IS ACTIVE
-                    selectItem(2);
+                    //selectItem(2);    NO LONGER NEEDED WITH UPDATE IN GROUP ADAPTER
                 } else if (resultCode == RESULT_CANCELED) {
                     Log.d(LOG_TAG, "Got canceled result from group creation.");
                     //DO NOTHING

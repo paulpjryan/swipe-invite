@@ -75,7 +75,7 @@ public class GroupCreationActivity extends ActionBarActivity {
         }
 
         model = Model.getInstance(this);
-        Log.d(LOG_TAG, "Got model, size: " + model.activeGroups.size());
+        Log.d(LOG_TAG, "Got model, size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
 
         //Setting the content view and support action bar
         setContentView(R.layout.activity_group_creation);
@@ -317,7 +317,9 @@ public class GroupCreationActivity extends ActionBarActivity {
         if (newGroup.isPrivate()) {
             Log.d(LOG_TAG, "Created private group.");
             //Update model, return to main activity
-            model.activeGroups.add(newGroup);
+            //model.activeGroups.add(newGroup);      //OLD way
+            model.getActiveGroups().add(newGroup);    //Synchronized meth. 1
+            GroupsAdapter.updateData(model.getActiveGroups());
             returnToMainSuccess();
             return;
         }
@@ -396,7 +398,9 @@ public class GroupCreationActivity extends ActionBarActivity {
         //Check if both grants have finished
         if (readRT == null && updateRT == null) {
             Log.d(LOG_TAG, "Created public group.");
-            model.activeGroups.add(newGroup);
+            //model.activeGroups.add(newGroup);    //OLD Methodology
+            model.getActiveGroups().add(newGroup);     //Synchronized methodology 1
+            GroupsAdapter.updateData(model.getActiveGroups());
             returnToMainSuccess();
             return;
         }

@@ -479,7 +479,11 @@ public class LoginActivity2 extends ActionBarActivity {
             //BaasDocument d = BaasDocument.from(x);    //Convert to BaasDocument
             if (d.getCollection().equals("group")) {
                 Group2 g = new Group2(d);     //Create group instance with BaasDocument
-                model.activeGroups.add(g);
+                //model.activeGroups.add(g);     //Old methodology
+                model.getActiveGroups().add(g);   //Synchronized implementation 1
+                /*synchronized (model) {          //Synchronized implementation 2
+                    model.activeGroups.add(g);
+                }*/
                 Log.d(LOG_TAG, "Added group to active group list.");
             } else if (d.getCollection().equals("event")) {
                 Event e = new Event(d);     //Create event instance with BaasDocument
