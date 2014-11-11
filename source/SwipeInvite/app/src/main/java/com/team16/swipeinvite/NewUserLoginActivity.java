@@ -271,7 +271,8 @@ public class NewUserLoginActivity extends Activity {
         Group2 g = new Group2("Personal", "A group just for you to push your own events to.", true);
 
         //Store the group in the local model object
-        model.activeGroups.add(g);
+        //model.activeGroups.add(g);
+        model.getActiveGroups().add(g);
 
         //Attempt to send the group to the server
         groupRT = g.getBaasDocument().save(SaveMode.IGNORE_VERSION, onGroupComplete);
@@ -310,12 +311,13 @@ public class NewUserLoginActivity extends Activity {
     //region Method called after group creation
     private void completeGroup(BaasDocument g) {
         //Check if the local model has a group in it (which it should)
-        if (model.activeGroups.size() != 1) {
-            Log.d(LOG_TAG, "Model is not the correct size: " + model.activeGroups.size());
+        if (/*model.activeGroups.size()*/ model.getActiveGroups().size() != 1) {
+            Log.d(LOG_TAG, "Model is not the correct size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
             showProgress(false);
             return;
         }
-        model.activeGroups.get(0).setBaasDocument(g);   //set the personal group from server object
+        model.getActiveGroups().get(0).setBaasDocument(g);
+        //model.activeGroups.get(0).setBaasDocument(g);   //set the personal group from server object
 
         //Convert the model object to a server version for storage on server
         modelRT = model.toServerVersion().save(SaveMode.IGNORE_VERSION, onModelComplete);

@@ -59,7 +59,7 @@ public class UserProfileActivity extends ActionBarActivity {
             //model = savedInstanceState.getParcelable(MODEL_KEY);
         }
         model = Model.getInstance(this);
-        Log.d(LOG_TAG, "Model active group size: " + model.activeGroups.size());
+        Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
 
         //Setup local variables for the views
         usernameField = (EditText) findViewById(R.id.editText_user_username);
@@ -92,7 +92,7 @@ public class UserProfileActivity extends ActionBarActivity {
         }
         if (model == null) {
             model = Model.getInstance(this);
-            Log.d(LOG_TAG, "Model active group size: " + model.activeGroups.size());
+            Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
         }
     }
     @Override

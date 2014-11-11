@@ -219,7 +219,7 @@ class Model implements Parcelable {
         if (model == null) {
             model = new BaasDocument(COLLECTION_NAME);
         }
-        model.put(ACTIVE_GROUPS_KEY, getJAofGroups(activeGroups));
+        model.put(ACTIVE_GROUPS_KEY, getJAofGroups(getActiveGroups()));
         model.put(ACCEPTED_EVENTS_KEY, getJAofEvents(acceptedEvents));
         model.put(WAITING_EVENTS_KEY, getJAofEvents(waitingEvents));
         model.put(REJECTED_EVENTS_KEY, getJAofEvents(rejectedEvents));
@@ -227,7 +227,7 @@ class Model implements Parcelable {
         return model;
     }
 
-    private static JsonArray getJAofGroups(ArrayList<Group2> g) {
+    private static JsonArray getJAofGroups(List<Group2> g) {
         JsonArray ja = new JsonArray();
         for (Group2 x : g) {
             ja.add(x.getId());

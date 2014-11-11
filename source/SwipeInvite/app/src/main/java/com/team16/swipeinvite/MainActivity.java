@@ -64,7 +64,7 @@ public class MainActivity extends ActionBarActivity {
 
         //Load the model
         model = Model.getInstance(this);
-        Log.d(LOG_TAG, "Model active group size: " + model.activeGroups.size());
+        Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
 
         setContentView(R.layout.activity_main);
 
@@ -124,7 +124,7 @@ public class MainActivity extends ActionBarActivity {
         checkPlayServices();    //Make sure user still has valid play service
         if (model == null) {
             model = Model.getInstance(this);
-            Log.d(LOG_TAG, "Model active group size: " + model.activeGroups.size());
+            Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
         }
         if (BaasUser.current() == null){    //Check if somehow the user got logged out
             model = null;    //nullify the model because something bad has happened to the user
@@ -217,7 +217,7 @@ public class MainActivity extends ActionBarActivity {
                 Log.d(LOG_TAG, "Request code not set.");
                 break;
         }
-        Log.d(LOG_TAG, "Model active group size: " + model.activeGroups.size());
+        Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
     }
     //endregion
 
