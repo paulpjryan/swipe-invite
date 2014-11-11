@@ -60,7 +60,7 @@ public class LogoutActivity extends ActionBarActivity {
         } /*else {
             model = getIntent().getParcelableExtra("model_data");
         } */
-        model = Model.getInstance(getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE));
+        model = Model.getInstance(this);
         Log.d(LOG_TAG, "Model active group size: " + model.activeGroups.size());
 
         //Setup the form views
@@ -86,7 +86,7 @@ public class LogoutActivity extends ActionBarActivity {
             logoutRT.resume(onLogout);
         }
         if (model == null) {
-            model = Model.getInstance(getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE));
+            model = Model.getInstance(this);
             Log.d(LOG_TAG, "Model active group size: " + model.activeGroups.size());
         }
     }

@@ -101,7 +101,7 @@ public class GcmIntentService extends IntentService {
         //Put BaasDocument into Group class and handle the model
         Group2 g = new Group2(d);
         Log.d(LOG_TAG, "Received group: " + g.getName());
-        Model model = Model.getInstance(getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE));    //load the model from the shared prefs
+        Model model = Model.getInstance(this);    //load the model from the shared prefs
 
         //Go through the model and find the group that was downloaded if there is one
         int i = 0;
@@ -120,7 +120,7 @@ public class GcmIntentService extends IntentService {
         }
 
         //Save the changed model
-        Model.saveModel(getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE));
+        Model.saveModel(this);
 
         //Notify the user of the change
         String title;

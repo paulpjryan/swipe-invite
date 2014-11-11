@@ -70,16 +70,12 @@ public class GroupCreationActivity extends ActionBarActivity {
             saveRT = savedInstanceState.getParcelable(SAVE_TOKEN_KEY);
             readRT = savedInstanceState.getParcelable(READ_TOKEN_KEY);
             updateRT = savedInstanceState.getParcelable(UPDATE_TOKEN_KEY);
-            model = savedInstanceState.getParcelable(MODEL_KEY);
+            //model = savedInstanceState.getParcelable(MODEL_KEY);
             newGroup = savedInstanceState.getParcelable(GROUP_KEY);
-        } else {
-            model = getIntent().getParcelableExtra(MODEL_INTENT_KEY);
-            try {
-                Log.d(LOG_TAG, "Got model from intent, size: " + model.activeGroups.size());
-            } catch (NullPointerException e) {
-                Log.d(LOG_TAG, "Model got messed up.");
-            }
         }
+
+        model = Model.getInstance(this);
+        Log.d(LOG_TAG, "Got model, size: " + model.activeGroups.size());
 
         //Setting the content view and support action bar
         setContentView(R.layout.activity_group_creation);
@@ -192,6 +188,7 @@ public class GroupCreationActivity extends ActionBarActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        Log.d(LOG_TAG, "onStop called");
     }
     //endregion
 
@@ -223,7 +220,7 @@ public class GroupCreationActivity extends ActionBarActivity {
     //region Submit button responder
     //Method to respond to the actual button click
     //Listener is set in the xml
-    protected void submitResponder(View v) {
+    public void submitResponder(View v) {
         //Change the views
         showProgress(true);
 
@@ -429,7 +426,8 @@ public class GroupCreationActivity extends ActionBarActivity {
     private void returnToMainSuccess() {
         showProgress(false);
         Intent returnIntent = new Intent();
-        returnIntent.putExtra(MODEL_INTENT_KEY, model);
+        //returnIntent.putExtra(MODEL_INTENT_KEY, model);
+        Model.saveModel(this);
         setResult(RESULT_OK, returnIntent);
         finish();
     }

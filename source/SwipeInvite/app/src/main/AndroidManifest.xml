@@ -67,7 +67,7 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.team16.swipeinvite.MainActivity" />
-      </activity>
+        </activity>
         <activity
             android:name=".SearchGroupActivity"
             android:label="@string/title_activity_search_group"

@@ -71,7 +71,7 @@ public class LoginActivity2 extends ActionBarActivity {
             eventRT = savedInstanceState.getParcelable(EVENT_TOKEN_KEY);
             cloudRT = savedInstanceState.getParcelable(CLOUD_TOKEN_KEY);
             //model = savedInstanceState.getParcelable(MODEL_KEY);
-            model = Model.getInstance(getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE));
+            model = Model.getInstance(this);
         }
 
         //Check for google play services
@@ -172,7 +172,7 @@ public class LoginActivity2 extends ActionBarActivity {
         }
         if (model != null) {
             //outState.putParcelable(MODEL_KEY, model);
-            Model.saveModel(getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE));
+            Model.saveModel(this);
         }
         if (cloudRT != null) {
             outState.putParcelable(CLOUD_TOKEN_KEY, cloudRT);
@@ -283,7 +283,8 @@ public class LoginActivity2 extends ActionBarActivity {
     private void completeLogin(BaasUser u) {
         //Create a new instance of the model, this will auto create the current user correctly
         //model = new Model();
-        model = Model.getInstance(getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE));   //Switch to singleton methodology
+        model = Model.resetInstance();
+        //model = Model.getInstance(this);   //Switch to singleton methodology
 
         //Attempt to retrieve the current user's model from the server
         modelRT = BaasDocument.fetchAll("model", onModelComplete);
@@ -566,7 +567,7 @@ public class LoginActivity2 extends ActionBarActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         //intent.putExtra(MODEL_INTENT_KEY, model);
-        Model.saveModel(getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE));
+        Model.saveModel(this);
         startActivity(intent);
         finish();
     }

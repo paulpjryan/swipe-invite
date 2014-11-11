@@ -67,7 +67,7 @@ public class NewUserLoginActivity extends Activity {
             groupRT = savedInstanceState.getParcelable(GROUP_TOKEN_KEY);
             modelRT = savedInstanceState.getParcelable(MODEL_TOKEN_KEY);
             //model = savedInstanceState.getParcelable(MODEL_KEY);
-            model = Model.getInstance(getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE));
+            model = Model.getInstance(this);
         }
 
         //Setup the form view variables
@@ -127,7 +127,7 @@ public class NewUserLoginActivity extends Activity {
         }
         if (model != null) {
             //outState.putParcelable(MODEL_KEY, model);
-            Model.saveModel(getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE));
+            Model.saveModel(this);
         }
     }
     //endregion
@@ -267,7 +267,7 @@ public class NewUserLoginActivity extends Activity {
     private void completeSignup(BaasUser u) {
         //Create the model, this also stores the current user into it
         //model = new Model();
-        model = Model.getInstance(getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE));
+        model = Model.getInstance(this);
 
         //Create the user's personal group
         Group2 g = new Group2("Personal", "A group just for you to push your own events to.", true);
@@ -366,7 +366,7 @@ public class NewUserLoginActivity extends Activity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         //intent.putExtra("model_data", model);
-        Model.saveModel(getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE));
+        Model.saveModel(this);
         startActivity(intent);
         finish();
     }

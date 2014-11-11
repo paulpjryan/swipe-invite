@@ -70,7 +70,7 @@ public class MainActivity extends ActionBarActivity {
             model = getIntent().getParcelableExtra(MODEL_INTENT_KEY);
             Log.d(LOG_TAG, "Got model from intent.");
         }*/
-        model = Model.getInstance(getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE));
+        model = Model.getInstance(this);
         Log.d(LOG_TAG, "Model active group size: " + model.activeGroups.size());
 
         setContentView(R.layout.activity_main);
@@ -130,7 +130,7 @@ public class MainActivity extends ActionBarActivity {
         Log.d(LOG_TAG, "onResume called");
         checkPlayServices();    //Make sure user still has valid play service
         if (model == null) {
-            model = Model.getInstance(getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE));
+            model = Model.getInstance(this);
             Log.d(LOG_TAG, "Model active group size: " + model.activeGroups.size());
         }
         if (BaasUser.current() == null){    //Check if somehow the user got logged out
@@ -189,7 +189,7 @@ public class MainActivity extends ActionBarActivity {
     //region Method to start the group creation activty
     private void startGroupCreate() {
         Intent intent = new Intent(this, GroupCreationActivity.class);
-        intent.putExtra(MODEL_INTENT_KEY, model);   //pass the model object to the group
+        //intent.putExtra(MODEL_INTENT_KEY, model);   //pass the model object to the group
         startActivityForResult(intent, GROUP_CREATE_REQUEST_CODE);
     }
     //endregion

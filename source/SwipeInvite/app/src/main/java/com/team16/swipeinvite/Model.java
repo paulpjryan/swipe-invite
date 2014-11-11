@@ -48,7 +48,7 @@ class Model implements Parcelable {
 
 
     //region Load/Save Model functions
-    protected static void saveModel(SharedPreferences sprefs)
+    protected static void saveModel(Context context)
     {
         if (BaasUser.current() == null) {    //Need to make sure there is a valid user
             Log.d(LOG_TAG, "No current user, cannot save model.");
@@ -60,16 +60,16 @@ class Model implements Parcelable {
         Log.d(LOG_TAG, "Model saved: " + gsonString);
         //String gsonString = gson.toJson(this);
         //Log.d(LOG_TAG, "Context: " + context.toString());
-        //SharedPreferences sprefs = context.getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE);
+        SharedPreferences sprefs = context.getApplicationContext().getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE);
         Log.d(LOG_TAG, "Shared Prefs: " + sprefs.toString());
-        sprefs.edit().clear();
-        sprefs.edit().putString("model", gsonString);
-        boolean check = sprefs.edit().commit();
-        Log.d(LOG_TAG, "Commit success: " + check);
+        SharedPreferences.Editor sprefEdit = sprefs.edit();
+        sprefEdit.clear();
+        sprefEdit.putString("model", gsonString);
+        sprefEdit.apply();
         Log.d(LOG_TAG, "Saved model for user: " + BaasUser.current().getName());
     }
 
-    private static Model loadModel(SharedPreferences sprefs)
+    private static Model loadModel(Context context)
     {
         if (BaasUser.current() == null) {    //Need to make sure there is a valid user
             Log.d(LOG_TAG, "No current user, cannot load model.");
@@ -78,7 +78,7 @@ class Model implements Parcelable {
         //context = context.getApplicationContext();
         Gson gson = new Gson();
         //Log.d(LOG_TAG, "Context: " + context.toString());
-        //SharedPreferences sprefs = context.getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE);
+        SharedPreferences sprefs = context.getApplicationContext().getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE);
         Log.d(LOG_TAG, "Shared Prefs: " + sprefs.toString());
         String gsonString = sprefs.getString("model", null);
         if (gsonString == null) {
@@ -188,10 +188,10 @@ class Model implements Parcelable {
 
     //region Singleton methods and motifs
     private static Model theModel;
-    protected static Model getInstance(SharedPreferences sprefs) {
+    protected static Model getInstance(Context context) {
         if (theModel == null) {
             Log.d(LOG_TAG, "The singeton model object was null.");
-            theModel = Model.loadModel(sprefs);
+            theModel = Model.loadModel(context);
             Log.d(LOG_TAG, "The singeton model repopulated from shared prefs.");
             if (theModel == null) {
                 Log.d(LOG_TAG, "Loading from shared prefs failed, creating new model instance");
@@ -202,6 +202,10 @@ class Model implements Parcelable {
     }
     protected static void dumpInstance() {
         theModel = null;
+    }
+    protected static Model resetInstance() {
+        theModel = new Model();
+        return theModel;
     }
     //endregion
 
