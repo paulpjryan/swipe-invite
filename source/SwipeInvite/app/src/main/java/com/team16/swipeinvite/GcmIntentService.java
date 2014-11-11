@@ -16,6 +16,10 @@ import com.baasbox.android.BaasResult;
 import com.baasbox.android.BaasUser;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+
 /**
  * Created by kylekrynski on 10/31/14.
  */
@@ -104,19 +108,21 @@ public class GcmIntentService extends IntentService {
         Model model = Model.getInstance(this);    //load the model from the shared prefs
 
         //Go through the model and find the group that was downloaded if there is one
-        int i = 0;
         boolean added = false;
-        for (Group2 x : model.activeGroups) {
-            if (x.equals(g)) {
-                model.activeGroups.add(i, g);    //Replace the old group for the new one
-                model.activeGroups.remove(i+1);
-                added = true;
-                break;
+        Log.d(LOG_TAG, "Iterating through group array to find and replace");
+        List<Group2> activeGroups = model.getActiveGroups();
+        synchronized (activeGroups) {    //Need to synchronize any iteration
+            for (final ListIterator<Group2> i = activeGroups.listIterator(); i.hasNext();) {    //Setting up the iterator for each loop
+                final Group2 current = i.next();    //need to get current group
+                if (current.equals(g)) {
+                    i.set(g);   //Replace the old group for the new one
+                    added = true;
+                    break;
+                }
             }
-            i++;
         }
         if (!added) {
-            model.activeGroups.add(g);    //Add the received group if it is new
+            activeGroups.add(g);    //Add the received group if it is new
         }
 
         //Save the changed model

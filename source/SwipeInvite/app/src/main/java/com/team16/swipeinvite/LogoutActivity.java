@@ -61,7 +61,7 @@ public class LogoutActivity extends ActionBarActivity {
             model = getIntent().getParcelableExtra("model_data");
         } */
         model = Model.getInstance(this);
-        Log.d(LOG_TAG, "Model active group size: " + model.activeGroups.size());
+        Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
 
         //Setup the form views
         formLogout = findViewById(R.id.form_logout);
@@ -87,7 +87,7 @@ public class LogoutActivity extends ActionBarActivity {
         }
         if (model == null) {
             model = Model.getInstance(this);
-            Log.d(LOG_TAG, "Model active group size: " + model.activeGroups.size());
+            Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
         }
     }
     @Override

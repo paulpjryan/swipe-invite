@@ -13,6 +13,8 @@ import com.baasbox.android.json.JsonObject;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by kylekrynski on 10/23/14.
@@ -48,7 +50,7 @@ class Model implements Parcelable {
 
 
     //region Load/Save Model functions
-    protected static void saveModel(Context context)
+    protected static synchronized void saveModel(Context context)
     {
         if (BaasUser.current() == null) {    //Need to make sure there is a valid user
             Log.d(LOG_TAG, "No current user, cannot save model.");
@@ -95,6 +97,7 @@ class Model implements Parcelable {
 
     //region Methods for Parcelable interface
     public void writeToParcel(Parcel out, int flags) {
+        Log.d(LOG_TAG, "Writing parcelable model.");
         out.writeTypedList(activeGroups);
         out.writeTypedList(acceptedEvents);
         out.writeTypedList(waitingEvents);
@@ -123,6 +126,7 @@ class Model implements Parcelable {
     };
 
     private Model(Parcel in) {   //Have to check for null object references
+        Log.d(LOG_TAG, "Reading parcelable model.");
         activeGroups = new ArrayList<Group2>();
         acceptedEvents = new ArrayList<Event>();
         waitingEvents = new ArrayList<Event>();
@@ -188,7 +192,7 @@ class Model implements Parcelable {
 
     //region Singleton methods and motifs
     private static Model theModel;
-    protected static Model getInstance(Context context) {
+    protected static synchronized Model getInstance(Context context) {
         if (theModel == null) {
             Log.d(LOG_TAG, "The singeton model object was null.");
             theModel = Model.loadModel(context);
@@ -215,7 +219,7 @@ class Model implements Parcelable {
         if (model == null) {
             model = new BaasDocument(COLLECTION_NAME);
         }
-        model.put(ACTIVE_GROUPS_KEY, getJAofGroups(activeGroups));
+        model.put(ACTIVE_GROUPS_KEY, getJAofGroups(getActiveGroups()));
         model.put(ACCEPTED_EVENTS_KEY, getJAofEvents(acceptedEvents));
         model.put(WAITING_EVENTS_KEY, getJAofEvents(waitingEvents));
         model.put(REJECTED_EVENTS_KEY, getJAofEvents(rejectedEvents));
@@ -223,7 +227,7 @@ class Model implements Parcelable {
         return model;
     }
 
-    private static JsonArray getJAofGroups(ArrayList<Group2> g) {
+    private static JsonArray getJAofGroups(List<Group2> g) {
         JsonArray ja = new JsonArray();
         for (Group2 x : g) {
             ja.add(x.getId());
@@ -313,6 +317,13 @@ class Model implements Parcelable {
 
     protected BaasDocument getServerVersion() {
         return model;
+    }
+    //endregion
+
+
+    //region Methods for synchronized access to the active groups list
+    protected synchronized List<Group2> getActiveGroups() {
+        return Collections.synchronizedList(activeGroups);
     }
     //endregion
 
