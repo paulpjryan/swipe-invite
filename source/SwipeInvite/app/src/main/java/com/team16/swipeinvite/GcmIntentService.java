@@ -124,6 +124,8 @@ public class GcmIntentService extends IntentService {
         if (!added) {
             activeGroups.add(g);    //Add the received group if it is new
         }
+        //Notify the List Views of a change
+        GroupsAdapter.updateData(activeGroups);
 
         //Save the changed model
         Model.saveModel(this);

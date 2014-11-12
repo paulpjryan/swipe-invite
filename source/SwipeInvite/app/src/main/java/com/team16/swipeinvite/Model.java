@@ -34,7 +34,7 @@ class Model implements Parcelable {
 
     //region The arrays representing all data for a logged in user
     //All data can be manipulated from classes in the app, this is just use to encapsulate
-    protected ArrayList<Group2> activeGroups;    //List of groups that the user is either creator of or has accepted an invite to
+    private ArrayList<Group2> activeGroups;    //List of groups that the user is either creator of or has accepted an invite to
     protected ArrayList<Event> acceptedEvents;   //List of events that the user has accepted
     protected ArrayList<Event> waitingEvents;    //List of events that the user has waited for a decision on
     protected ArrayList<Event> rejectedEvents;   //List of events that the user has rejected
@@ -229,8 +229,10 @@ class Model implements Parcelable {
 
     private static JsonArray getJAofGroups(List<Group2> g) {
         JsonArray ja = new JsonArray();
-        for (Group2 x : g) {
-            ja.add(x.getId());
+        synchronized (g) {
+            for (Group2 x : g) {
+                ja.add(x.getId());
+            }
         }
         return ja;
     }
