@@ -50,6 +50,7 @@ public class LogoutActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logout);
         setTitle("Logout");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //Check for resumed states and retrieve model from somewhere
         if (savedInstanceState != null) {
             //model = savedInstanceState.getParcelable(MODEL_KEY);
@@ -224,7 +225,7 @@ public class LogoutActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.logout, menu);
+        //getMenuInflater().inflate(R.menu.logout, menu);
         return true;
     }
 
