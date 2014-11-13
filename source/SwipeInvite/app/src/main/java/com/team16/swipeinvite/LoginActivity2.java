@@ -3,6 +3,7 @@ package com.team16.swipeinvite;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.baasbox.android.BaasBox;
 import com.baasbox.android.BaasCloudMessagingService;
@@ -23,6 +25,8 @@ import com.baasbox.android.BaasQuery;
 import com.baasbox.android.BaasResult;
 import com.baasbox.android.BaasUser;
 import com.baasbox.android.RequestToken;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import java.util.List;
 
@@ -66,7 +70,12 @@ public class LoginActivity2 extends ActionBarActivity {
             groupRT = savedInstanceState.getParcelable(GROUP_TOKEN_KEY);
             eventRT = savedInstanceState.getParcelable(EVENT_TOKEN_KEY);
             cloudRT = savedInstanceState.getParcelable(CLOUD_TOKEN_KEY);
-            model = savedInstanceState.getParcelable(MODEL_KEY);
+            model = Model.getInstance(this);
+        }
+
+        //Check for google play services
+        if (!checkPlayServices()) {
+            return;
         }
 
         //Instantiate the local view variables correctly
@@ -85,6 +94,7 @@ public class LoginActivity2 extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        checkPlayServices();   //Need to check for valid google play services
         if (signInRT != null) {
             showProgress(true);
             signInRT.resume(onComplete);
@@ -143,6 +153,7 @@ public class LoginActivity2 extends ActionBarActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        Log.d(LOG_TAG, "onSaveInstanceState called.");
         if (signInRT != null) {
             outState.putParcelable(SIGN_IN_TOKEN_KEY, signInRT);
         } else if (modelRT != null) {
@@ -159,7 +170,7 @@ public class LoginActivity2 extends ActionBarActivity {
             outState.putParcelable(FRIEND_TOKEN_KEY, friendRT);
         }
         if (model != null) {
-            outState.putParcelable(MODEL_KEY, model);
+            Model.saveModel(this);
         }
         if (cloudRT != null) {
             outState.putParcelable(CLOUD_TOKEN_KEY, cloudRT);
@@ -269,7 +280,8 @@ public class LoginActivity2 extends ActionBarActivity {
     //region Method called after login request returns success
     private void completeLogin(BaasUser u) {
         //Create a new instance of the model, this will auto create the current user correctly
-        model = new Model();
+        model = Model.resetInstance();
+        //model = Model.getInstance(this);   //Switch to singleton methodology
 
         //Attempt to retrieve the current user's model from the server
         modelRT = BaasDocument.fetchAll("model", onModelComplete);
@@ -320,6 +332,8 @@ public class LoginActivity2 extends ActionBarActivity {
             //NO DATA TO RETRIEVE
             //THIS CASE SHOULD NEVER HAPPEN
             Log.d(LOG_TAG, "Model object from server was not the correct size!: " + r.size());
+            Toast.makeText(this, "Your data is corrupted, contact server admin.", Toast.LENGTH_SHORT).show();
+            showProgress(false);
             //launchMainActivity();
             return;
         }
@@ -465,7 +479,11 @@ public class LoginActivity2 extends ActionBarActivity {
             //BaasDocument d = BaasDocument.from(x);    //Convert to BaasDocument
             if (d.getCollection().equals("group")) {
                 Group2 g = new Group2(d);     //Create group instance with BaasDocument
-                model.activeGroups.add(g);
+                //model.activeGroups.add(g);     //Old methodology
+                model.getActiveGroups().add(g);   //Synchronized implementation 1
+                /*synchronized (model) {          //Synchronized implementation 2
+                    model.activeGroups.add(g);
+                }*/
                 Log.d(LOG_TAG, "Added group to active group list.");
             } else if (d.getCollection().equals("event")) {
                 Event e = new Event(d);     //Create event instance with BaasDocument
@@ -549,9 +567,28 @@ public class LoginActivity2 extends ActionBarActivity {
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.putExtra(MODEL_INTENT_KEY, model);
+        Model.saveModel(this);
         startActivity(intent);
         finish();
+    }
+    //endregion
+
+
+    //region Method and variables to check if a valid Google play services is found
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Log.i(LOG_TAG, "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
     }
     //endregion
 

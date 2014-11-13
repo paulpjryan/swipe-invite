@@ -13,6 +13,8 @@ import com.baasbox.android.json.JsonObject;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by kylekrynski on 10/23/14.
@@ -48,28 +50,54 @@ class Model implements Parcelable {
 
 
     //region Load/Save Model functions
-    void saveModel()
+    protected static synchronized void saveModel(Context context)
     {
+        if (BaasUser.current() == null) {    //Need to make sure there is a valid user
+            Log.d(LOG_TAG, "No current user, cannot save model.");
+            return;
+        }
+        //context = context.getApplicationContext();
         Gson gson = new Gson();
-        String gsonString = gson.toJson(this);
-        SharedPreferences sprefs = StartUp.getAppContext()
-                .getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE);
-        sprefs.edit().putString("model", gsonString);
-        sprefs.edit().commit();
+        String gsonString = gson.toJson(theModel);
+        Log.d(LOG_TAG, "Model saved: " + gsonString);
+        //String gsonString = gson.toJson(this);
+        //Log.d(LOG_TAG, "Context: " + context.toString());
+        SharedPreferences sprefs = context.getApplicationContext().getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE);
+        Log.d(LOG_TAG, "Shared Prefs: " + sprefs.toString());
+        SharedPreferences.Editor sprefEdit = sprefs.edit();
+        sprefEdit.clear();
+        sprefEdit.putString("model", gsonString);
+        sprefEdit.apply();
+        Log.d(LOG_TAG, "Saved model for user: " + BaasUser.current().getName());
     }
 
-    static void loadModel( Model model )
+    private static Model loadModel(Context context)
     {
+        if (BaasUser.current() == null) {    //Need to make sure there is a valid user
+            Log.d(LOG_TAG, "No current user, cannot load model.");
+            return null;
+        }
+        //context = context.getApplicationContext();
         Gson gson = new Gson();
-        SharedPreferences sprefs = StartUp.getAppContext()
-                .getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE);
+        //Log.d(LOG_TAG, "Context: " + context.toString());
+        SharedPreferences sprefs = context.getApplicationContext().getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE);
+        Log.d(LOG_TAG, "Shared Prefs: " + sprefs.toString());
         String gsonString = sprefs.getString("model", null);
-        model = gson.fromJson(gsonString, Model.class);
+        if (gsonString == null) {
+            Log.d(LOG_TAG, "No local data for current user: " + BaasUser.current().getName());
+            return null;
+        }
+        Log.d(LOG_TAG, "Model loaded: " + gsonString);
+        Model model = gson.fromJson(gsonString, Model.class);
+        Log.d(LOG_TAG, "Loaded model for user: " + BaasUser.current().getName());
+        return model;
     }
     //endregion
 
+
     //region Methods for Parcelable interface
     public void writeToParcel(Parcel out, int flags) {
+        Log.d(LOG_TAG, "Writing parcelable model.");
         out.writeTypedList(activeGroups);
         out.writeTypedList(acceptedEvents);
         out.writeTypedList(waitingEvents);
@@ -98,6 +126,7 @@ class Model implements Parcelable {
     };
 
     private Model(Parcel in) {   //Have to check for null object references
+        Log.d(LOG_TAG, "Reading parcelable model.");
         activeGroups = new ArrayList<Group2>();
         acceptedEvents = new ArrayList<Event>();
         waitingEvents = new ArrayList<Event>();
@@ -149,7 +178,7 @@ class Model implements Parcelable {
 
     //region Constructor methods
     //Constructor for a model object for a user logging in, under any circumstance
-    protected Model() throws ModelException {
+    private Model() throws ModelException {
         if (BaasUser.current() == null) throw new ModelException("No logged in user.");
         activeGroups = new ArrayList<Group2>();
         acceptedEvents = new ArrayList<Event>();
@@ -161,12 +190,36 @@ class Model implements Parcelable {
     //endregion
 
 
+    //region Singleton methods and motifs
+    private static Model theModel;
+    protected static synchronized Model getInstance(Context context) {
+        if (theModel == null) {
+            Log.d(LOG_TAG, "The singeton model object was null.");
+            theModel = Model.loadModel(context);
+            Log.d(LOG_TAG, "The singeton model repopulated from shared prefs.");
+            if (theModel == null) {
+                Log.d(LOG_TAG, "Loading from shared prefs failed, creating new model instance");
+                theModel = new Model();
+            }
+        }
+        return theModel;
+    }
+    protected static void dumpInstance() {
+        theModel = null;
+    }
+    protected static Model resetInstance() {
+        theModel = new Model();
+        return theModel;
+    }
+    //endregion
+
+
     //region Methods for conversion of a local model object to a server model object
     protected BaasDocument toServerVersion() {
         if (model == null) {
             model = new BaasDocument(COLLECTION_NAME);
         }
-        model.put(ACTIVE_GROUPS_KEY, getJAofGroups(activeGroups));
+        model.put(ACTIVE_GROUPS_KEY, getJAofGroups(getActiveGroups()));
         model.put(ACCEPTED_EVENTS_KEY, getJAofEvents(acceptedEvents));
         model.put(WAITING_EVENTS_KEY, getJAofEvents(waitingEvents));
         model.put(REJECTED_EVENTS_KEY, getJAofEvents(rejectedEvents));
@@ -174,7 +227,7 @@ class Model implements Parcelable {
         return model;
     }
 
-    private static JsonArray getJAofGroups(ArrayList<Group2> g) {
+    private static JsonArray getJAofGroups(List<Group2> g) {
         JsonArray ja = new JsonArray();
         for (Group2 x : g) {
             ja.add(x.getId());
@@ -264,6 +317,13 @@ class Model implements Parcelable {
 
     protected BaasDocument getServerVersion() {
         return model;
+    }
+    //endregion
+
+
+    //region Methods for synchronized access to the active groups list
+    protected synchronized List<Group2> getActiveGroups() {
+        return Collections.synchronizedList(activeGroups);
     }
     //endregion
 

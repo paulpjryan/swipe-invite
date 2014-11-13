@@ -21,12 +21,24 @@ public class GroupsAdapter extends BaseAdapter implements Filterable {
     private List<Group2>filteredData = null;
     private LayoutInflater mInflater;
     private ItemFilter mFilter = new ItemFilter();
+    private static GroupsAdapter selfInstance;
 
     public GroupsAdapter(Context context, List<Group2> data) {
         this.filteredData = data ;
         this.originalData = data ;
         mInflater = LayoutInflater.from(context);
+        GroupsAdapter.selfInstance = this;     //keep track of the instance of this class that is used
     }
+
+    //region Methods to handle updating the list view from other threads in a static context
+    protected static synchronized void updateData(List<Group2> g) {
+        if (selfInstance == null) {
+            return;
+        }
+        selfInstance.originalData = g;
+        selfInstance.notifyDataSetChanged();
+    }
+    //endregion
 
     public int getCount() {
         return filteredData.size();

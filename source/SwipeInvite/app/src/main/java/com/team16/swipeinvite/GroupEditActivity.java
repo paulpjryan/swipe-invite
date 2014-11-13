@@ -1,5 +1,6 @@
 package com.team16.swipeinvite;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
@@ -11,9 +12,15 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import android.widget.EditText;
+
+
+import android.widget.Button;
+
 
 
 public class GroupEditActivity extends ActionBarActivity {
@@ -24,8 +31,9 @@ public class GroupEditActivity extends ActionBarActivity {
     private ListView mainListView2;
     private ArrayAdapter<String> ListAdapter;
 
-    private TextView groupnameField;
-    private TextView descriptionField;
+    private EditText groupnameField;
+    private EditText descriptionField;
+    private EditText groupTypeField;
 
     private ArrayAdapter<String> ListAdapter2;
 
@@ -34,33 +42,40 @@ public class GroupEditActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_edit);
-        groupnameField = (TextView) findViewById(R.id.textView_new_group);
-        descriptionField = (TextView) findViewById(R.id.et_edit_group_des);
+        groupnameField = (EditText) findViewById(R.id.textView_new_group);
+        descriptionField = (EditText) findViewById(R.id.et_edit_group_des);
+        groupTypeField = (EditText) findViewById(R.id.textView_new_group_type);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        //Submit button
 
-       /* Button submit_bt = (Button)findViewById(R.id.group_edit_submit);
+        //region Submit Button
+
+
+        Button submit_bt = (Button)findViewById(R.id.group_edit_submit);
         submit_bt.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                Toast words = Toast.makeText(GroupEditActivity.this,"Sucessful",Toast.LENGTH_LONG);
+                Toast words = Toast.makeText(GroupEditActivity.this,"Sucessful", Toast.LENGTH_LONG);
                 words.show();
             }
-        });*/
+        });
+        //endregion
 
-        //Add member
 
-        /*Button add_bt = (Button)findViewById(R.id.bt_add_member);
+
+
+        //region Add member button
+        Button add_bt = (Button)findViewById(R.id.bt_add_member);
         add_bt.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 Intent intent_add_person2group = new Intent(GroupEditActivity.this, Add_person2group.class);
                 startActivity(intent_add_person2group);
             }
-        }); */
+        });
+        //endregion
+
 
 
 
@@ -100,13 +115,32 @@ public class GroupEditActivity extends ActionBarActivity {
         };
 
         ArrayList<String> EventList2 = new ArrayList<String>();
-        EventList2.addAll(Arrays.asList(data));
+        EventList2.addAll(Arrays.asList(data2));
 
 
-        ListAdapter2 = new ArrayAdapter<String>(this,R.layout.list_item_group_member,R.id.list_add_person_tv,data2);
+        ListAdapter2 = new ArrayAdapter<String>(this,R.layout.list_item_group_member,R.id.list_add_person_tv,EventList2);
 
         mainListView2.setAdapter(ListAdapter2);
         //endregion
+
+
+
+        //region EditView all show
+        // Automatically show the group name and description
+
+        //Dummy data
+        String data_groupName =  "Name: CS team"   ;
+
+        String data_groupDes =
+                "Fall 2014 project SwipeInvite";
+        String data_type = "private";
+
+        groupnameField.setText(data_groupName);
+        descriptionField.setText(data_groupDes);
+        groupTypeField.setText(data_type);
+
+        //endregion
+
 
 
 

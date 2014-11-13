@@ -70,16 +70,12 @@ public class GroupCreationActivity extends ActionBarActivity {
             saveRT = savedInstanceState.getParcelable(SAVE_TOKEN_KEY);
             readRT = savedInstanceState.getParcelable(READ_TOKEN_KEY);
             updateRT = savedInstanceState.getParcelable(UPDATE_TOKEN_KEY);
-            model = savedInstanceState.getParcelable(MODEL_KEY);
+            //model = savedInstanceState.getParcelable(MODEL_KEY);
             newGroup = savedInstanceState.getParcelable(GROUP_KEY);
-        } else {
-            model = getIntent().getParcelableExtra(MODEL_INTENT_KEY);
-            try {
-                Log.d(LOG_TAG, "Got model from intent, size: " + model.activeGroups.size());
-            } catch (NullPointerException e) {
-                Log.d(LOG_TAG, "Model got messed up.");
-            }
         }
+
+        model = Model.getInstance(this);
+        Log.d(LOG_TAG, "Got model, size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
 
         //Setting the content view and support action bar
         setContentView(R.layout.activity_group_creation);
@@ -192,6 +188,7 @@ public class GroupCreationActivity extends ActionBarActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        Log.d(LOG_TAG, "onStop called");
     }
     //endregion
 
@@ -320,7 +317,9 @@ public class GroupCreationActivity extends ActionBarActivity {
         if (newGroup.isPrivate()) {
             Log.d(LOG_TAG, "Created private group.");
             //Update model, return to main activity
-            model.activeGroups.add(newGroup);
+            //model.activeGroups.add(newGroup);      //OLD way
+            model.getActiveGroups().add(newGroup);    //Synchronized meth. 1
+            GroupsAdapter.updateData(model.getActiveGroups());
             returnToMainSuccess();
             return;
         }
@@ -399,7 +398,9 @@ public class GroupCreationActivity extends ActionBarActivity {
         //Check if both grants have finished
         if (readRT == null && updateRT == null) {
             Log.d(LOG_TAG, "Created public group.");
-            model.activeGroups.add(newGroup);
+            //model.activeGroups.add(newGroup);    //OLD Methodology
+            model.getActiveGroups().add(newGroup);     //Synchronized methodology 1
+            GroupsAdapter.updateData(model.getActiveGroups());
             returnToMainSuccess();
             return;
         }
@@ -429,7 +430,8 @@ public class GroupCreationActivity extends ActionBarActivity {
     private void returnToMainSuccess() {
         showProgress(false);
         Intent returnIntent = new Intent();
-        returnIntent.putExtra(MODEL_INTENT_KEY, model);
+        //returnIntent.putExtra(MODEL_INTENT_KEY, model);
+        Model.saveModel(this);
         setResult(RESULT_OK, returnIntent);
         finish();
     }

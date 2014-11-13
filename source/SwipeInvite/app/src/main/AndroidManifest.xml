@@ -67,12 +67,21 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.team16.swipeinvite.MainActivity" />
-      </activity>
+        </activity>
         <activity
             android:name=".SearchGroupActivity"
             android:label="@string/title_activity_search_group"
-            android:windowSoftInputMode="stateHidden" >
+            android:windowSoftInputMode="stateHidden"
+            android:parentActivityName=".MainActivity">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.team16.swipeinvite.MainActivity" />
+
+
         </activity>
+
+
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"
@@ -120,10 +129,22 @@
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <category android:name="com.example.gcm" />
+                <category android:name="com.team16.swipeinvite.gcm" />
             </intent-filter>
         </receiver>
         <service android:name=".GcmIntentService" /> -->
+
+        <activity
+            android:name=".EventCreationActivity"
+            android:label="@string/title_activity_event_creation"
+            android:parentActivityName=".MainActivity" >
+
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.team16.swipeinvite.MainActivity" />
+        </activity>
+
 
     </application>
 

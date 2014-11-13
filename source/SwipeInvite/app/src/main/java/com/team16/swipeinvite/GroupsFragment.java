@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import java.util.List;
  * Fragment that shows which groups a user has been invited to
  */
 public class GroupsFragment extends Fragment {
+    private static final String LOG_TAG = "GROUP_FRAGMENT";
 
     private GroupsAdapter mArrayAdapter;
 
@@ -31,6 +33,7 @@ public class GroupsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(LOG_TAG, "onCreateViewCalled");
 
         // Create some dummy data for the ListView.  Here's a sample weekly forecast
         String[] data = {
@@ -48,12 +51,14 @@ public class GroupsFragment extends Fragment {
                 "CS 391"
         };
 
-        List<Group2> groupData = getArguments().getParcelableArrayList("group_list");
+        m = Model.getInstance(getActivity());
+        //List<Group2> groupData = m.activeGroups;   //OLD implementation
+        //List<Group2> groupData = m.getActiveGroups();    //Synchronized methodology 1
         mArrayAdapter =
                 new GroupsAdapter(
                         getActivity(), // The current context (this activity)
                         //R.layout.list_item_group, // The name of the layout ID.
-                        groupData);
+                        m.getActiveGroups());
 
 
         View rootView = inflater.inflate(R.layout.fragment_group, container, false);

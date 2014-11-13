@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -37,6 +38,7 @@ public class NewUserLoginActivity extends Activity {
     private static final String MODEL_KEY = "model_d";
     //endregion
 
+
     //region Private instance variables for the view
     //The form view
     private View formView;
@@ -64,7 +66,7 @@ public class NewUserLoginActivity extends Activity {
             signInRT = savedInstanceState.getParcelable(SIGN_IN_TOKEN_KEY);
             groupRT = savedInstanceState.getParcelable(GROUP_TOKEN_KEY);
             modelRT = savedInstanceState.getParcelable(MODEL_TOKEN_KEY);
-            model = savedInstanceState.getParcelable(MODEL_KEY);
+            model = Model.getInstance(this);
         }
 
         //Setup the form view variables
@@ -114,6 +116,7 @@ public class NewUserLoginActivity extends Activity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        Log.d(LOG_TAG, "onSaveInstanceState called.");
         if (signInRT != null) {
             outState.putParcelable(SIGN_IN_TOKEN_KEY, signInRT);
         } else if (groupRT != null) {
@@ -122,7 +125,7 @@ public class NewUserLoginActivity extends Activity {
             outState.putParcelable(MODEL_TOKEN_KEY, modelRT);
         }
         if (model != null) {
-            outState.putParcelable(MODEL_KEY, model);
+            Model.saveModel(this);
         }
     }
     //endregion
@@ -261,13 +264,15 @@ public class NewUserLoginActivity extends Activity {
     //region Method that is called after the signup is complete
     private void completeSignup(BaasUser u) {
         //Create the model, this also stores the current user into it
-        model = new Model();
+        //model = new Model();
+        model = Model.getInstance(this);
 
         //Create the user's personal group
         Group2 g = new Group2("Personal", "A group just for you to push your own events to.", true);
 
         //Store the group in the local model object
-        model.activeGroups.add(g);
+        //model.activeGroups.add(g);
+        model.getActiveGroups().add(g);
 
         //Attempt to send the group to the server
         groupRT = g.getBaasDocument().save(SaveMode.IGNORE_VERSION, onGroupComplete);
@@ -306,12 +311,13 @@ public class NewUserLoginActivity extends Activity {
     //region Method called after group creation
     private void completeGroup(BaasDocument g) {
         //Check if the local model has a group in it (which it should)
-        if (model.activeGroups.size() != 1) {
-            Log.d(LOG_TAG, "Model is not the correct size: " + model.activeGroups.size());
+        if (/*model.activeGroups.size()*/ model.getActiveGroups().size() != 1) {
+            Log.d(LOG_TAG, "Model is not the correct size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
             showProgress(false);
             return;
         }
-        model.activeGroups.get(0).setBaasDocument(g);   //set the personal group from server object
+        model.getActiveGroups().get(0).setBaasDocument(g);
+        //model.activeGroups.get(0).setBaasDocument(g);   //set the personal group from server object
 
         //Convert the model object to a server version for storage on server
         modelRT = model.toServerVersion().save(SaveMode.IGNORE_VERSION, onModelComplete);
@@ -359,7 +365,7 @@ public class NewUserLoginActivity extends Activity {
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.putExtra("model_data", model);
+        Model.saveModel(this);
         startActivity(intent);
         finish();
     }

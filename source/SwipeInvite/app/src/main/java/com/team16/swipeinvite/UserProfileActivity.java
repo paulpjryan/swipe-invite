@@ -56,10 +56,10 @@ public class UserProfileActivity extends ActionBarActivity {
         //Retrieve model from somewhere
         if (savedInstanceState != null) {
             saveRT = savedInstanceState.getParcelable(SAVE_TOKEN_KEY);
-            model = savedInstanceState.getParcelable(MODEL_KEY);
-        } else {
-            model = getIntent().getParcelableExtra(MODEL_INTENT_KEY);
+            //model = savedInstanceState.getParcelable(MODEL_KEY);
         }
+        model = Model.getInstance(this);
+        Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
 
         //Setup local variables for the views
         usernameField = (EditText) findViewById(R.id.editText_user_username);
@@ -90,6 +90,10 @@ public class UserProfileActivity extends ActionBarActivity {
             progressSpinner.setVisibility(View.VISIBLE);
             saveRT.resume(onSaveComplete);
         }
+        if (model == null) {
+            model = Model.getInstance(this);
+            Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
+        }
     }
     @Override
     protected void onStop() {
@@ -99,7 +103,7 @@ public class UserProfileActivity extends ActionBarActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (model != null) {
-            outState.putParcelable(MODEL_KEY, model);
+            //outState.putParcelable(MODEL_KEY, model);
         }
         if (saveRT != null) {
             outState.putParcelable(SAVE_TOKEN_KEY, saveRT);
@@ -160,7 +164,7 @@ public class UserProfileActivity extends ActionBarActivity {
             Log.d(LOG_TAG, "Navigating away from profile edit, return OK.");
             progressSpinner.setVisibility(View.GONE);
             Intent returnIntent = new Intent();
-            returnIntent.putExtra(MODEL_INTENT_KEY, model);
+            //returnIntent.putExtra(MODEL_INTENT_KEY, model);
             setResult(RESULT_OK, returnIntent);
         } else {
             Log.d(LOG_TAG, "Navigating away from profile edit, return CANCEL.");
@@ -168,6 +172,7 @@ public class UserProfileActivity extends ActionBarActivity {
             Intent returnIntent = new Intent();
             setResult(RESULT_CANCELED, returnIntent);
         }
+        finish();
     }
     //endregion
 
@@ -274,6 +279,7 @@ public class UserProfileActivity extends ActionBarActivity {
         progressSpinner.setVisibility(View.GONE);
         //Put the current user info into the model
         model.currentUser = new CurrentUser(u);
+        Model.saveModel(this);
 
         //Reload the views
         populateViews();

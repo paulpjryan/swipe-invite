@@ -22,4 +22,8 @@
     <item android:id="@+id/action_search_group"
         android:title="@string/action_search_group"
         app:showAsAction="never" />
+    <item android:id="@+id/action_event_creation"
+        android:title="@string/action_event_creation"
+        app:showAsAction="never" />
+
 </menu>

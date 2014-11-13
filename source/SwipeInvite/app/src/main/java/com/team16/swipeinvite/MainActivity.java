@@ -2,6 +2,7 @@ package com.team16.swipeinvite;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -19,6 +20,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.baasbox.android.BaasUser;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 
 public class MainActivity extends ActionBarActivity {
     /* -------------------- LOG TAG CONSTANTS --------------------------- */
@@ -59,19 +62,9 @@ public class MainActivity extends ActionBarActivity {
             return;
         }
 
-        //Load in the model
-        if (savedInstanceState != null) {
-            model = savedInstanceState.getParcelable(MODEL_KEY);
-            Log.d(LOG_TAG, "Got model from saved state.");
-        } else {
-            model = getIntent().getParcelableExtra(MODEL_INTENT_KEY);
-            Log.d(LOG_TAG, "Got model from intent.");
-        }
-        if (model != null) {
-            Log.d(LOG_TAG, "Model active group size: " + model.activeGroups.size());
-        } else {
-            Log.d(LOG_TAG, "Model got messed up.");
-        }
+        //Load the model
+        model = Model.getInstance(this);
+        Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
 
         setContentView(R.layout.activity_main);
 
@@ -128,6 +121,11 @@ public class MainActivity extends ActionBarActivity {
     protected void onResume() {
         super.onResume();
         Log.d(LOG_TAG, "onResume called");
+        checkPlayServices();    //Make sure user still has valid play service
+        if (model == null) {
+            model = Model.getInstance(this);
+            Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
+        }
         if (BaasUser.current() == null){    //Check if somehow the user got logged out
             model = null;    //nullify the model because something bad has happened to the user
             startLoginScreen();
@@ -148,9 +146,6 @@ public class MainActivity extends ActionBarActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Log.d(LOG_TAG, "onSaveInstanceState called");
-        if (model != null) {
-            outState.putParcelable(MODEL_KEY, model);
-        }
     }
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -172,7 +167,6 @@ public class MainActivity extends ActionBarActivity {
             finish();
         } else {
             Intent intent = new Intent(this, LogoutActivity.class);
-            intent.putExtra("model_data", model);
             startActivity(intent);
         }
     }
@@ -182,7 +176,6 @@ public class MainActivity extends ActionBarActivity {
     //region Method to start the group creation activty
     private void startGroupCreate() {
         Intent intent = new Intent(this, GroupCreationActivity.class);
-        intent.putExtra(MODEL_INTENT_KEY, model);   //pass the model object to the group
         startActivityForResult(intent, GROUP_CREATE_REQUEST_CODE);
     }
     //endregion
@@ -190,9 +183,8 @@ public class MainActivity extends ActionBarActivity {
 
     //region Method to start the profile edit activity
     private void startProfileEdit() {
-        //Create the intent and put the model in it
+        //Create the intent
         Intent intent = new Intent(this, UserProfileActivity.class);
-        intent.putExtra(MODEL_INTENT_KEY, model);
         startActivityForResult(intent, PROFILE_EDIT_REQUEST_CODE);
     }
     //endregion
@@ -207,8 +199,8 @@ public class MainActivity extends ActionBarActivity {
             case GROUP_CREATE_REQUEST_CODE:    //Group Create activity result
                 if(resultCode == RESULT_OK) {
                     Log.d(LOG_TAG, "Got ok result from group creation.");
-                    //SET THE MODEL WITH THE RETURNED MODEL OBJECT
-                    model = data.getParcelableExtra(MODEL_INTENT_KEY);
+                    //NEED TO REPOPULATE FRAGMENT IF IT IS ACTIVE
+                    //selectItem(2);    NO LONGER NEEDED WITH UPDATE IN GROUP ADAPTER
                 } else if (resultCode == RESULT_CANCELED) {
                     Log.d(LOG_TAG, "Got canceled result from group creation.");
                     //DO NOTHING
@@ -217,7 +209,6 @@ public class MainActivity extends ActionBarActivity {
             case PROFILE_EDIT_REQUEST_CODE:    //Profile Edit activity result
                 if (resultCode == RESULT_OK) {
                     Log.d(LOG_TAG, "Got ok result from profile edit.");
-                    model = data.getParcelableExtra(MODEL_INTENT_KEY);
                 } else if (resultCode == RESULT_CANCELED) {
                     Log.d(LOG_TAG, "Got canceled result from profile edit, bad.");
                 }
@@ -226,11 +217,7 @@ public class MainActivity extends ActionBarActivity {
                 Log.d(LOG_TAG, "Request code not set.");
                 break;
         }
-        try {
-            Log.d(LOG_TAG, "Model size: " + model.activeGroups.size());
-        } catch (NullPointerException e) {
-            Log.d(LOG_TAG, "Model got messed up after returned activity.");
-        }
+        Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
     }
     //endregion
 
@@ -279,7 +266,7 @@ public class MainActivity extends ActionBarActivity {
             // Search Group
 
             case R.id.action_search_group:
-                Intent intent_sg = new Intent(this,Add_person2group.class);
+                Intent intent_sg = new Intent(this,SearchGroupActivity.class);
                 if (intent_sg.resolveActivity(getPackageManager()) != null) {
 
                     startActivity(intent_sg);
@@ -292,6 +279,17 @@ public class MainActivity extends ActionBarActivity {
                 //Start the group creation activity
                 startGroupCreate();
                 return true;
+
+            case R.id.action_event_creation:
+                Intent intent_sg2 = new Intent(this,EventCreationActivity.class);
+                if (intent_sg2.resolveActivity(getPackageManager()) != null) {
+
+                    startActivity(intent_sg2);
+                } else {
+                    Toast.makeText(this, "Action unavailable", Toast.LENGTH_LONG).show();
+                }
+                return true;
+
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -307,9 +305,6 @@ public class MainActivity extends ActionBarActivity {
         switch(position) {
             case 2:
                 fragment = new GroupsFragment();
-                Bundle args = new Bundle();
-                args.putParcelableArrayList("group_list", model.activeGroups);
-                fragment.setArguments(args);
                 break;
             default:
                 fragment = new EventsFragment();
@@ -323,6 +318,25 @@ public class MainActivity extends ActionBarActivity {
         mTitle = drawerTitleList[position];
 
         mDrawerLayout.closeDrawer(mDrawerList);
+    }
+    //endregion
+
+
+    //region Method and variables to check if a valid Google play services is found
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Log.i(LOG_TAG, "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
     }
     //endregion
 
