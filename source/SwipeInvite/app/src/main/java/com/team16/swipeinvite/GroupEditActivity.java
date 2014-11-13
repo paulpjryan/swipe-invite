@@ -64,6 +64,7 @@ public class GroupEditActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(LOG_TAG, "onCreate");
         setContentView(R.layout.activity_group_edit);
 
         //Loading any saved states
@@ -85,12 +86,18 @@ public class GroupEditActivity extends ActionBarActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         progressSpinner = (ProgressBar) findViewById(R.id.progressBar_group_edit);
         progressSpinner.setVisibility(View.GONE);
+        mainListView = (ListView) findViewById(R.id.listView_events_group);
+        mainListView2 = (ListView) findViewById(R.id.listView_group_member);
 
         //Load the model
         model = Model.getInstance(this);
 
         //Populate the Text views
         populateTextViews();
+
+        //Populate the list views
+        populateEventList();
+        populateMemberList();
 
         //region Submit Button -- DOES NOTHING
         /*
@@ -118,8 +125,8 @@ public class GroupEditActivity extends ActionBarActivity {
         }); */
         //endregion
 
-        //region event list view
-        mainListView = (ListView) findViewById(R.id.listView_events_group);
+        //region event list view -- DOES NOTHING
+        /*
         String[] data = {
                 "Having fun Halloween - 4:30pm",
                 "Party - 6:15pm",
@@ -135,11 +142,11 @@ public class GroupEditActivity extends ActionBarActivity {
 
         ListAdapter = new ArrayAdapter<String>(this,R.layout.list_item_event,EventList);
 
-        mainListView.setAdapter(ListAdapter);
+        mainListView.setAdapter(ListAdapter); */
         //endregion
 
-        //region Group member Listview
-        mainListView2 = (ListView) findViewById(R.id.listView_group_member);
+        //region Group member Listview -- DOES NOTHING
+        /*
         String[] data2 = {
                 "Having fun Halloween - 4:30pm",
                 "Party - 6:15pm",
@@ -157,7 +164,7 @@ public class GroupEditActivity extends ActionBarActivity {
 
         ListAdapter2 = new ArrayAdapter<String>(this,R.layout.list_item_group_member,R.id.list_add_person_tv,EventList2);
 
-        mainListView2.setAdapter(ListAdapter2);
+        mainListView2.setAdapter(ListAdapter2); */
         //endregion
 
     }
@@ -229,6 +236,62 @@ public class GroupEditActivity extends ActionBarActivity {
         descriptionField.setEnabled(perm);
         descriptionField.setFocusable(perm);
 
+    }
+    //endregion
+
+
+    //region Methods to repopulate the list views
+    private void populateEventList() {
+        Log.d(LOG_TAG, "Populating event list");
+
+        //Pull the proper list from the model
+        List<Group2> lG = model.getActiveGroups();
+        Group2 g = null;
+        synchronized (lG) {
+            for (Group2 x : lG) {
+                if (x.equals(groupToEdit)) {
+                    g = x;
+                }
+            }
+        }
+        if (g == null) {
+            Toast.makeText(this, "This group is no longer available.", Toast.LENGTH_SHORT).show();
+            returnCancelled();
+            finish();
+        }
+
+        ArrayList<String> EventList = new ArrayList<String>();
+        EventList.addAll(g.getEventList());
+
+        ListAdapter = new ArrayAdapter<String>(this,R.layout.list_item_event,EventList);
+
+        mainListView.setAdapter(ListAdapter);
+    }
+    private void populateMemberList() {
+        Log.d(LOG_TAG, "Populating member list");
+
+        //Pull the proper list from the model
+        List<Group2> lG = model.getActiveGroups();
+        Group2 g = null;
+        synchronized (lG) {
+            for (Group2 x : lG) {
+                if (x.equals(groupToEdit)) {
+                    g = x;
+                }
+            }
+        }
+        if (g == null) {
+            Toast.makeText(this, "This group is no longer available.", Toast.LENGTH_SHORT).show();
+            returnCancelled();
+            finish();
+        }
+
+        ArrayList<String> MemberList = new ArrayList<String>();
+        MemberList.addAll(g.getUserList());
+
+        ListAdapter2 = new ArrayAdapter<String>(this,R.layout.list_item_group_member,R.id.list_add_person_tv,MemberList);
+
+        mainListView2.setAdapter(ListAdapter2);
     }
     //endregion
 

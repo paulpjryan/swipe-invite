@@ -4,6 +4,7 @@ package com.team16.swipeinvite;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,13 +26,25 @@ import java.util.Observer;
 
 
 public class Add_person2group extends ActionBarActivity implements Observer, OnClickListener{
+    private static final String LOG_TAG = "ADD_P2G";
 
+
+    //region Local variables for group
+    private Model model;
+    private String groupToEdit;
+    private static final String ID_KEY = "id";
+    //endregion
+
+
+    //region Local variables for view elements
     private Group group;
     private Button ivButton;
     private EditText nameText;
     private ImageButton scButton;
     private ListView ListView_add_people;
     private ArrayAdapter<String> ListAdapter;
+    //endregion
+
 
 
 
