@@ -18,6 +18,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Button;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,6 +46,7 @@ public class EventCreationActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_creation);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
@@ -114,6 +116,66 @@ public class EventCreationActivity extends ActionBarActivity {
         int endhour = endtimeField.getCurrentHour();
         int endminute = endtimeField.getCurrentMinute();
 
+        Calendar startDate, endDate, currentDate;
+        startDate = Calendar.getInstance();
+        endDate = Calendar.getInstance();
+        currentDate = Calendar.getInstance();
+        startDate.clear();
+        endDate.clear();
+
+        if(startmonth == 0)
+            startDate.set(startyear, Calendar.JANUARY, startday, starthour, startminute);
+        else if(startmonth == 1)
+            startDate.set(startyear, Calendar.FEBRUARY, startday, starthour, startminute);
+        else if(startmonth == 2)
+            startDate.set(startyear, Calendar.MARCH, startday, starthour, startminute);
+        else if(startmonth == 3)
+            startDate.set(startyear, Calendar.APRIL, startday, starthour, startminute);
+        else if(startmonth == 4)
+            startDate.set(startyear, Calendar.MAY, startday, starthour, startminute);
+        else if(startmonth == 5)
+            startDate.set(startyear, Calendar.JUNE, startday, starthour, startminute);
+        else if(startmonth == 6)
+            startDate.set(startyear, Calendar.JULY, startday, starthour, startminute);
+        else if(startmonth == 7)
+            startDate.set(startyear, Calendar.AUGUST, startday, starthour, startminute);
+        else if(startmonth == 8)
+            startDate.set(startyear, Calendar.SEPTEMBER, startday, starthour, startminute);
+        else if(startmonth == 9)
+            startDate.set(startyear, Calendar.OCTOBER, startday, starthour, startminute);
+        else if(startmonth == 10)
+            startDate.set(startyear, Calendar.NOVEMBER, startday, starthour, startminute);
+        else if(startmonth == 11)
+            startDate.set(startyear, Calendar.DECEMBER, startday, starthour, startminute);
+
+
+        if(endmonth == 0)
+            endDate.set(endyear, Calendar.JANUARY, endday, endhour, endminute);
+        else if(endmonth == 1)
+            endDate.set(endyear, Calendar.FEBRUARY, endday, endhour, endminute);
+        else if(endmonth == 2)
+            endDate.set(endyear, Calendar.MARCH, endday, endhour, endminute);
+        else if(endmonth == 3)
+            endDate.set(endyear, Calendar.APRIL, endday, endhour, endminute);
+        else if(endmonth == 4)
+            endDate.set(endyear, Calendar.MAY, endday, endhour, endminute);
+        else if(endmonth == 5)
+            endDate.set(endyear, Calendar.JUNE, endday, endhour, endminute);
+        else if(endmonth == 6)
+            endDate.set(endyear, Calendar.JULY, endday, endhour, endminute);
+        else if(endmonth == 7)
+            endDate.set(endyear, Calendar.AUGUST, endday, endhour, endminute);
+        else if(endmonth == 8)
+            endDate.set(endyear, Calendar.SEPTEMBER, endday, endhour, endminute);
+        else if(endmonth == 9)
+            endDate.set(endyear, Calendar.OCTOBER, endday, endhour, endminute);
+        else if(endmonth == 10)
+            endDate.set(endyear, Calendar.NOVEMBER, endday, endhour, endminute);
+        else if(endmonth == 11)
+            endDate.set(endyear, Calendar.DECEMBER, endday, endhour, endminute);
+
+
+
         if (TextUtils.isEmpty(eventname)) {
             Log.d(LOG_TAG, "Name field cannot be blank.");
             //showProgress(false);
@@ -144,6 +206,20 @@ public class EventCreationActivity extends ActionBarActivity {
             //showProgress(false);
             descriptionField.setError("Must be between 4 and 100 characters");
             descriptionField.requestFocus();
+            return;
+        } else if(endDate.before(startDate)) {
+            Log.d(LOG_TAG, "End date must be after start date");
+            //showProgress(false);
+            Toast bread = Toast.makeText(EventCreationActivity.this, "Must be after start date", Toast.LENGTH_LONG);
+            bread.show();
+            enddateField.requestFocus();
+            return;
+        } else if(startDate.before(currentDate)) {
+            Log.d(LOG_TAG, "start date must be after current date");
+            //showProgress(false);
+            Toast bread = Toast.makeText(EventCreationActivity.this, "Must be after current date", Toast.LENGTH_LONG);
+            bread.show();
+            startdateField.requestFocus();
             return;
         }
 

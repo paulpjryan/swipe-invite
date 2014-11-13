@@ -53,7 +53,7 @@ public class GroupEditActivity extends ActionBarActivity {
 
             @Override
             public void onClick(View v) {
-                Toast words = Toast.makeText(GroupEditActivity.this,"Sucessful", Toast.LENGTH_LONG);
+                Toast words = Toast.makeText(GroupEditActivity.this,"Successful", Toast.LENGTH_LONG);
                 words.show();
             }
         });
