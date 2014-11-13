@@ -32,6 +32,7 @@ import com.baasbox.android.Grant;
 import com.baasbox.android.RequestToken;
 import com.baasbox.android.SaveMode;
 import com.baasbox.android.json.JsonObject;
+import com.google.android.gms.plus.model.people.Person;
 
 import java.security.acl.Group;
 import java.util.ArrayList;
@@ -133,6 +134,7 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
                     Toast.makeText(getParent(), "This group is no longer available.", Toast.LENGTH_SHORT).show();
                     returnCancelled();
                     finish();
+                    return;
                 }
                 //Check to make sure the user is not already in the group
                 if (g.containsUser(username)) {
@@ -178,7 +180,10 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
     protected void onPause() {
         super.onPause();
         Log.d(LOG_TAG, "onPause");
-        searchRT.cancel();   //Just cancel the query if the user leaves the page, dont save it
+        if (searchRT != null) {
+            searchRT.cancel();   //Just cancel the query if the user leaves the page, dont save it
+        }
+
         if (saveRT != null) {
             progressSpinner.setVisibility(View.GONE);
             saveRT.suspend();
@@ -300,7 +305,11 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
                 }
 
                 // Add sql server search data here
-                BaasQuery queryU = BaasQuery.builder().where("name like " + "'" + username + "%" + "'").build();
+                //where("name like " + "'" + username + "%" + "'")
+                //BaasQuery.builder().projection("select * from BaasUser where name like '" + username + "%'")
+                BaasQuery queryU = BaasQuery.builder().users().build();
+                queryU = queryU.buildUpon().where("user.name like '" + username + "%'").build();
+                Log.d(LOG_TAG, "Sending query: " + queryU.toString());
                 searchRT = BaasUser.fetchAll(queryU.buildUpon().criteria(), onSearchComplete);
                 break;
             case R.id.add_person:
@@ -343,12 +352,13 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
     }
     private void completeSearch(List<BaasUser> userList) {
         progressSpinner.setVisibility(View.GONE);
-        if (userList == null) {
+        if (userList == null || userList.size() == 0) {
             Toast.makeText(this, "No user with that name.", Toast.LENGTH_SHORT).show();
             return;
         }
         ArrayList<String> uList = new ArrayList<String>();
         for (BaasUser x : userList) {
+            Log.d(LOG_TAG, "Person retrieved: " + x.getName());
             uList.add(x.getName());
         }
         ListAdapter = new ArrayAdapter<String>(Add_person2group.this,R.layout.list_add_person2group_withouticon, uList);
@@ -395,6 +405,7 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
                 Toast.makeText(getParent(), "This group is no longer available.", Toast.LENGTH_SHORT).show();
                 returnCancelled();
                 finish();
+                return;
             }
             //Update the local group
             g.setBaasDocument(result.value());

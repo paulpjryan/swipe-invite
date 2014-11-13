@@ -148,6 +148,7 @@ public class GroupEditActivity extends ActionBarActivity {
             Toast.makeText(this, "This group is no longer available.", Toast.LENGTH_SHORT).show();
             returnCancelled();
             finish();
+            return;
         }
         //Set the text of the views
         groupnameField.setText(g.getName());
@@ -190,6 +191,7 @@ public class GroupEditActivity extends ActionBarActivity {
             Toast.makeText(this, "This group is no longer available.", Toast.LENGTH_SHORT).show();
             returnCancelled();
             finish();
+            return;
         }
 
         ArrayList<String> EventList = new ArrayList<String>();
@@ -216,6 +218,7 @@ public class GroupEditActivity extends ActionBarActivity {
             Toast.makeText(this, "This group is no longer available.", Toast.LENGTH_SHORT).show();
             returnCancelled();
             finish();
+            return;
         }
 
         ArrayList<String> MemberList = new ArrayList<String>();
@@ -352,6 +355,7 @@ public class GroupEditActivity extends ActionBarActivity {
             Toast.makeText(this, "This group is no longer available.", Toast.LENGTH_SHORT).show();
             returnCancelled();
             finish();
+            return;
         }
         if (!g.hasMemberPermission()) {   //If the user does not have permission, don't submit
             Log.d(LOG_TAG, "User does not have permission to add members.");
@@ -372,6 +376,7 @@ public class GroupEditActivity extends ActionBarActivity {
         //Figure out which activity is returning a result
         switch (requestCode) {
             case ADD_MEMBER_REQUEST_CODE:    //Group Create activity result
+                Log.d(LOG_TAG, "Got activity return.");
                 if(resultCode == RESULT_OK) {
                     Log.d(LOG_TAG, "Got ok result from add memeber.");
                     //RELOAD the list views
@@ -455,6 +460,7 @@ public class GroupEditActivity extends ActionBarActivity {
            Toast.makeText(this, "This group is no longer available.", Toast.LENGTH_SHORT).show();
            returnCancelled();
            finish();
+           return;
        }
        if (!g.hasDetailPermission()) {   //If the user does not have permission, don't submit
            Log.d(LOG_TAG, "User does not have permission to submit change.");
@@ -518,6 +524,7 @@ public class GroupEditActivity extends ActionBarActivity {
             Toast.makeText(this, "This group is no longer available.", Toast.LENGTH_SHORT).show();
             returnCancelled();
             finish();
+            return;
         }
         g.setBaasDocument(u);    //Actually put the change into the model
 

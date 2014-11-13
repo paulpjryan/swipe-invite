@@ -35,10 +35,10 @@ class Model implements Parcelable {
     //region The arrays representing all data for a logged in user
     //All data can be manipulated from classes in the app, this is just use to encapsulate
     private ArrayList<Group2> activeGroups;    //List of groups that the user is either creator of or has accepted an invite to
-    protected ArrayList<Event> acceptedEvents;   //List of events that the user has accepted
-    protected ArrayList<Event> waitingEvents;    //List of events that the user has waited for a decision on
-    protected ArrayList<Event> rejectedEvents;   //List of events that the user has rejected
-    protected ArrayList<Acquaintence> friends;   //List of users that the user has invited or been in a group with
+    private ArrayList<Event> acceptedEvents;   //List of events that the user has accepted
+    private ArrayList<Event> waitingEvents;    //List of events that the user has waited for a decision on
+    private ArrayList<Event> rejectedEvents;   //List of events that the user has rejected
+    private ArrayList<Acquaintence> friends;   //List of users that the user has invited or been in a group with
     protected CurrentUser currentUser;    //The current user object
     private ArrayList<BaasDocument> modelList;    //This is just for easy passing of model object
     //endregion
@@ -326,6 +326,26 @@ class Model implements Parcelable {
     //region Methods for synchronized access to the active groups list
     protected synchronized List<Group2> getActiveGroups() {
         return Collections.synchronizedList(activeGroups);
+    }
+    //endregion
+
+
+    //region Methods for synchronized access to the event lists
+    protected synchronized List<Event> getAcceptedEvents() {
+        return Collections.synchronizedList(acceptedEvents);
+    }
+    protected synchronized List<Event> getWaitingEvents() {
+        return Collections.synchronizedList(waitingEvents);
+    }
+    protected synchronized List<Event> getRejectedEvents() {
+        return Collections.synchronizedList(rejectedEvents);
+    }
+    //endregion
+
+
+    //region Methods for synchronized access to the active groups list
+    protected synchronized List<Acquaintence> getFriends() {
+        return Collections.synchronizedList(friends);
     }
     //endregion
 

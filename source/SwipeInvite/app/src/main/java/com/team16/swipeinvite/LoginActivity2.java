@@ -357,7 +357,7 @@ public class LoginActivity2 extends ActionBarActivity {
             //There is friend profiles, retrieve them
             BaasQuery fquery = BaasQuery.builder().build();
             for (String s : model.getIdList().get(5)) {
-                fquery = fquery.buildUpon().or("name=" + "'" + s + "'").build();
+                fquery = fquery.buildUpon().or("user.name=" + "'" + s + "'").build();
             }
             Log.d(LOG_TAG, "Friend list request sent.");
             friendRT = BaasUser.fetchAll(fquery.buildUpon().criteria(), onFriendComplete);
@@ -496,15 +496,15 @@ public class LoginActivity2 extends ActionBarActivity {
                     if (model.getIdList().get(i).contains(e.getId())) {      //If it contains the current event ID, add event
                         switch (i) {
                             case 1:
-                                model.acceptedEvents.add(e);
+                                model.getAcceptedEvents().add(e);
                                 Log.d(LOG_TAG, "Added event to accepted.");
                                 break;
                             case 2:
-                                model.waitingEvents.add(e);
+                                model.getWaitingEvents().add(e);
                                 Log.d(LOG_TAG, "Added event to waiting.");
                                 break;
                             case 3:
-                                model.rejectedEvents.add(e);
+                                model.getRejectedEvents().add(e);
                                 Log.d(LOG_TAG, "Added event to rejected.");
                                 break;
                             default:
@@ -555,7 +555,7 @@ public class LoginActivity2 extends ActionBarActivity {
         //Convert all received user profiles to local objects and store them
         for (BaasUser u : f) {
             Acquaintence a = new Acquaintence(u);
-            model.friends.add(a);
+            model.getFriends().add(a);
             Log.d(LOG_TAG, "Added friends to list.");
         }
         if (friendRT == null && eventRT == null && groupRT == null && cloudRT == null) {

@@ -93,6 +93,7 @@
             android:name=".GroupEditActivity"
             android:label="@string/title_activity_group_edit"
             android:parentActivityName=".MainActivity"
+            android:launchMode="singleTop"
             android:windowSoftInputMode="stateHidden" >
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
