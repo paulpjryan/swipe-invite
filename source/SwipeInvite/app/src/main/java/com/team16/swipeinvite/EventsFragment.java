@@ -42,7 +42,7 @@ public class EventsFragment extends Fragment {
                 new ArrayAdapter<String>(
                         getActivity(), // The current context (this activity)
                         R.layout.list_item_event, // The name of the layout ID.
-                        R.id.list_item_event_textview, // The ID of the textview to populate.
+                        R.id.list_item_event_name, // The ID of the textview to populate.
                         dummyData);
 
 
