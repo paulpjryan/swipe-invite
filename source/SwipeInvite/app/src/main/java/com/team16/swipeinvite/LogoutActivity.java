@@ -3,7 +3,6 @@ package com.team16.swipeinvite;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -50,7 +49,7 @@ public class LogoutActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logout);
-
+        setTitle("Logout");
         //Check for resumed states and retrieve model from somewhere
         if (savedInstanceState != null) {
             //model = savedInstanceState.getParcelable(MODEL_KEY);
