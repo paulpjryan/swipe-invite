@@ -66,7 +66,12 @@ public class NewUserLoginActivity extends Activity {
             signInRT = savedInstanceState.getParcelable(SIGN_IN_TOKEN_KEY);
             groupRT = savedInstanceState.getParcelable(GROUP_TOKEN_KEY);
             modelRT = savedInstanceState.getParcelable(MODEL_TOKEN_KEY);
-            model = Model.getInstance(this);
+            try {
+                model = Model.getInstance(this);
+            } catch (Model.ModelException e) {
+                Log.d(LOG_TAG, "Caught a model exception.");
+                model = null;
+            }
         }
 
         //Setup the form view variables

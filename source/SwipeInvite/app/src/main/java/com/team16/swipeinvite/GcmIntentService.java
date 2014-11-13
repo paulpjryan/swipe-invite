@@ -10,10 +10,12 @@ import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.baasbox.android.BaasBox;
 import com.baasbox.android.BaasDocument;
 import com.baasbox.android.BaasHandler;
 import com.baasbox.android.BaasResult;
 import com.baasbox.android.BaasUser;
+import com.baasbox.android.json.JsonObject;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import java.util.Iterator;

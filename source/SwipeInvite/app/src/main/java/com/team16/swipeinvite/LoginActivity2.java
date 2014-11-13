@@ -70,7 +70,12 @@ public class LoginActivity2 extends ActionBarActivity {
             groupRT = savedInstanceState.getParcelable(GROUP_TOKEN_KEY);
             eventRT = savedInstanceState.getParcelable(EVENT_TOKEN_KEY);
             cloudRT = savedInstanceState.getParcelable(CLOUD_TOKEN_KEY);
-            model = Model.getInstance(this);
+            try {
+                model = Model.getInstance(this);
+            } catch (Model.ModelException e) {
+                Log.d(LOG_TAG, "Caught a model exception.");
+                model = null;
+            }
         }
 
         //Check for google play services

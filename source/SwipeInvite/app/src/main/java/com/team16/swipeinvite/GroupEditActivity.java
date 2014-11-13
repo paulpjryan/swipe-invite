@@ -99,74 +99,6 @@ public class GroupEditActivity extends ActionBarActivity {
         populateEventList();
         populateMemberList();
 
-        //region Submit Button -- DOES NOTHING
-        /*
-
-        Button submit_bt = (Button)findViewById(R.id.group_edit_submit);
-        submit_bt.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Toast words = Toast.makeText(GroupEditActivity.this,"Sucessful", Toast.LENGTH_LONG);
-                words.show();
-            }
-        });*/
-        //endregion
-
-        //region Add member button  -- DOES NOTHING
-        /*
-        Button add_bt = (Button)findViewById(R.id.bt_add_member);
-        add_bt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent_add_person2group = new Intent(GroupEditActivity.this, Add_person2group.class);
-                startActivity(intent_add_person2group);
-            }
-        }); */
-        //endregion
-
-        //region event list view -- DOES NOTHING
-        /*
-        String[] data = {
-                "Having fun Halloween - 4:30pm",
-                "Party - 6:15pm",
-                "CS free toturial - 11:30am",
-                "RANDOM DANCING - ALL THE TIME",
-                "RANDOM DANCING - ALL THE TIME",
-                "RANDOM DANCING - ALL THE TIME",
-                "RANDOM DANCING - ALL THE TIME",
-                "RANDOM DANCING - ALL THE TIME",
-        };
-        ArrayList<String> EventList = new ArrayList<String>();
-        EventList.addAll(Arrays.asList(data));
-
-        ListAdapter = new ArrayAdapter<String>(this,R.layout.list_item_event,EventList);
-
-        mainListView.setAdapter(ListAdapter); */
-        //endregion
-
-        //region Group member Listview -- DOES NOTHING
-        /*
-        String[] data2 = {
-                "Having fun Halloween - 4:30pm",
-                "Party - 6:15pm",
-                "CS free toturial - 11:30am",
-                "RANDOM DANCING - ALL THE TIME",
-                "RANDOM DANCING - ALL THE TIME",
-                "RANDOM DANCING - ALL THE TIME",
-                "RANDOM DANCING - ALL THE TIME",
-                "RANDOM DANCING - ALL THE TIME",
-        };
-
-        ArrayList<String> EventList2 = new ArrayList<String>();
-        EventList2.addAll(Arrays.asList(data2));
-
-
-        ListAdapter2 = new ArrayAdapter<String>(this,R.layout.list_item_group_member,R.id.list_add_person_tv,EventList2);
-
-        mainListView2.setAdapter(ListAdapter2); */
-        //endregion
-
     }
     @Override
     protected void onResume() {
@@ -442,11 +374,13 @@ public class GroupEditActivity extends ActionBarActivity {
             case ADD_MEMBER_REQUEST_CODE:    //Group Create activity result
                 if(resultCode == RESULT_OK) {
                     Log.d(LOG_TAG, "Got ok result from add memeber.");
-                    //RELOAD the member list view
+                    //RELOAD the list views
                 } else if (resultCode == RESULT_CANCELED) {
                     Log.d(LOG_TAG, "Got canceled result from group creation.");
-                    //DO NOTHING
+                    //RELOAD the list views
                 }
+                populateMemberList();
+                populateEventList();
                 break;
             default:
                 Log.d(LOG_TAG, "Request code not set.");
