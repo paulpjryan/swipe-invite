@@ -123,7 +123,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.team16.swipeinvite.LoginActivity2" />
         </activity>
-        <!--
+
         <receiver
             android:name=".GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
@@ -132,7 +132,7 @@
                 <category android:name="com.team16.swipeinvite.gcm" />
             </intent-filter>
         </receiver>
-        <service android:name=".GcmIntentService" /> -->
+        <service android:name=".GcmIntentService" />
 
         <activity
             android:name=".EventCreationActivity"
