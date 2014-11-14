@@ -24,7 +24,10 @@ import com.baasbox.android.BaasUser;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
-public class MainActivity extends ActionBarActivity {
+import java.util.Observable;
+import java.util.Observer;
+
+public class MainActivity extends ActionBarActivity implements Observer {
     /* -------------------- LOG TAG CONSTANTS --------------------------- */
     private final static String LOG_TAG = "MAIN_ACT";
     /* -------------------- END LOG TAG CONSTANTS ----------------------- */
@@ -65,6 +68,7 @@ public class MainActivity extends ActionBarActivity {
 
         //Load the model
         model = Model.getInstance(this);
+        model.addObserver(this);
         Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
 
         setContentView(R.layout.activity_main);
@@ -129,6 +133,7 @@ public class MainActivity extends ActionBarActivity {
         checkPlayServices();    //Make sure user still has valid play service
         if (model == null) {
             model = Model.getInstance(this);
+            model.addObserver(this);
             Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
         }
         if (BaasUser.current() == null){    //Check if somehow the user got logged out
@@ -146,6 +151,7 @@ public class MainActivity extends ActionBarActivity {
     protected void onStop() {
         super.onStop();
         Log.d(LOG_TAG, "onStop called");
+        model.deleteObserver(this);
     }
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -159,6 +165,15 @@ public class MainActivity extends ActionBarActivity {
         mDrawerToggle.syncState();
     }
     //endregion
+
+
+    //region Implementation of observer
+    public void update(Observable ob, Object o) {
+        //UPDATE ANYTHING THAT RELIES ON MODEL
+        return;
+    }
+    //endregion
+
 
 
     //region Method to start the login screen, either on new startup or on logout button push

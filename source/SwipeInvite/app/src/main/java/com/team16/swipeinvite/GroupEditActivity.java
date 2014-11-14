@@ -21,6 +21,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import android.widget.EditText;
 
@@ -39,7 +41,7 @@ import org.apache.http.HttpRequest;
 import org.apache.http.protocol.HTTP;
 
 
-public class GroupEditActivity extends ActionBarActivity {
+public class GroupEditActivity extends ActionBarActivity implements Observer {
     private static final String LOG_TAG = "GROUPEDIT";
 
     //region Local variables for views
@@ -111,6 +113,10 @@ public class GroupEditActivity extends ActionBarActivity {
             progressSpinner.setVisibility(View.VISIBLE);
             saveRT.resume(onSaveComplete);
         }
+        if (model == null) {
+            model.getInstance(this);
+            model.addObserver(this);
+        }
     }
     @Override
     protected void onPause() {
@@ -130,7 +136,23 @@ public class GroupEditActivity extends ActionBarActivity {
             outState.putParcelable(SAVE_TOKEN_KEY, saveRT);
         }
     }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(LOG_TAG, "onStop");
+        model.deleteObserver(this);
+    }
+    //endregion
 
+
+    //region Implementation of observer
+    public void update(Observable ob, Object o) {
+        //UPDATE ANYTHING THAT RELIES ON MODEL
+        populateTextViews();
+        populateEventList();
+        populateMemberList();
+        return;
+    }
     //endregion
 
 

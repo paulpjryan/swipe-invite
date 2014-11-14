@@ -15,11 +15,12 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Observable;
 
 /**
  * Created by kylekrynski on 10/23/14.
  */
-class Model implements Parcelable {
+class Model extends Observable {
     private static final String LOG_TAG = "MODEL";
 
     //region Constants to wrap the model data into a BaasDocument for later pulldown
@@ -69,6 +70,11 @@ class Model implements Parcelable {
         sprefEdit.putString("model", gsonString);
         sprefEdit.apply();
         Log.d(LOG_TAG, "Saved model for user: " + BaasUser.current().getName());
+        //Notify the observers
+        theModel.setChanged();
+        theModel.notifyObservers();
+        //Save model to server
+        //Pull objects from server
     }
 
     private static Model loadModel(Context context)
@@ -92,87 +98,6 @@ class Model implements Parcelable {
         Log.d(LOG_TAG, "Loaded model for user: " + BaasUser.current().getName());
         return model;
     }
-    //endregion
-
-
-    //region Methods for Parcelable interface
-    public void writeToParcel(Parcel out, int flags) {
-        Log.d(LOG_TAG, "Writing parcelable model.");
-        out.writeTypedList(activeGroups);
-        out.writeTypedList(acceptedEvents);
-        out.writeTypedList(waitingEvents);
-        out.writeTypedList(rejectedEvents);
-        out.writeTypedList(friends);
-        //out.writeValue(currentUser);
-        modelList = new ArrayList<BaasDocument>();
-        modelList.add(model);
-        out.writeTypedList(modelList);
-        //out.writeParcelable(model, flags);
-    }
-
-    public int describeContents() {
-        return 0;
-    }
-
-    public static final Parcelable.Creator<Model> CREATOR
-            = new Parcelable.Creator<Model>() {
-        public Model createFromParcel(Parcel in) {
-            return new Model(in);
-        }
-
-        public Model[] newArray(int size) {
-            return new Model[size];
-        }
-    };
-
-    private Model(Parcel in) {   //Have to check for null object references
-        Log.d(LOG_TAG, "Reading parcelable model.");
-        activeGroups = new ArrayList<Group2>();
-        acceptedEvents = new ArrayList<Event>();
-        waitingEvents = new ArrayList<Event>();
-        rejectedEvents = new ArrayList<Event>();
-        friends = new ArrayList<Acquaintence>();
-        modelList = new ArrayList<BaasDocument>();
-        try {
-            in.readTypedList(activeGroups, Group2.CREATOR);
-        } catch (NullPointerException e) {
-            activeGroups = new ArrayList<Group2>();
-            Log.d(LOG_TAG, "New active group array created.");
-        }
-        try {
-            in.readTypedList(acceptedEvents, Event.CREATOR);
-        } catch (NullPointerException e) {
-            acceptedEvents = new ArrayList<Event>();
-            Log.d(LOG_TAG, "New accepted event array created.");
-        }
-        try {
-            in.readTypedList(waitingEvents, Event.CREATOR);
-        } catch (NullPointerException e) {
-            waitingEvents = new ArrayList<Event>();
-            Log.d(LOG_TAG, "New waiting event array created.");
-        }
-        try {
-            in.readTypedList(rejectedEvents, Event.CREATOR);
-        } catch (NullPointerException e) {
-            rejectedEvents = new ArrayList<Event>();
-            Log.d(LOG_TAG, "New rejected event array created.");
-        }
-        try {
-            in.readTypedList(friends, Acquaintence.CREATOR);
-        } catch (NullPointerException e) {
-            friends = new ArrayList<Acquaintence>();
-            Log.d(LOG_TAG, "New friend array created.");
-        }
-        try {
-            in.readTypedList(modelList, BaasDocument.CREATOR);
-        } catch (NullPointerException e) {
-            modelList = new ArrayList<BaasDocument>();
-            Log.d(LOG_TAG, "New model created, this is bad.");
-        }
-        currentUser = new CurrentUser(BaasUser.current());
-        model = modelList.get(0);
-    }
-
     //endregion
 
 

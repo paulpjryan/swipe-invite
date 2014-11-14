@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 // The standard text view adapter only seems to search from the beginning of whole words
 // so we've had to write this whole class to make it possible to search
@@ -31,6 +33,7 @@ public class GroupsAdapter extends BaseAdapter implements Filterable {
         mInflater = LayoutInflater.from(context);
         GroupsAdapter.selfInstance = this;     //keep track of the instance of this class that is used
     }
+
 
     //region Methods to handle updating the list view from other threads in a static context
     protected static synchronized void updateData(List<Group2> g) {

@@ -29,9 +29,11 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 
-public class LoginActivity2 extends ActionBarActivity {
+public class LoginActivity2 extends ActionBarActivity implements Observer {
     private static final String LOG_TAG = "LOGIN_ACTIVITY";
 
     //region Instance of the model class
@@ -54,6 +56,14 @@ public class LoginActivity2 extends ActionBarActivity {
     //endregion
 
 
+    //region Implementation of observer
+    public void update(Observable ob, Object o) {
+        //UPDATE ANYTHING THAT RELIES ON MODEL
+        return;
+    }
+    //endregion
+
+
     //region Methods for handling the lifecycle of the activity
     @Override
     //Create any view instances here and try to recover a Request token
@@ -72,6 +82,7 @@ public class LoginActivity2 extends ActionBarActivity {
             cloudRT = savedInstanceState.getParcelable(CLOUD_TOKEN_KEY);
             try {
                 model = Model.getInstance(this);
+                model.addObserver(this);
             } catch (Model.ModelException e) {
                 Log.d(LOG_TAG, "Caught a model exception.");
                 model = null;
@@ -179,6 +190,13 @@ public class LoginActivity2 extends ActionBarActivity {
         }
         if (cloudRT != null) {
             outState.putParcelable(CLOUD_TOKEN_KEY, cloudRT);
+        }
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (model != null) {
+            model.deleteObserver(this);
         }
     }
     //endregion

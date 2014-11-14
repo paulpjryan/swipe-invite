@@ -23,7 +23,10 @@ import com.baasbox.android.BaasUser;
 import com.baasbox.android.RequestToken;
 import com.baasbox.android.SaveMode;
 
-public class UserProfileActivity extends ActionBarActivity {
+import java.util.Observable;
+import java.util.Observer;
+
+public class UserProfileActivity extends ActionBarActivity implements Observer {
     private static final String LOG_TAG = "USERPROFILE";
 
     //region Local variables for views
@@ -59,6 +62,7 @@ public class UserProfileActivity extends ActionBarActivity {
             //model = savedInstanceState.getParcelable(MODEL_KEY);
         }
         model = Model.getInstance(this);
+        model.addObserver(this);
         Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
 
         //Setup local variables for the views
@@ -92,12 +96,15 @@ public class UserProfileActivity extends ActionBarActivity {
         }
         if (model == null) {
             model = Model.getInstance(this);
+            model.addObserver(this);
             Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
         }
     }
     @Override
     protected void onStop() {
         super.onStop();
+        Log.d(LOG_TAG, "onStop");
+        model.deleteObserver(this);
     }
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -108,6 +115,15 @@ public class UserProfileActivity extends ActionBarActivity {
         if (saveRT != null) {
             outState.putParcelable(SAVE_TOKEN_KEY, saveRT);
         }
+    }
+    //endregion
+
+
+    //region Implementation of observer
+    public void update(Observable ob, Object o) {
+        //UPDATE ANYTHING THAT RELIES ON MODEL
+        populateViews();
+        return;
     }
     //endregion
 
