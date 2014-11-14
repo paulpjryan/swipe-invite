@@ -2,7 +2,6 @@ package com.team16.swipeinvite;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -330,6 +329,8 @@ public class MainActivity extends ActionBarActivity {
                 fragment = new EventsFragment();
                 break;
         }
+
+
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
 
