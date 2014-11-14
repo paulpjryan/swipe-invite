@@ -1,7 +1,7 @@
 package com.team16.swipeinvite;
 
 /**
- * Created by Tej on 11/6/2014.
+ * Created by Tej on 11/13/2014.
  */
 
 import android.os.Bundle;
@@ -24,13 +24,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 
-public class EventCreationActivity extends ActionBarActivity {
+public class EventEditActivity extends ActionBarActivity{
 
     /* -------------------- LOG TAG CONSTANTS --------------------------- */
-    private final static String LOG_TAG = "EVENT_CREATE_ACT";
+    private final static String LOG_TAG = "EVENT_EDIT_ACT";
     /* -------------------- END LOG TAG CONSTANTS ----------------------- */
 
-    private View EventCreateView;
+    private View EventEditView;
     private TextView eventnameField;
     private TextView locationField;
     private TextView descriptionField;
@@ -41,47 +41,22 @@ public class EventCreationActivity extends ActionBarActivity {
     private DatePicker enddateField;
     private TimePicker endtimeField;
 
-
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_event_creation);
+        setContentView(R.layout.activity_event_edit);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        c = Calendar.getInstance();
-        int year = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH);
-        int day = c.get(Calendar.DATE);
-        int hour = c.get(Calendar.HOUR_OF_DAY);
-        int minute = c.get(Calendar.MINUTE);
-
-
 
         startdateField = (DatePicker) findViewById(R.id.event_start_date);
         starttimeField = (TimePicker) findViewById(R.id.event_start_time);
         enddateField = (DatePicker) findViewById(R.id.event_end_date);
         endtimeField = (TimePicker) findViewById(R.id.event_end_time);
 
-        startdateField.updateDate(year, month, day);
-        starttimeField.setCurrentHour(hour);
-        starttimeField.setCurrentMinute(minute);
-        enddateField.updateDate(year, month, day);
-        endtimeField.setCurrentHour(hour);
-        endtimeField.setCurrentMinute(minute);
-
         eventnameField = (TextView) findViewById(R.id.textView_new_event);
         locationField = (TextView) findViewById(R.id.textView_event_location);
         descriptionField = (TextView) findViewById(R.id.et_edit_event_description);
         submitButton = (Button) findViewById(R.id.button_event_submit);
-
     }
 
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.event_creation, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -98,8 +73,14 @@ public class EventCreationActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void onEventSubmit(View v)
-    {
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        //getMenuInflater().inflate(R.menu.event_edit, menu);
+        return true;
+    }
+
+    public void onEventEdit(View v) {
+
         //showprogress(true)
 
         String eventname = eventnameField.getText().toString();
@@ -123,8 +104,58 @@ public class EventCreationActivity extends ActionBarActivity {
         startDate.clear();
         endDate.clear();
 
-        startDate.set(startyear, startmonth, startday, starthour, startminute);
-        endDate.set(endyear, endmonth, endday, endhour, endminute);
+        if(startmonth == 0)
+            startDate.set(startyear, Calendar.JANUARY, startday, starthour, startminute);
+        else if(startmonth == 1)
+            startDate.set(startyear, Calendar.FEBRUARY, startday, starthour, startminute);
+        else if(startmonth == 2)
+            startDate.set(startyear, Calendar.MARCH, startday, starthour, startminute);
+        else if(startmonth == 3)
+            startDate.set(startyear, Calendar.APRIL, startday, starthour, startminute);
+        else if(startmonth == 4)
+            startDate.set(startyear, Calendar.MAY, startday, starthour, startminute);
+        else if(startmonth == 5)
+            startDate.set(startyear, Calendar.JUNE, startday, starthour, startminute);
+        else if(startmonth == 6)
+            startDate.set(startyear, Calendar.JULY, startday, starthour, startminute);
+        else if(startmonth == 7)
+            startDate.set(startyear, Calendar.AUGUST, startday, starthour, startminute);
+        else if(startmonth == 8)
+            startDate.set(startyear, Calendar.SEPTEMBER, startday, starthour, startminute);
+        else if(startmonth == 9)
+            startDate.set(startyear, Calendar.OCTOBER, startday, starthour, startminute);
+        else if(startmonth == 10)
+            startDate.set(startyear, Calendar.NOVEMBER, startday, starthour, startminute);
+        else if(startmonth == 11)
+            startDate.set(startyear, Calendar.DECEMBER, startday, starthour, startminute);
+
+
+        if(endmonth == 0)
+            endDate.set(endyear, Calendar.JANUARY, endday, endhour, endminute);
+        else if(endmonth == 1)
+            endDate.set(endyear, Calendar.FEBRUARY, endday, endhour, endminute);
+        else if(endmonth == 2)
+            endDate.set(endyear, Calendar.MARCH, endday, endhour, endminute);
+        else if(endmonth == 3)
+            endDate.set(endyear, Calendar.APRIL, endday, endhour, endminute);
+        else if(endmonth == 4)
+            endDate.set(endyear, Calendar.MAY, endday, endhour, endminute);
+        else if(endmonth == 5)
+            endDate.set(endyear, Calendar.JUNE, endday, endhour, endminute);
+        else if(endmonth == 6)
+            endDate.set(endyear, Calendar.JULY, endday, endhour, endminute);
+        else if(endmonth == 7)
+            endDate.set(endyear, Calendar.AUGUST, endday, endhour, endminute);
+        else if(endmonth == 8)
+            endDate.set(endyear, Calendar.SEPTEMBER, endday, endhour, endminute);
+        else if(endmonth == 9)
+            endDate.set(endyear, Calendar.OCTOBER, endday, endhour, endminute);
+        else if(endmonth == 10)
+            endDate.set(endyear, Calendar.NOVEMBER, endday, endhour, endminute);
+        else if(endmonth == 11)
+            endDate.set(endyear, Calendar.DECEMBER, endday, endhour, endminute);
+
+
 
         if (TextUtils.isEmpty(eventname)) {
             Log.d(LOG_TAG, "Name field cannot be blank.");
@@ -139,8 +170,8 @@ public class EventCreationActivity extends ActionBarActivity {
             descriptionField.requestFocus();
             return;
         } else if (TextUtils.isEmpty(location)) {
-           // Log.d(LOG_TAG, "location field cannot be blank.");
-                //showProgress(false);
+            // Log.d(LOG_TAG, "location field cannot be blank.");
+            //showProgress(false);
             //descriptionField.setError("Cannot be left blank");
             //descriptionField.requestFocus();
             description = "TBD";
@@ -160,21 +191,21 @@ public class EventCreationActivity extends ActionBarActivity {
         } else if(endDate.before(startDate)) {
             Log.d(LOG_TAG, "End date must be after start date");
             //showProgress(false);
-            Toast bread = Toast.makeText(EventCreationActivity.this, "End date must be after start date", Toast.LENGTH_LONG);
+            Toast bread = Toast.makeText(EventEditActivity.this, "End date must be after start date", Toast.LENGTH_LONG);
             bread.show();
             enddateField.requestFocus();
             return;
         } else if(startDate.before(currentDate)) {
             Log.d(LOG_TAG, "start date must be after current date");
             //showProgress(false);
-            Toast bread = Toast.makeText(EventCreationActivity.this, "Start date must be after current date", Toast.LENGTH_LONG);
+            Toast bread = Toast.makeText(EventEditActivity.this, "Start date must be after current date", Toast.LENGTH_LONG);
             bread.show();
             startdateField.requestFocus();
             return;
         }
 
-        Toast bread = Toast.makeText(EventCreationActivity.this, "Submitted", Toast.LENGTH_LONG);
+        Toast bread = Toast.makeText(EventEditActivity.this, "Submitted", Toast.LENGTH_LONG);
         bread.show();
-    }
 
+    }
 }

@@ -63,7 +63,7 @@ public class UserProfileActivity extends ActionBarActivity {
 
         //Setup local variables for the views
         usernameField = (EditText) findViewById(R.id.editText_user_username);
-        passwordField = (EditText) findViewById(R.id.editText_user_password);
+        //passwordField = (EditText) findViewById(R.id.editText_user_password);
 		fullnameField = (TextView) findViewById(R.id.editText_user_name);
         emailField = (TextView) findViewById(R.id.editText_user_email);
         genderGroup = (RadioGroup) findViewById(R.id.RadioGroup_gender);

@@ -38,15 +38,6 @@
             android:id="@+id/group_create_group_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Group Name: "
-            android:id="@+id/textView3"
-            android:layout_alignBottom="@+id/textView_group_name"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
 
 
         <EditText
@@ -55,6 +46,8 @@
             android:id="@+id/textView_group_name"
             android:layout_toRightOf="@+id/textView3"
             android:layout_toEndOf="@+id/textView3"
+            android:background="@drawable/textinputborder"
+            android:hint="Group Name"
             android:ems="8"
             android:inputType="textMultiLine"
             android:maxLines="2"
@@ -63,75 +56,84 @@
 
     </LinearLayout>
 
-    <LinearLayout
-            android:id="@+id/group_create_group_type"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/group_create_group_name">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Group Type:"
-            android:id="@+id/textView4"
-            android:layout_marginTop="34dp"
-            android:layout_marginRight="10dp"
-            android:layout_toStartOf="@+id/textView3"
-            android:layout_toLeftOf="@+id/textView3"
-            android:layout_below="@+id/textView_group_name"
-            android:layout_alignRight="@+id/textView3"
-            android:layout_alignEnd="@+id/textView3" />
-
-        <RadioGroup
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/radioGroup">
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Private"
-                android:id="@+id/text_private"
-                android:checked="false"
-                android:layout_marginTop="31dp"
-
-
-                android:onClick="onRadioButtonClicked" />
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Public"
-                android:id="@+id/text_public"
-                android:checked="false"
-                android:layout_below="@+id/text_private"
-                android:layout_alignLeft="@+id/text_private"
-                android:layout_alignStart="@+id/text_private"
-                android:onClick="onRadioButtonClicked" />
-
-        </RadioGroup>
-    </LinearLayout>
 
     <LinearLayout
             android:id="@+id/group_create_group_des"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/group_create_group_type">
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/group_create_group_name">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <EditText
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Description:"
-            android:id="@+id/textView5"
-            android:layout_marginTop="31dp"
-            android:layout_below="@+id/radioGroup"
+            android:inputType="textMultiLine"
+            android:ems="8"
+            android:id="@+id/textView_group_description"
+            android:background="@drawable/textinputborder"
+            android:hint="Description"
+            android:layout_below="@+id/group_create_group_des"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:layout_alignRight="@+id/group_create_group_des"
+            android:layout_alignEnd="@+id/group_create_group_des"
+            android:maxLines="6"
+            android:lines="3"
+            android:maxLength="800"
+            android:onClick="textFieldResponder" />
 
 
     </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/group_create_group_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/group_create_group_des">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Group Type:"
+                android:id="@+id/textView4"
+                android:layout_marginTop="34dp"
+                android:layout_marginRight="10dp"
+                android:layout_toStartOf="@+id/textView3"
+                android:layout_toLeftOf="@+id/textView3"
+                android:layout_below="@+id/textView_group_name"
+                android:layout_alignRight="@+id/textView3"
+                android:layout_alignEnd="@+id/textView3" />
+
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/radioGroup">
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Private"
+                    android:id="@+id/text_private"
+                    android:checked="false"
+                    android:layout_marginTop="31dp"
+
+
+                    android:onClick="onRadioButtonClicked" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Public"
+                    android:id="@+id/text_public"
+                    android:checked="false"
+                    android:layout_below="@+id/text_private"
+                    android:layout_alignLeft="@+id/text_private"
+                    android:layout_alignStart="@+id/text_private"
+                    android:onClick="onRadioButtonClicked" />
+
+            </RadioGroup>
+        </LinearLayout>
 
         <Button
             android:layout_width="wrap_content"
@@ -143,21 +145,7 @@
             android:layout_alignRight="@+id/group_create_group_type"
             android:layout_alignEnd="@+id/group_create_group_type" />
 
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="textMultiLine"
-            android:ems="8"
-            android:id="@+id/textView_group_description"
 
-            android:layout_below="@+id/group_create_group_des"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignRight="@+id/group_create_group_des"
-            android:layout_alignEnd="@+id/group_create_group_des"
-            android:maxLines="6"
-            android:maxLength="800"
-            android:onClick="textFieldResponder" />
 
     </RelativeLayout>
 

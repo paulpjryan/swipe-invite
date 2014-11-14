@@ -43,6 +43,7 @@
                 android:ems="10"
                 android:id="@+id/username_new_login"
                 android:layout_gravity="center_horizontal"
+                android:background="@drawable/textinputborder"
                 android:hint="@string/username_hint_new_login"
                 android:layout_marginTop="20dp"
                 android:onClick="textFieldResponder" />
@@ -54,8 +55,10 @@
                 android:ems="10"
                 android:id="@+id/name_new_login"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:hint="@string/name_hint_new_login"
+                android:background="@drawable/textinputborder"
+
                 android:onClick="textFieldResponder"
                 android:nestedScrollingEnabled="false" />
 
@@ -66,8 +69,9 @@
                 android:ems="10"
                 android:id="@+id/email_new_login"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:hint="@string/email_hint_new_login"
+                android:background="@drawable/textinputborder"
                 android:onClick="textFieldResponder" />
 
             <EditText
@@ -77,8 +81,9 @@
                 android:ems="10"
                 android:id="@+id/password_new_login"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:hint="@string/password_hint_new_login"
+                android:background="@drawable/textinputborder"
                 android:password="false"
                 android:onClick="textFieldResponder" />
 
