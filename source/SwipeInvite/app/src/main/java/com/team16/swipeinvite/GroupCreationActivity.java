@@ -178,9 +178,6 @@ public class GroupCreationActivity extends ActionBarActivity {
         if (updateRT != null) {
             outState.putParcelable(UPDATE_TOKEN_KEY, updateRT);
         }
-        if (model != null) {
-            outState.putParcelable(MODEL_KEY, model);
-        }
         if (newGroup != null) {
             outState.putParcelable(GROUP_KEY, newGroup);
         }
@@ -320,7 +317,6 @@ public class GroupCreationActivity extends ActionBarActivity {
             //Update model, return to main activity
             //model.activeGroups.add(newGroup);      //OLD way
             model.getActiveGroups().add(newGroup);    //Synchronized meth. 1
-            GroupsAdapter.updateData(model.getActiveGroups());
             returnToMainSuccess();
             return;
         }
@@ -401,7 +397,6 @@ public class GroupCreationActivity extends ActionBarActivity {
             Log.d(LOG_TAG, "Created public group.");
             //model.activeGroups.add(newGroup);    //OLD Methodology
             model.getActiveGroups().add(newGroup);     //Synchronized methodology 1
-            GroupsAdapter.updateData(model.getActiveGroups());
             returnToMainSuccess();
             return;
         }
@@ -431,7 +426,6 @@ public class GroupCreationActivity extends ActionBarActivity {
     private void returnToMainSuccess() {
         showProgress(false);
         Intent returnIntent = new Intent();
-        //returnIntent.putExtra(MODEL_INTENT_KEY, model);
         Model.saveModel(this);
         setResult(RESULT_OK, returnIntent);
         finish();

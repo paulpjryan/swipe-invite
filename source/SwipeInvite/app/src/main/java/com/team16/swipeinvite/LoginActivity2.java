@@ -58,7 +58,13 @@ public class LoginActivity2 extends ActionBarActivity implements Observer {
 
     //region Implementation of observer
     public void update(Observable ob, Object o) {
-        //UPDATE ANYTHING THAT RELIES ON MODEL
+        //NEED TO RUN ON UI THREAD
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //UPDATE ANYTHING THAT RELIES ON MODEL
+            }
+        });
         return;
     }
     //endregion

@@ -148,9 +148,15 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
     //region Implementation of observer
     public void update(Observable ob, Object o) {
         //UPDATE ANYTHING THAT RELIES ON MODEL
-        populateTextViews();
-        populateEventList();
-        populateMemberList();
+        //NEED TO RUN ON UI THREAD
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                populateTextViews();
+                populateEventList();
+                populateMemberList();
+            }
+        });
         return;
     }
     //endregion
@@ -553,9 +559,6 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
             return;
         }
         g.setBaasDocument(u);    //Actually put the change into the model
-
-        //Notify the GroupFragment that a change has occurred
-        GroupsAdapter.updateData(lG);
 
         //Save the Model
         Model.saveModel(this);

@@ -169,7 +169,14 @@ public class MainActivity extends ActionBarActivity implements Observer {
 
     //region Implementation of observer
     public void update(Observable ob, Object o) {
-        //UPDATE ANYTHING THAT RELIES ON MODEL
+        //NEEDS TO RUN ON UI THREAD
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //UPDATE ANYTHING THAT RELIES ON MODEL
+                GroupsAdapter.updateData(model.getActiveGroups());
+            }
+        });
         return;
     }
     //endregion

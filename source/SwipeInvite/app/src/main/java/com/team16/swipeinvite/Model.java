@@ -1,5 +1,6 @@
 package com.team16.swipeinvite;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Parcel;
@@ -74,7 +75,6 @@ class Model extends Observable {
         theModel.setChanged();
         theModel.notifyObservers();
         //Save model to server
-        //Pull objects from server
     }
 
     private static Model loadModel(Context context)

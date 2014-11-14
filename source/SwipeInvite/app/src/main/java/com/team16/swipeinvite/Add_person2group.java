@@ -410,11 +410,9 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
             //Update the local group
             g.setBaasDocument(result.value());
 
-            //Notify the Group Adapter
-            GroupsAdapter.updateData(lG);
-
             //Save the model
             Model.saveModel(this);
+
         } else if (result.isCanceled()) {
             Log.d(LOG_TAG, "Save cancelled.");
             return;
