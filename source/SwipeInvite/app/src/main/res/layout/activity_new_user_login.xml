@@ -87,6 +87,19 @@
                 android:password="false"
                 android:onClick="textFieldResponder" />
 
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:ems="10"
+                android:id="@+id/password_new_confirm"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:hint="Confirm Password"
+                android:background="@drawable/textinputborder"
+                android:password="false"
+                android:onClick="textFieldResponder" />
+
             <RadioGroup
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

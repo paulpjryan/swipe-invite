@@ -46,6 +46,7 @@ public class NewUserLoginActivity extends Activity {
     private EditText nameField;
     private EditText emailField;
     private EditText passwordField;
+    private EditText confirmPasswordField;
     private Button submitButton;
     private RadioGroup radGroup;
     //The status display
@@ -80,6 +81,7 @@ public class NewUserLoginActivity extends Activity {
         nameField = (EditText) findViewById(R.id.name_new_login);
         emailField = (EditText) findViewById(R.id.email_new_login);
         passwordField = (EditText) findViewById(R.id.password_new_login);
+        confirmPasswordField = (EditText) findViewById(R.id.password_new_confirm);
         submitButton = (Button) findViewById(R.id.create_user_button);
         radGroup = (RadioGroup) findViewById(R.id.radioGroup_male_female);
 
@@ -163,6 +165,7 @@ public class NewUserLoginActivity extends Activity {
         String name = nameField.getText().toString();
         String email = emailField.getText().toString();
         String password = passwordField.getText().toString();
+        String confirmpassword = confirmPasswordField.getText().toString();
 
         //Catch faulty inputs
         if (TextUtils.isEmpty(username)) {
@@ -212,6 +215,12 @@ public class NewUserLoginActivity extends Activity {
             Log.d(LOG_TAG, "Gender cannot be empty");
             showProgress(false);
             radGroup.requestFocus();
+            return;
+        } else if (!(password.equals(confirmpassword)) ) {
+            Log.d(LOG_TAG, "Passwords do not match");
+            showProgress(false);
+            confirmPasswordField.setError("Password does not match");
+            confirmPasswordField.requestFocus();
             return;
         }
         //Create new user based on fields
