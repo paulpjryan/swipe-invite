@@ -94,9 +94,10 @@ public class GroupsFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id)
             {
-                Intent intent = new Intent(getActivity(), GroupEditActivity.class);
-                //ADD ARGUMENTS
-                startActivity(intent);
+                //Figure out which group is being referred to and pass it to the activity
+                Group2 g = (Group2) mArrayAdapter.getItem(position);
+                //Call the method in the main activity to start the group edit activity
+                ((MainActivity) getActivity()).startGroupEdit(g.getId());
             }
         });
 

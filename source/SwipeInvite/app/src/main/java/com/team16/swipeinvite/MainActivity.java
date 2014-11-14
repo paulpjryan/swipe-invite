@@ -42,7 +42,7 @@ public class MainActivity extends ActionBarActivity {
 
 
     //region Local variable for the model
-    protected Model model;
+    private Model model;
     private static final String MODEL_KEY = "model_d";
     private static final String MODEL_INTENT_KEY = "model_data";
     //endregion
@@ -181,6 +181,13 @@ public class MainActivity extends ActionBarActivity {
     //endregion
 
 
+    protected void startGroupEdit(String id) {
+        Intent intent = new Intent(this, GroupEditActivity.class);
+        intent.putExtra("id", id);
+        startActivityForResult(intent, GROUP_EDIT_REQUEST_CODE);
+    }
+
+
     //region Method to start the profile edit activity
     private void startProfileEdit() {
         //Create the intent
@@ -193,6 +200,7 @@ public class MainActivity extends ActionBarActivity {
     //region Method to handle returning results from side activities around the main
     private static final int GROUP_CREATE_REQUEST_CODE = 1;
     private static final int PROFILE_EDIT_REQUEST_CODE = 2;
+    private static final int GROUP_EDIT_REQUEST_CODE = 3;
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //Figure out which activity is returning a result
         switch (requestCode) {
@@ -211,6 +219,13 @@ public class MainActivity extends ActionBarActivity {
                     Log.d(LOG_TAG, "Got ok result from profile edit.");
                 } else if (resultCode == RESULT_CANCELED) {
                     Log.d(LOG_TAG, "Got canceled result from profile edit, bad.");
+                }
+                break;
+            case GROUP_EDIT_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    Log.d(LOG_TAG, "Got ok result from group edit.");
+                } else if (resultCode == RESULT_CANCELED) {
+                    Log.d(LOG_TAG, "Got canceled result from group edit, bad.");
                 }
                 break;
             default:
@@ -255,16 +270,19 @@ public class MainActivity extends ActionBarActivity {
         }
         // Handle action buttons
         switch(item.getItemId()) {
+            // Logout
             case R.id.action_logout:
+                //Decide how to logout
                 startLoginScreen();
                 return true;
+
             // User profile
             case R.id.action_profile:
+                //Start user profile activity
                 startProfileEdit();
                 return true;
 
             // Search Group
-
             case R.id.action_search_group:
                 Intent intent_sg = new Intent(this,SearchGroupActivity.class);
                 if (intent_sg.resolveActivity(getPackageManager()) != null) {
@@ -275,11 +293,13 @@ public class MainActivity extends ActionBarActivity {
                 }
                 return true;
 
+            // Create Group
             case R.id.action_create_group:
                 //Start the group creation activity
                 startGroupCreate();
                 return true;
 
+            // Create Event
             case R.id.action_event_creation:
                 Intent intent_sg2 = new Intent(this,EventCreationActivity.class);
                 if (intent_sg2.resolveActivity(getPackageManager()) != null) {

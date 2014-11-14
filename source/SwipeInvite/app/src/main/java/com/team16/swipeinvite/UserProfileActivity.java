@@ -164,7 +164,6 @@ public class UserProfileActivity extends ActionBarActivity {
             Log.d(LOG_TAG, "Navigating away from profile edit, return OK.");
             progressSpinner.setVisibility(View.GONE);
             Intent returnIntent = new Intent();
-            //returnIntent.putExtra(MODEL_INTENT_KEY, model);
             setResult(RESULT_OK, returnIntent);
         } else {
             Log.d(LOG_TAG, "Navigating away from profile edit, return CANCEL.");
@@ -172,7 +171,6 @@ public class UserProfileActivity extends ActionBarActivity {
             Intent returnIntent = new Intent();
             setResult(RESULT_CANCELED, returnIntent);
         }
-        finish();
     }
     //endregion
 
@@ -180,6 +178,13 @@ public class UserProfileActivity extends ActionBarActivity {
     //region Method for clicking the submit button
     public void onClickListener(View v)
     {
+        //Make sure to avoid the spamming of the submit button
+        if (saveRT != null) {
+            Log.d(LOG_TAG, "Preventing spam of submit button.");
+            Toast.makeText(this, "Already contacting server...", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         progressSpinner.setVisibility(View.VISIBLE);
         //show progress here **************************************
 

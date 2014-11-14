@@ -70,7 +70,12 @@ public class LoginActivity2 extends ActionBarActivity {
             groupRT = savedInstanceState.getParcelable(GROUP_TOKEN_KEY);
             eventRT = savedInstanceState.getParcelable(EVENT_TOKEN_KEY);
             cloudRT = savedInstanceState.getParcelable(CLOUD_TOKEN_KEY);
-            model = Model.getInstance(this);
+            try {
+                model = Model.getInstance(this);
+            } catch (Model.ModelException e) {
+                Log.d(LOG_TAG, "Caught a model exception.");
+                model = null;
+            }
         }
 
         //Check for google play services
@@ -352,7 +357,7 @@ public class LoginActivity2 extends ActionBarActivity {
             //There is friend profiles, retrieve them
             BaasQuery fquery = BaasQuery.builder().build();
             for (String s : model.getIdList().get(5)) {
-                fquery = fquery.buildUpon().or("name=" + "'" + s + "'").build();
+                fquery = fquery.buildUpon().or("user.name=" + "'" + s + "'").build();
             }
             Log.d(LOG_TAG, "Friend list request sent.");
             friendRT = BaasUser.fetchAll(fquery.buildUpon().criteria(), onFriendComplete);
@@ -491,15 +496,15 @@ public class LoginActivity2 extends ActionBarActivity {
                     if (model.getIdList().get(i).contains(e.getId())) {      //If it contains the current event ID, add event
                         switch (i) {
                             case 1:
-                                model.acceptedEvents.add(e);
+                                model.getAcceptedEvents().add(e);
                                 Log.d(LOG_TAG, "Added event to accepted.");
                                 break;
                             case 2:
-                                model.waitingEvents.add(e);
+                                model.getWaitingEvents().add(e);
                                 Log.d(LOG_TAG, "Added event to waiting.");
                                 break;
                             case 3:
-                                model.rejectedEvents.add(e);
+                                model.getRejectedEvents().add(e);
                                 Log.d(LOG_TAG, "Added event to rejected.");
                                 break;
                             default:
@@ -550,7 +555,7 @@ public class LoginActivity2 extends ActionBarActivity {
         //Convert all received user profiles to local objects and store them
         for (BaasUser u : f) {
             Acquaintence a = new Acquaintence(u);
-            model.friends.add(a);
+            model.getFriends().add(a);
             Log.d(LOG_TAG, "Added friends to list.");
         }
         if (friendRT == null && eventRT == null && groupRT == null && cloudRT == null) {
