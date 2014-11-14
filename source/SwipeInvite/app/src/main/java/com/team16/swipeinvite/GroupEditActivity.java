@@ -158,8 +158,9 @@ public class GroupEditActivity extends ActionBarActivity {
         descriptionField.setText(g.getDescription());
         if (g.isPrivate()) {
             groupTypeField.setText("private");
+        } else {
+            groupTypeField.setText("public");
         }
-        groupTypeField.setText("public");
 
         //Decide whether or not the user has access to edit
         boolean perm = false;
