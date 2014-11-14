@@ -64,7 +64,6 @@ public class LogoutActivity extends ActionBarActivity implements Observer {
             model = getIntent().getParcelableExtra("model_data");
         } */
         model = Model.getInstance(this);
-        model.addObserver(this);
         Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
 
         //Setup the form views
@@ -91,9 +90,9 @@ public class LogoutActivity extends ActionBarActivity implements Observer {
         }
         if (model == null) {
             model = Model.getInstance(this);
-            model.addObserver(this);
             Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
         }
+        model.addObserver(this);
     }
     @Override
     protected void onPause() {
@@ -131,7 +130,13 @@ public class LogoutActivity extends ActionBarActivity implements Observer {
 
     //region Implementation of observer
     public void update(Observable ob, Object o) {
-        //UPDATE ANYTHING THAT RELIES ON MODEL
+        //MAKE SURE TO RUN ON UI THREAD
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //UPDATE ANYTHING THAT RELIES ON MODEL
+            }
+        });
         return;
     }
     //endregion

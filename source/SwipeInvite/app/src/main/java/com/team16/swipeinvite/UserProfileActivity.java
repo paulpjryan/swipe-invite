@@ -62,7 +62,6 @@ public class UserProfileActivity extends ActionBarActivity implements Observer {
             //model = savedInstanceState.getParcelable(MODEL_KEY);
         }
         model = Model.getInstance(this);
-        model.addObserver(this);
         Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
 
         //Setup local variables for the views
@@ -76,8 +75,6 @@ public class UserProfileActivity extends ActionBarActivity implements Observer {
         progressSpinner = (ProgressBar) findViewById(R.id.progressBar_user_profile);
         progressSpinner.setVisibility(View.GONE);
 
-        //Populate the views with data from the model
-        populateViews();
 	}
     @Override
     protected void onPause() {
@@ -96,9 +93,11 @@ public class UserProfileActivity extends ActionBarActivity implements Observer {
         }
         if (model == null) {
             model = Model.getInstance(this);
-            model.addObserver(this);
             Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
         }
+        model.addObserver(this);
+        //Populate the views with data from the model
+        populateViews();
     }
     @Override
     protected void onStop() {
@@ -121,8 +120,14 @@ public class UserProfileActivity extends ActionBarActivity implements Observer {
 
     //region Implementation of observer
     public void update(Observable ob, Object o) {
-        //UPDATE ANYTHING THAT RELIES ON MODEL
-        populateViews();
+        //MAKE SURE TO RUN ON UI THREAD
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //UPDATE ANYTHING THAT RELIES ON MODEL
+                populateViews();
+            }
+        });
         return;
     }
     //endregion
@@ -303,7 +308,7 @@ public class UserProfileActivity extends ActionBarActivity implements Observer {
         Model.saveModel(this);
 
         //Reload the views
-        populateViews();
+        //populateViews();  SHOULDN'T NEED TO DO THIS AFTER MODEL SAVE
 
         //Toast user success
         Toast.makeText(getApplicationContext(), "Profile updated.", Toast.LENGTH_SHORT).show();

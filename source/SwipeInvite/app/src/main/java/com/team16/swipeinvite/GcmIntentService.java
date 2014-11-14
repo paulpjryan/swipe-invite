@@ -30,11 +30,6 @@ public class GcmIntentService extends IntentService {
     private static final String LOG_TAG = "GCM_SERVICE";
 
 
-    //region Local instance variable for the model
-    //private Model model;
-    //endregion
-
-
     //region Constructor for service
     public GcmIntentService() {
         super("GcmIntentService");
@@ -80,13 +75,14 @@ public class GcmIntentService extends IntentService {
                 Log.d(LOG_TAG, "Message 3: " + message3);
                 String type = message3.getString("type");
                 String id = message3.getString("id");
+                String notificationMessage = extras.getString("message", "Something happened.");
                 if (type.equals("group")) {    //Check if a group was received
                     //Attempt to pulldown a group object from the server
                     BaasResult<BaasDocument> result = BaasDocument.fetchSync(type, id);
                     if (result.isFailed()) {
                         Log.d(LOG_TAG, "Group fetch failed: " + result.error());
                     } else if (result.isSuccess()) {
-                        completeGroup(result.value());
+                        completeGroup(result.value(), notificationMessage);
                     }
 
                 } else if (type.equals("event")) {    //Check if an event was received
@@ -110,7 +106,7 @@ public class GcmIntentService extends IntentService {
 
 
     //region Methods for dealing with completed document requests
-    private void completeGroup(BaasDocument d) {
+    private void completeGroup(BaasDocument d, String message) {
         //Put BaasDocument into Group class and handle the model
         Group2 g = new Group2(d);
         Log.d(LOG_TAG, "Received group: " + g.getName());
@@ -141,17 +137,8 @@ public class GcmIntentService extends IntentService {
         Model.saveModel(this);
 
         //Notify the user of the change
-        String title;
-        String message;
-        if (!added) {
-            Log.d(LOG_TAG, "Group Joined.");
-            title = "Group Joined";
-            message = "You have been added to " + g.getName() + ".";
-        } else {
-            Log.d(LOG_TAG, "Group Updated.");
-            title = "Group Updated";
-            message = g.getName() + " has been updated.";
-        }
+        String title = g.getName();
+
         sendNotification(message, title);
     }
 

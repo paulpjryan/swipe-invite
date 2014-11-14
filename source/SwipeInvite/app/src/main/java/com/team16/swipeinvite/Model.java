@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.baasbox.android.BaasDocument;
 import com.baasbox.android.BaasUser;
@@ -17,11 +18,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Created by kylekrynski on 10/23/14.
  */
-class Model extends Observable {
+class Model {
     private static final String LOG_TAG = "MODEL";
 
     //region Constants to wrap the model data into a BaasDocument for later pulldown
@@ -60,7 +62,20 @@ class Model extends Observable {
         }
         //context = context.getApplicationContext();
         Gson gson = new Gson();
-        String gsonString = gson.toJson(theModel);
+        String gsonString;
+        //Remove the observers from the model while saving
+        ArrayList<Observer> o = new ArrayList<Observer>();
+        o.addAll(theModel.getObservers());
+        theModel.deleteObservers();
+        try {
+            gsonString = gson.toJson(theModel);
+        } catch (Exception e) {
+            Log.d(LOG_TAG, "Caught something weird: " + e.getMessage());
+            Toast.makeText(context, "Data corrupted, please contact admin.", Toast.LENGTH_LONG).show();
+            return;
+        }
+        //Put the observers back
+        theModel.setObservers(o);
         Log.d(LOG_TAG, "Model saved: " + gsonString);
         //String gsonString = gson.toJson(this);
         //Log.d(LOG_TAG, "Context: " + context.toString());
@@ -72,7 +87,6 @@ class Model extends Observable {
         sprefEdit.apply();
         Log.d(LOG_TAG, "Saved model for user: " + BaasUser.current().getName());
         //Notify the observers
-        theModel.setChanged();
         theModel.notifyObservers();
         //Save model to server
     }
@@ -95,6 +109,14 @@ class Model extends Observable {
         }
         Log.d(LOG_TAG, "Model loaded: " + gsonString);
         Model model = gson.fromJson(gsonString, Model.class);
+        try {
+            model.activeGroups.get(0).getUserList();
+        } catch (Exception e) {
+            Log.d(LOG_TAG, "Model not working: " + e.getMessage());
+            Toast.makeText(context, "Data corrupted, please contact admin.", Toast.LENGTH_LONG).show();
+            return model;
+        }
+
         Log.d(LOG_TAG, "Loaded model for user: " + BaasUser.current().getName());
         return model;
     }
@@ -127,6 +149,7 @@ class Model extends Observable {
                 theModel = new Model();
             }
         }
+        Log.d(LOG_TAG, "Giving model to something.");
         return theModel;
     }
     protected static void dumpInstance() {
@@ -135,6 +158,33 @@ class Model extends Observable {
     protected static Model resetInstance() {
         theModel = new Model();
         return theModel;
+    }
+    //endregion
+
+
+    //region Methods to deal with observers
+    private ArrayList<Observer> observers = new ArrayList<Observer>();
+    protected void addObserver(Observer o) {
+        Log.d(LOG_TAG, "Added observer to model.");
+        this.observers.add(o);
+    }
+    protected void deleteObserver(Observer o) {
+        Log.d(LOG_TAG, "Removed observer from model.");
+        this.observers.remove(o);
+    }
+    private void notifyObservers() {
+        for (Observer x : observers) {
+            x.update(new Observable() , new Object());
+        }
+    }
+    private static ArrayList<Observer> getObservers() {
+        return theModel.observers;
+    }
+    private void deleteObservers() {
+        this.observers = null;
+    }
+    private void setObservers(ArrayList<Observer> o) {
+        this.observers = o;
     }
     //endregion
 

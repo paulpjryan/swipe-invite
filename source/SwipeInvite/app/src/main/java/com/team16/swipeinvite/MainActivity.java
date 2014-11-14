@@ -68,7 +68,6 @@ public class MainActivity extends ActionBarActivity implements Observer {
 
         //Load the model
         model = Model.getInstance(this);
-        model.addObserver(this);
         Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
 
         setContentView(R.layout.activity_main);
@@ -133,14 +132,16 @@ public class MainActivity extends ActionBarActivity implements Observer {
         checkPlayServices();    //Make sure user still has valid play service
         if (model == null) {
             model = Model.getInstance(this);
-            model.addObserver(this);
             Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
         }
+        model.addObserver(this);
         if (BaasUser.current() == null){    //Check if somehow the user got logged out
             model = null;    //nullify the model because something bad has happened to the user
             startLoginScreen();
             return;
         }
+        //Refresh any views
+        refresh();
     }
     @Override
     protected void onPause() {
@@ -173,14 +174,21 @@ public class MainActivity extends ActionBarActivity implements Observer {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                //UPDATE ANYTHING THAT RELIES ON MODEL
-                GroupsAdapter.updateData(model.getActiveGroups());
+                //Refresh views
+                refresh();
             }
         });
         return;
     }
     //endregion
 
+
+    //region Method to refresh any views
+    private void refresh(){
+        //UPDATE ANYTHING THAT RELIES ON MODEL
+        GroupsAdapter.updateData(model.getActiveGroups());
+    }
+    //endregion
 
 
     //region Method to start the login screen, either on new startup or on logout button push
@@ -234,8 +242,7 @@ public class MainActivity extends ActionBarActivity implements Observer {
             case GROUP_CREATE_REQUEST_CODE:    //Group Create activity result
                 if(resultCode == RESULT_OK) {
                     Log.d(LOG_TAG, "Got ok result from group creation.");
-                    //NEED TO REPOPULATE FRAGMENT IF IT IS ACTIVE
-                    //selectItem(2);    NO LONGER NEEDED WITH UPDATE IN GROUP ADAPTER
+                    //NOTHING SPECIAL TO DO
                 } else if (resultCode == RESULT_CANCELED) {
                     Log.d(LOG_TAG, "Got canceled result from group creation.");
                     //DO NOTHING

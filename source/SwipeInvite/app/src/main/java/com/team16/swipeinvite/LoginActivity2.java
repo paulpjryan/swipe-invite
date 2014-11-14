@@ -33,7 +33,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 
-public class LoginActivity2 extends ActionBarActivity implements Observer {
+public class LoginActivity2 extends ActionBarActivity {
     private static final String LOG_TAG = "LOGIN_ACTIVITY";
 
     //region Instance of the model class
@@ -56,20 +56,6 @@ public class LoginActivity2 extends ActionBarActivity implements Observer {
     //endregion
 
 
-    //region Implementation of observer
-    public void update(Observable ob, Object o) {
-        //NEED TO RUN ON UI THREAD
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                //UPDATE ANYTHING THAT RELIES ON MODEL
-            }
-        });
-        return;
-    }
-    //endregion
-
-
     //region Methods for handling the lifecycle of the activity
     @Override
     //Create any view instances here and try to recover a Request token
@@ -88,7 +74,6 @@ public class LoginActivity2 extends ActionBarActivity implements Observer {
             cloudRT = savedInstanceState.getParcelable(CLOUD_TOKEN_KEY);
             try {
                 model = Model.getInstance(this);
-                model.addObserver(this);
             } catch (Model.ModelException e) {
                 Log.d(LOG_TAG, "Caught a model exception.");
                 model = null;
@@ -202,7 +187,6 @@ public class LoginActivity2 extends ActionBarActivity implements Observer {
     protected void onStop() {
         super.onStop();
         if (model != null) {
-            model.deleteObserver(this);
         }
     }
     //endregion
