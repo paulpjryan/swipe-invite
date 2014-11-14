@@ -20,12 +20,16 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baasbox.android.BaasBox;
+import com.baasbox.android.BaasCloudMessagingService;
 import com.baasbox.android.BaasDocument;
 import com.baasbox.android.BaasHandler;
 import com.baasbox.android.BaasResult;
 import com.baasbox.android.BaasUser;
 import com.baasbox.android.RequestToken;
 import com.baasbox.android.SaveMode;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import java.util.List;
 
@@ -67,12 +71,18 @@ public class NewUserLoginActivity extends Activity {
             signInRT = savedInstanceState.getParcelable(SIGN_IN_TOKEN_KEY);
             groupRT = savedInstanceState.getParcelable(GROUP_TOKEN_KEY);
             modelRT = savedInstanceState.getParcelable(MODEL_TOKEN_KEY);
+            cloudRT = savedInstanceState.getParcelable(CLOUD_TOKEN_KEY);
             try {
                 model = Model.getInstance(this);
             } catch (Model.ModelException e) {
                 Log.d(LOG_TAG, "Caught a model exception.");
                 model = null;
             }
+        }
+
+        //Check for google play services
+        if (!checkPlayServices()) {
+            return;
         }
 
         //Setup the form view variables
@@ -93,12 +103,16 @@ public class NewUserLoginActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        checkPlayServices();   //Need to check for valid google play services
         if (signInRT != null) {
             showProgress(true);
             signInRT.resume(onComplete);
         } else if (groupRT != null) {
             showProgress(true);
             groupRT.resume(onGroupComplete);
+        } else if (cloudRT != null) {
+            showProgress(true);
+            cloudRT.resume(onCloudComplete);
         } else if (modelRT != null) {
             showProgress(true);
             modelRT.resume(onModelComplete);
@@ -114,6 +128,9 @@ public class NewUserLoginActivity extends Activity {
         } else if (groupRT != null) {
             showProgress(false);
             groupRT.suspend();
+        } else if (cloudRT != null) {
+            showProgress(true);
+            cloudRT.suspend();
         } else if (modelRT != null) {
             showProgress(false);
             modelRT.suspend();
@@ -128,6 +145,8 @@ public class NewUserLoginActivity extends Activity {
             outState.putParcelable(SIGN_IN_TOKEN_KEY, signInRT);
         } else if (groupRT != null) {
             outState.putParcelable(GROUP_TOKEN_KEY, groupRT);
+        } else if (cloudRT != null) {
+            outState.putParcelable(CLOUD_TOKEN_KEY, cloudRT);
         } else if (modelRT != null) {
             outState.putParcelable(MODEL_TOKEN_KEY, modelRT);
         }
@@ -331,11 +350,40 @@ public class NewUserLoginActivity extends Activity {
             return;
         }
         model.getActiveGroups().get(0).setBaasDocument(g);
-        //model.activeGroups.get(0).setBaasDocument(g);   //set the personal group from server object
 
-        //Convert the model object to a server version for storage on server
-        modelRT = model.toServerVersion().save(SaveMode.IGNORE_VERSION, onModelComplete);
+        //Send the cloud setup
+        BaasCloudMessagingService box = BaasBox.messagingService();
+        cloudRT = box.enable(onCloudComplete);
     }
+    //endregion
+
+
+    //region Variables and methods to deal with cloud signup
+    private static final String CLOUD_TOKEN_KEY = "cloud";
+    private RequestToken cloudRT;
+    private final BaasHandler<Void> onCloudComplete = new BaasHandler<Void>() {
+        @Override
+        public void handle(BaasResult<Void> result) {
+            cloudRT = null;
+            if (result.isFailed()) {
+                //NOTIFY USER OF ERROR
+                Log.d(LOG_TAG, "Server request error: " + result.error());
+                showProgress(false);
+                return;
+            } else if (result.isSuccess()) {
+                //COMPLETE THE  CLOUD SIGNUP
+                Log.d(LOG_TAG, "Cloud request received.");
+                //Save model to server
+                //Convert the model object to a server version for storage on server
+                modelRT = model.toServerVersion().save(SaveMode.IGNORE_VERSION, onModelComplete);
+
+                return;
+            }
+            Log.d(LOG_TAG, "Server request weird: " + result.toString());
+            showProgress(false);
+            return;
+        }
+    };
     //endregion
 
 
@@ -404,6 +452,25 @@ public class NewUserLoginActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+    //endregion
+
+
+    //region Method and variables to check if a valid Google play services is found
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Log.i(LOG_TAG, "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
     }
     //endregion
 

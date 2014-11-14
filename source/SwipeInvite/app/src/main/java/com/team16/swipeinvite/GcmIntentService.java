@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
@@ -71,8 +72,14 @@ public class GcmIntentService extends IntentService {
                     MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 Log.d(LOG_TAG, "Receieved message: " + extras.toString());
                 //Parse the type and id of the group / event from the message
-                String type = extras.getString("type");
-                String id = extras.getString("id");
+                String message1 = extras.getString("custom");
+                Log.d(LOG_TAG, "Message 1: " + message1);
+                JsonObject message2 = JsonObject.decode(message1);
+                Log.d(LOG_TAG, "Message 2: " + message2);
+                JsonObject message3 = message2.getObject("custom");
+                Log.d(LOG_TAG, "Message 3: " + message3);
+                String type = message3.getString("type");
+                String id = message3.getString("id");
                 if (type.equals("group")) {    //Check if a group was received
                     //Attempt to pulldown a group object from the server
                     BaasResult<BaasDocument> result = BaasDocument.fetchSync(type, id);
@@ -117,6 +124,8 @@ public class GcmIntentService extends IntentService {
             for (final ListIterator<Group2> i = activeGroups.listIterator(); i.hasNext();) {    //Setting up the iterator for each loop
                 final Group2 current = i.next();    //need to get current group
                 if (current.equals(g)) {
+                    Log.d(LOG_TAG, "Found group to replace: " + g.getName() + ",  " + g.getId());
+                    Log.d(LOG_TAG, "Old group replaced: " + current.getName() + ",  " + current.getId());
                     i.set(g);   //Replace the old group for the new one
                     added = true;
                     break;
@@ -124,6 +133,7 @@ public class GcmIntentService extends IntentService {
             }
         }
         if (!added) {
+            Log.d(LOG_TAG, "Group added: " + g.getName() + ",  " + g.getId());
             activeGroups.add(g);    //Add the received group if it is new
         }
         //Notify the List Views of a change
@@ -136,9 +146,11 @@ public class GcmIntentService extends IntentService {
         String title;
         String message;
         if (!added) {
+            Log.d(LOG_TAG, "Group Joined.");
             title = "Group Joined";
             message = "You have been added to " + g.getName() + ".";
         } else {
+            Log.d(LOG_TAG, "Group Updated.");
             title = "Group Updated";
             message = g.getName() + " has been updated.";
         }
@@ -158,6 +170,7 @@ public class GcmIntentService extends IntentService {
     public static final int NOTIFICATION_ID = 1;
     private NotificationManager mNotificationManager;
     private void sendNotification(String msg, String title) {
+        Log.d(LOG_TAG, "Sending notification.");
         mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -169,7 +182,8 @@ public class GcmIntentService extends IntentService {
                         .setContentTitle(title)
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(msg))
-                        .setContentText(msg);
+                        .setContentText(msg).setSmallIcon(R.drawable.ic_launcher);
+        Log.d(LOG_TAG, "Built notification: " + mBuilder);
 
         mBuilder.setContentIntent(contentIntent);
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
