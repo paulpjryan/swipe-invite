@@ -1,6 +1,7 @@
 package com.team16.swipeinvite;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import java.util.List;
 // so we've had to write this whole class to make it possible to search
 // for parts of the arbitrary string we want
 public class GroupsAdapter extends BaseAdapter implements Filterable {
+    private static final String LOG_TAG = "Groups_Adapter";
 
     private List<Group2>originalData = null;
     private List<Group2>filteredData = null;
@@ -35,8 +37,14 @@ public class GroupsAdapter extends BaseAdapter implements Filterable {
         if (selfInstance == null) {
             return;
         }
+        Log.d(LOG_TAG, "Received request to update list view.");
         selfInstance.originalData = g;
-        selfInstance.notifyDataSetChanged();
+        try {
+            selfInstance.notifyDataSetChanged();
+        } catch (Exception e) {
+            Log.d(LOG_TAG, "Caught exception: " + e.toString());
+            return;
+        }
     }
     //endregion
 
