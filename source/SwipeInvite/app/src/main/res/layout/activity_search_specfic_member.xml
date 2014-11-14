@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#80000000"
+
+    xmlns:tools="http://schemas.android.com/tools"
+
+
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.team16.swipeinvite.group_edit">
+
+    <!--
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+    -->
+
+
+    <LinearLayout
+        android:id="@+id/linearLayout_profile_group_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Group Name:"
+            android:id="@+id/textView"
+            android:layout_weight="2"
+            android:gravity="center_vertical"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="8"
+            android:id="@+id/textView_new_group"
+            android:layout_weight="8"
+            android:maxLength="35"
+            android:maxLines="2" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout_profile_group_nameType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/linearLayout_profile_group_name"
+        android:weightSum="8">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Group Type: "
+            android:layout_weight="2"
+            android:gravity="center_vertical"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="8"
+            android:id="@+id/textView_new_group_type"
+            android:layout_weight="6"
+            android:maxLength="35"
+            android:maxLines="2"
+            android:enabled="false"
+            />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/linearLayout_profile_group_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/linearLayout_profile_group_nameType"
+        android:weightSum="8">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Description: "
+            android:id="@+id/textView5"
+
+            android:enabled="true"
+            android:textSize="18dp" />
+
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:ems="8"
+        android:id="@+id/et_edit_group_des"
+        android:layout_below="@+id/linearLayout_profile_group_description"
+
+        android:layout_alignRight="@+id/linearLayout_profile_group_description"
+        android:layout_alignEnd="@+id/linearLayout_profile_group_description"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:scrollbars="vertical"
+        android:lines="2"
+        android:singleLine="false"
+        android:maxLines="6"
+        android:maxLength="800"
+        />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Group Members:"
+        android:id="@+id/textView_groupMember"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/et_edit_group_des"
+        android:paddingTop="25dp" />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/listView_group_member"
+        android:layout_below="@+id/textView_groupMember"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="15dp" />
+
+
+
+
+
+    <Button
+        android:theme="@android:style/Theme.Translucent"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:text="      Join      "
+        android:id="@+id/bt_add_member"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/listView_group_member"
+        android:background="#80000000"
+        />
+
+
+
+
+</RelativeLayout>
