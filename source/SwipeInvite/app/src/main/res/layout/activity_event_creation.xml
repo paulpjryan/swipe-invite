@@ -99,7 +99,15 @@
 
         </LinearLayout>
 
-
+        <LinearLayout
+            android:id="@+id/LL_Seperator1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="20dp"
+            android:layout_below="@id/linearLayout_profile_event_description"
+            android:background="#37000000"
+            android:orientation="horizontal" >
+        </LinearLayout>
 
 
             <TextView
@@ -109,7 +117,7 @@
                 android:text="Start Date:"
                 android:layout_marginTop="20dp"
                 android:id="@+id/textView2"
-                android:layout_below="@id/linearLayout_profile_event_description"
+                android:layout_below="@id/LL_Seperator1"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
 
@@ -134,7 +142,16 @@
                 android:timePickerMode="spinner"
                 android:id="@+id/event_start_time"></TimePicker>
 
+        </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/LL_Seperator2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="20dp"
+            android:layout_below="@id/linearLayout_profile_event_start_time"
+            android:background="#37000000"
+            android:orientation="horizontal" >
         </LinearLayout>
 
             <TextView
@@ -144,8 +161,8 @@
                 android:text="End Date:"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginTop="25dp"
-                android:layout_below="@+id/linearLayout_profile_event_start_time"
+                android:layout_marginTop="20dp"
+                android:layout_below="@+id/LL_Seperator2"
                 android:id="@+id/textView3" />
 
 
@@ -172,14 +189,24 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/LL_Seperator3"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="20dp"
+            android:layout_below="@id/linearLayout_profile_event_end_time"
+            android:background="#37000000"
+            android:orientation="horizontal" >
+        </LinearLayout>
+
         <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Submit"
         android:onClick="onEventSubmit"
         android:id="@+id/button_event_submit"
-        android:layout_marginTop="30dp"
-        android:layout_below="@id/linearLayout_profile_event_end_time"
+        android:layout_marginTop="20dp"
+        android:layout_below="@id/LL_Seperator3"
         android:layout_gravity="right" />
 
 
