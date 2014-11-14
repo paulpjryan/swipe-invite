@@ -112,7 +112,7 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
                 //Make sure to avoid spamming the search button
                 if (saveRT != null || grantRT != null || searchRT != null) {
                     Log.d(LOG_TAG, "Preventing list change while adding member.");
-                    Toast.makeText(getParent(), "Server busy.", Toast.LENGTH_SHORT).show();
+                    makeToast("Server busy.");
                     return;
                 }
 
@@ -131,7 +131,7 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
                     }
                 }
                 if (g == null) {
-                    Toast.makeText(getParent(), "This group is no longer available.", Toast.LENGTH_SHORT).show();
+                    makeToast("This group is no longer available.");
                     returnCancelled();
                     finish();
                     return;
@@ -139,7 +139,7 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
                 //Check to make sure the user is not already in the group
                 if (g.containsUser(username)) {
                     Log.d(LOG_TAG, "User is already in group.");
-                    Toast.makeText(getParent(), "User is already a member.", Toast.LENGTH_SHORT).show();
+                    makeToast("User is already a member.");
                     progressSpinner.setVisibility(View.GONE);
                     return;
                 }
@@ -402,7 +402,7 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
                 }
             }
             if (g == null) {
-                Toast.makeText(getParent(), "This group is no longer available.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "This group is no longer available.", Toast.LENGTH_SHORT).show();
                 returnCancelled();
                 finish();
                 return;
@@ -472,7 +472,7 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
         message.put("id", groupToEdit);
 
         //Send the push notification
-        pushRT = BaasBox.messagingService().newMessage().extra(message).to(userToInvite).send(onPushComplete);
+        pushRT = BaasBox.messagingService().newMessage().extra(message).text("PUSH").to(userToInvite).send(onPushComplete);
     }
     //endregion
 
@@ -486,16 +486,22 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
             pushRT = null;
             if (result.isFailed()) {
                 Log.d(LOG_TAG, "Push error: " + result.error());
-                Toast.makeText(getParent(), "Unable to complete invite.", Toast.LENGTH_SHORT).show();
+                makeToast("Unable to complete invite.");
             } else if (result.isSuccess()) {
                 Log.d(LOG_TAG, "Push success.");
-                Toast.makeText(getParent(), "Invite sent.", Toast.LENGTH_SHORT).show();
-                completeSearch(new ArrayList<BaasUser>());
+                makeToast("Invite sent.");
             }
             userToInvite = null;
             progressSpinner.setVisibility(View.GONE);
         }
     };
+    //endregion
+
+
+    //region Method to make toast
+    private void makeToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
     //endregion
 
 
