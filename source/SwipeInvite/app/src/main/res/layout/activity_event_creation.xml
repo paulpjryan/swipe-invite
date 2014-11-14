@@ -28,21 +28,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Event Name:"
-                android:id="@+id/textView"
-                android:layout_weight="2"
-                android:gravity="center_vertical"/>
+
 
 
             <EditText
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName"
                 android:ems="8"
+                android:background="@drawable/textinputborder"
+                android:hint="Event Name"
                 android:id="@+id/textView_new_event"
                 android:layout_weight="8"
                 android:maxLength="35"
@@ -56,20 +51,14 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/linearLayout_profile_event_name">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Location:"
-                android:id="@+id/textView_location"
-                android:layout_weight="5"
-                android:gravity="center_vertical"/>
+            android:layout_below="@id/linearLayout_profile_event_name"
+            android:layout_marginTop="10dp">
 
             <EditText
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:hint="Location"
+                android:background="@drawable/textinputborder"
                 android:inputType="textPersonName"
                 android:ems="8"
                 android:id="@+id/textView_event_location"
@@ -83,37 +72,42 @@
             android:id="@+id/linearLayout_profile_event_description"
             android:orientation="horizontal"
             android:layout_width="match_parent"
+            android:layout_marginTop="10dp"
             android:layout_height="wrap_content"
             android:layout_below="@id/linearLayout_profile_event_location">
 
-            <TextView
-                android:layout_width="wrap_content"
+
+            <EditText
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Description:"
-                android:id="@+id/textView_description"
-                android:layout_weight="2"
-                android:gravity="center_vertical"/>
+                android:inputType="textMultiLine"
+                android:ems="8"
+                android:hint="Description"
+                android:id="@+id/et_edit_event_description"
+                android:layout_below="@+id/linearLayout_profile_event_description"
+
+                android:layout_alignRight="@+id/linearLayout_profile_event_description"
+                android:layout_alignEnd="@+id/linearLayout_profile_event_description"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:background="@drawable/textinputborder"
+                android:scrollbars="vertical"
+                android:lines="3"
+                android:singleLine="false"
+                android:maxLines="6"
+                android:maxLength="800" />
 
         </LinearLayout>
 
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="textMultiLine"
-            android:ems="8"
-            android:id="@+id/et_edit_event_description"
-            android:layout_below="@+id/linearLayout_profile_event_description"
-
-            android:layout_alignRight="@+id/linearLayout_profile_event_description"
-            android:layout_alignEnd="@+id/linearLayout_profile_event_description"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:scrollbars="vertical"
-            android:lines="2"
-            android:singleLine="false"
-            android:maxLines="6"
-            android:maxLength="800" />
+        <LinearLayout
+            android:id="@+id/LL_Seperator1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="20dp"
+            android:layout_below="@id/linearLayout_profile_event_description"
+            android:background="#37000000"
+            android:orientation="horizontal" >
+        </LinearLayout>
 
 
             <TextView
@@ -123,7 +117,7 @@
                 android:text="Start Date:"
                 android:layout_marginTop="20dp"
                 android:id="@+id/textView2"
-                android:layout_below="@id/et_edit_event_description"
+                android:layout_below="@id/LL_Seperator1"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
 
@@ -148,7 +142,16 @@
                 android:timePickerMode="spinner"
                 android:id="@+id/event_start_time"></TimePicker>
 
+        </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/LL_Seperator2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="20dp"
+            android:layout_below="@id/linearLayout_profile_event_start_time"
+            android:background="#37000000"
+            android:orientation="horizontal" >
         </LinearLayout>
 
             <TextView
@@ -158,8 +161,8 @@
                 android:text="End Date:"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginTop="25dp"
-                android:layout_below="@+id/linearLayout_profile_event_start_time"
+                android:layout_marginTop="20dp"
+                android:layout_below="@+id/LL_Seperator2"
                 android:id="@+id/textView3" />
 
 
@@ -186,14 +189,24 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/LL_Seperator3"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="20dp"
+            android:layout_below="@id/linearLayout_profile_event_end_time"
+            android:background="#37000000"
+            android:orientation="horizontal" >
+        </LinearLayout>
+
         <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Submit"
         android:onClick="onEventSubmit"
         android:id="@+id/button_event_submit"
-        android:layout_marginTop="30dp"
-        android:layout_below="@id/linearLayout_profile_event_end_time"
+        android:layout_marginTop="20dp"
+        android:layout_below="@id/LL_Seperator3"
         android:layout_gravity="right" />
 
 
