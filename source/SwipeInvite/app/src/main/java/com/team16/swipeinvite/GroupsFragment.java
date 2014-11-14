@@ -14,8 +14,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import java.util.List;
-
 /**
  * Fragment that shows which groups a user has been invited to
  */
@@ -56,8 +54,7 @@ public class GroupsFragment extends Fragment {
         //List<Group2> groupData = m.getActiveGroups();    //Synchronized methodology 1
         mArrayAdapter =
                 new GroupsAdapter(
-                        getActivity(), // The current context (this activity)
-                        //R.layout.list_item_group, // The name of the layout ID.
+                        getActivity(),
                         m.getActiveGroups());
 
 

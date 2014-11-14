@@ -18,6 +18,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Button;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,6 +46,7 @@ public class EventCreationActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_creation);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
@@ -114,6 +116,16 @@ public class EventCreationActivity extends ActionBarActivity {
         int endhour = endtimeField.getCurrentHour();
         int endminute = endtimeField.getCurrentMinute();
 
+        Calendar startDate, endDate, currentDate;
+        startDate = Calendar.getInstance();
+        endDate = Calendar.getInstance();
+        currentDate = Calendar.getInstance();
+        startDate.clear();
+        endDate.clear();
+
+        startDate.set(startyear, startmonth, startday, starthour, startminute);
+        endDate.set(endyear, endmonth, endday, endhour, endminute);
+
         if (TextUtils.isEmpty(eventname)) {
             Log.d(LOG_TAG, "Name field cannot be blank.");
             //showProgress(false);
@@ -144,6 +156,20 @@ public class EventCreationActivity extends ActionBarActivity {
             //showProgress(false);
             descriptionField.setError("Must be between 4 and 100 characters");
             descriptionField.requestFocus();
+            return;
+        } else if(endDate.before(startDate)) {
+            Log.d(LOG_TAG, "End date must be after start date");
+            //showProgress(false);
+            Toast bread = Toast.makeText(EventCreationActivity.this, "Must be after start date", Toast.LENGTH_LONG);
+            bread.show();
+            enddateField.requestFocus();
+            return;
+        } else if(startDate.before(currentDate)) {
+            Log.d(LOG_TAG, "start date must be after current date");
+            //showProgress(false);
+            Toast bread = Toast.makeText(EventCreationActivity.this, "Must be after current date", Toast.LENGTH_LONG);
+            bread.show();
+            startdateField.requestFocus();
             return;
         }
 

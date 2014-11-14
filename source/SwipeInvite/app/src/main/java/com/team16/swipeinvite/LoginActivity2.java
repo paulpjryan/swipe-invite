@@ -61,7 +61,7 @@ public class LoginActivity2 extends ActionBarActivity {
         Log.d(LOG_TAG, "onCreate called.");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_activity2);
-
+        setTitle("Login");
         //Load a previous request for onResume to take care of if one exists
         if (savedInstanceState != null) {
             signInRT = savedInstanceState.getParcelable(SIGN_IN_TOKEN_KEY);
