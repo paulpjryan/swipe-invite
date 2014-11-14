@@ -245,6 +245,7 @@ public class GroupCreationActivity extends ActionBarActivity {
             Log.d(LOG_TAG, "Privacy field cannot be blank.");
             showProgress(false);
             radgroup.requestFocus();
+            Toast.makeText(this, "Must specifiy a privacy level.", Toast.LENGTH_SHORT).show();
             return;
         } else if (name.length() > 20 ) {
             Log.d(LOG_TAG, "Name field cannot be longer than 20 characters.");
