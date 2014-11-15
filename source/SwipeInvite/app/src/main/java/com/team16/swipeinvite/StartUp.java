@@ -29,7 +29,7 @@ public class StartUp extends Application {
         BaasBox.Builder b = new BaasBox.Builder(this);
         //set your configurations
         b.setAuthentication(BaasBox.Config.AuthType.SESSION_TOKEN); //Standard handshake protocol
-        b.setApiDomain("128.46.66.236");  //IP of server holding DB
+        b.setApiDomain("128.210.109.149");  //IP of server holding DB
         b.setAppCode("1234567890");  //App code to verify client (personalize later)
         b.setPort(9000);  //Server port
         b.setPushSenderId("151927917640");  //Push app registration

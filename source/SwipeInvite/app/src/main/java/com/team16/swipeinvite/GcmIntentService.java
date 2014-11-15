@@ -76,6 +76,12 @@ public class GcmIntentService extends IntentService {
                 String type = message3.getString("type");
                 String id = message3.getString("id");
                 String notificationMessage = extras.getString("message", "Something happened.");
+                //Check if no current user
+                if (BaasUser.current() == null) {
+                    Log.d(LOG_TAG, "No current user to receive push");
+                    return;
+                }
+
                 if (type.equals("group")) {    //Check if a group was received
                     //Attempt to pulldown a group object from the server
                     BaasResult<BaasDocument> result = BaasDocument.fetchSync(type, id);
