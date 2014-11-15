@@ -23,7 +23,10 @@ import com.baasbox.android.BaasUser;
 import com.baasbox.android.RequestToken;
 import com.baasbox.android.SaveMode;
 
-public class UserProfileActivity extends ActionBarActivity {
+import java.util.Observable;
+import java.util.Observer;
+
+public class UserProfileActivity extends ActionBarActivity implements Observer {
     private static final String LOG_TAG = "USERPROFILE";
 
     //region Local variables for views
@@ -72,8 +75,6 @@ public class UserProfileActivity extends ActionBarActivity {
         progressSpinner = (ProgressBar) findViewById(R.id.progressBar_user_profile);
         progressSpinner.setVisibility(View.GONE);
 
-        //Populate the views with data from the model
-        populateViews();
 	}
     @Override
     protected void onPause() {
@@ -94,10 +95,15 @@ public class UserProfileActivity extends ActionBarActivity {
             model = Model.getInstance(this);
             Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
         }
+        model.addObserver(this);
+        //Populate the views with data from the model
+        populateViews();
     }
     @Override
     protected void onStop() {
         super.onStop();
+        Log.d(LOG_TAG, "onStop");
+        model.deleteObserver(this);
     }
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -108,6 +114,21 @@ public class UserProfileActivity extends ActionBarActivity {
         if (saveRT != null) {
             outState.putParcelable(SAVE_TOKEN_KEY, saveRT);
         }
+    }
+    //endregion
+
+
+    //region Implementation of observer
+    public void update(Observable ob, Object o) {
+        //MAKE SURE TO RUN ON UI THREAD
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //UPDATE ANYTHING THAT RELIES ON MODEL
+                populateViews();
+            }
+        });
+        return;
     }
     //endregion
 
@@ -287,7 +308,7 @@ public class UserProfileActivity extends ActionBarActivity {
         Model.saveModel(this);
 
         //Reload the views
-        populateViews();
+        //populateViews();  SHOULDN'T NEED TO DO THIS AFTER MODEL SAVE
 
         //Toast user success
         Toast.makeText(getApplicationContext(), "Profile updated.", Toast.LENGTH_SHORT).show();

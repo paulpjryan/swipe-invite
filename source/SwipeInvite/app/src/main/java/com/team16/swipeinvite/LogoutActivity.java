@@ -23,8 +23,11 @@ import com.baasbox.android.BaasUser;
 import com.baasbox.android.RequestToken;
 import com.baasbox.android.SaveMode;
 
+import java.util.Observable;
+import java.util.Observer;
 
-public class LogoutActivity extends ActionBarActivity {
+
+public class LogoutActivity extends ActionBarActivity implements Observer {
     private static final String LOG_TAG = "LOGOUT_ACTIVITY";
 
     //region Local instance of the model
@@ -89,6 +92,7 @@ public class LogoutActivity extends ActionBarActivity {
             model = Model.getInstance(this);
             Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
         }
+        model.addObserver(this);
     }
     @Override
     protected void onPause() {
@@ -116,7 +120,27 @@ public class LogoutActivity extends ActionBarActivity {
             outState.putParcelable(LOGOUT_TOKEN_KEY, logoutRT);
         }
     }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        model.deleteObserver(this);
+    }
     //endregion
+
+
+    //region Implementation of observer
+    public void update(Observable ob, Object o) {
+        //MAKE SURE TO RUN ON UI THREAD
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //UPDATE ANYTHING THAT RELIES ON MODEL
+            }
+        });
+        return;
+    }
+    //endregion
+
 
 
     //region Method to respond to logout button

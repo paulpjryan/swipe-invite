@@ -29,6 +29,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 
 public class LoginActivity2 extends ActionBarActivity {
@@ -179,6 +181,12 @@ public class LoginActivity2 extends ActionBarActivity {
         }
         if (cloudRT != null) {
             outState.putParcelable(CLOUD_TOKEN_KEY, cloudRT);
+        }
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (model != null) {
         }
     }
     //endregion

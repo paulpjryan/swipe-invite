@@ -24,7 +24,10 @@ import com.baasbox.android.BaasUser;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
-public class MainActivity extends ActionBarActivity {
+import java.util.Observable;
+import java.util.Observer;
+
+public class MainActivity extends ActionBarActivity implements Observer {
     /* -------------------- LOG TAG CONSTANTS --------------------------- */
     private final static String LOG_TAG = "MAIN_ACT";
     /* -------------------- END LOG TAG CONSTANTS ----------------------- */
@@ -131,11 +134,14 @@ public class MainActivity extends ActionBarActivity {
             model = Model.getInstance(this);
             Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
         }
+        model.addObserver(this);
         if (BaasUser.current() == null){    //Check if somehow the user got logged out
             model = null;    //nullify the model because something bad has happened to the user
             startLoginScreen();
             return;
         }
+        //Refresh any views
+        refresh();
     }
     @Override
     protected void onPause() {
@@ -146,6 +152,7 @@ public class MainActivity extends ActionBarActivity {
     protected void onStop() {
         super.onStop();
         Log.d(LOG_TAG, "onStop called");
+        model.deleteObserver(this);
     }
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -157,6 +164,29 @@ public class MainActivity extends ActionBarActivity {
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
         mDrawerToggle.syncState();
+    }
+    //endregion
+
+
+    //region Implementation of observer
+    public void update(Observable ob, Object o) {
+        //NEEDS TO RUN ON UI THREAD
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //Refresh views
+                refresh();
+            }
+        });
+        return;
+    }
+    //endregion
+
+
+    //region Method to refresh any views
+    private void refresh(){
+        //UPDATE ANYTHING THAT RELIES ON MODEL
+        GroupsAdapter.updateData(model.getActiveGroups());
     }
     //endregion
 
@@ -212,8 +242,7 @@ public class MainActivity extends ActionBarActivity {
             case GROUP_CREATE_REQUEST_CODE:    //Group Create activity result
                 if(resultCode == RESULT_OK) {
                     Log.d(LOG_TAG, "Got ok result from group creation.");
-                    //NEED TO REPOPULATE FRAGMENT IF IT IS ACTIVE
-                    //selectItem(2);    NO LONGER NEEDED WITH UPDATE IN GROUP ADAPTER
+                    //NOTHING SPECIAL TO DO
                 } else if (resultCode == RESULT_CANCELED) {
                     Log.d(LOG_TAG, "Got canceled result from group creation.");
                     //DO NOTHING

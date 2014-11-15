@@ -175,6 +175,11 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
             progressSpinner.setVisibility(View.VISIBLE);
             pushRT.resume(onPushComplete);
         }
+        if (model == null) {
+            model = Model.getInstance(this);
+        }
+        model.addObserver(this);
+        checkForGone();
     }
     @Override
     protected void onPause() {
@@ -214,6 +219,12 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
         if (userToInvite != null) {
             outState.putString(USER_KEY, userToInvite);
         }
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(LOG_TAG, "onStop");
+        model.deleteObserver(this);
     }
     //endregion
 
@@ -410,11 +421,9 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
             //Update the local group
             g.setBaasDocument(result.value());
 
-            //Notify the Group Adapter
-            GroupsAdapter.updateData(lG);
-
             //Save the model
             Model.saveModel(this);
+
         } else if (result.isCanceled()) {
             Log.d(LOG_TAG, "Save cancelled.");
             return;
@@ -471,8 +480,39 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
         message.put("type", "group");
         message.put("id", groupToEdit);
 
+        //Figure out what users to send to
+        //Get the current group to edit
+        List<Group2> lG = model.getActiveGroups();
+        Group2 g = null;
+        synchronized (lG) {
+            for (Group2 x : lG) {
+                if (x.equals(groupToEdit)) {
+                    g = x;
+                }
+            }
+        }
+        if (g == null) {
+            Toast.makeText(this, "This group is no longer available.", Toast.LENGTH_SHORT).show();
+            returnCancelled();
+            finish();
+            return;
+        }
+
+        String notificationMessage = userToInvite + " joined the group.";
+
+        //Start the intent service to send the push
+        Intent intent = new Intent(this, PushSender.class);
+        intent.putStringArrayListExtra("users", g.getUserList());
+        intent.putExtra("message", message);
+        intent.putExtra("notification", notificationMessage);
+        startService(intent);
+
+
         //Send the push notification
-        pushRT = BaasBox.messagingService().newMessage().extra(message).text("PUSH").to(userToInvite).send(onPushComplete);
+        //pushRT = BaasBox.messagingService().newMessage().extra(message).to(userToInvite)
+                //.text(notificationMessage).send(onPushComplete);
+        makeToast("Invite sent");
+        progressSpinner.setVisibility(View.GONE);
     }
     //endregion
 
@@ -506,10 +546,38 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
 
 
     //region Method for observer callback
-    @Override
     public void update(Observable observable, Object data) {
-        // TODO Auto-generated method stub
+        // MAKE SURE UI THREAD IS USED
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //Check for the group deletion
+                checkForGone();
+            }
+        });
 
+    }
+    //endregion
+
+
+    //region Method to check if the current group has been deleted
+    private void checkForGone() {
+        //Get the current group to edit
+        List<Group2> lG = model.getActiveGroups();
+        Group2 g = null;
+        synchronized (lG) {
+            for (Group2 x : lG) {
+                if (x.equals(groupToEdit)) {
+                    g = x;
+                }
+            }
+        }
+        if (g == null) {
+            makeToast("This group is no longer available.");
+            returnCancelled();
+            finish();
+            return;
+        }
     }
     //endregion
 

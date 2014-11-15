@@ -21,6 +21,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import android.widget.EditText;
 
@@ -39,7 +41,7 @@ import org.apache.http.HttpRequest;
 import org.apache.http.protocol.HTTP;
 
 
-public class GroupEditActivity extends ActionBarActivity {
+public class GroupEditActivity extends ActionBarActivity implements Observer {
     private static final String LOG_TAG = "GROUPEDIT";
 
     //region Local variables for views
@@ -94,14 +96,6 @@ public class GroupEditActivity extends ActionBarActivity {
 
         //Load the model
         model = Model.getInstance(this);
-
-        //Populate the Text views
-        populateTextViews();
-
-        //Populate the list views
-        populateEventList();
-        populateMemberList();
-
     }
     @Override
     protected void onResume() {
@@ -111,6 +105,17 @@ public class GroupEditActivity extends ActionBarActivity {
             progressSpinner.setVisibility(View.VISIBLE);
             saveRT.resume(onSaveComplete);
         }
+        if (model == null) {
+            model.getInstance(this);
+        }
+        model.addObserver(this);
+
+        //Populate the Text views
+        populateTextViews();
+
+        //Populate the list views
+        populateEventList();
+        populateMemberList();
     }
     @Override
     protected void onPause() {
@@ -130,7 +135,30 @@ public class GroupEditActivity extends ActionBarActivity {
             outState.putParcelable(SAVE_TOKEN_KEY, saveRT);
         }
     }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(LOG_TAG, "onStop");
+        model.deleteObserver(this);
+    }
+    //endregion
 
+
+    //region Implementation of observer
+    public void update(Observable ob, Object o) {
+        //NEED TO RUN ON UI THREAD
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //Update all views
+                Log.d(LOG_TAG, "Updating from notification.");
+                populateTextViews();
+                populateEventList();
+                populateMemberList();
+            }
+        });
+        return;
+    }
     //endregion
 
 
@@ -172,7 +200,7 @@ public class GroupEditActivity extends ActionBarActivity {
         groupnameField.setFocusable(perm);
         descriptionField.setEnabled(perm);
         descriptionField.setFocusable(perm);
-
+        Log.d(LOG_TAG, "Json string of group: " + g.getBaasDocument().toJson().encode());
     }
     //endregion
 
@@ -292,50 +320,6 @@ public class GroupEditActivity extends ActionBarActivity {
     //endregion
 
 
-    //region Class for Fragment -- DOES NOT DO ANYTHING
-    /*
-    public static class PlaceholderFragment extends Fragment {
-        private ArrayAdapter<String> mArrayAdapter;
-        public PlaceholderFragment() {
-        }
-
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.activity_group_edit,container,false);
-
-            String[] data = {
-                    "Having fun Halloween - 4:30pm",
-                    "Party - 6:15pm",
-                    "CS free toturial - 11:30am",
-                    "RANDOM DANCING - ALL THE TIME",
-                    "RANDOM DANCING - ALL THE TIME",
-                    "RANDOM DANCING - ALL THE TIME",
-                    "RANDOM DANCING - ALL THE TIME",
-                    "RANDOM DANCING - ALL THE TIME",
-            };
-
-            List<String> dummyData = new ArrayList<String>(Arrays.asList(data));
-            mArrayAdapter =
-                    new ArrayAdapter<String>(
-                            getActivity(), // The current context (this activity)
-                            R.layout.list_item_event, // The name of the layout ID.
-                            R.id.list_item_event_textview, // The ID of the textview to populate.
-                            dummyData);
-            ListView ListView = (ListView) rootView.findViewById(R.id.listView_events_group);
-            ListView.setAdapter(mArrayAdapter);
-
-            return rootView;
-
-
-        }
-
-
-
-    }
-    */
-    //endregion
-
-
     //region Methods for add member button
     public void addMemListener(View v) {
         //Check to make sure the button is not spammed
@@ -388,8 +372,6 @@ public class GroupEditActivity extends ActionBarActivity {
                     Log.d(LOG_TAG, "Got canceled result from group creation.");
                     //RELOAD the list views
                 }
-                populateMemberList();
-                populateEventList();
                 break;
             default:
                 Log.d(LOG_TAG, "Request code not set.");
@@ -512,6 +494,7 @@ public class GroupEditActivity extends ActionBarActivity {
 
     //region Method to deal with saving attempt result
     private void completeSave(BaasDocument u) {
+        Log.d(LOG_TAG, "Save sucessful.");
         progressSpinner.setVisibility(View.GONE);
         //Update the model
         //Get the current group from the model
@@ -532,14 +515,11 @@ public class GroupEditActivity extends ActionBarActivity {
         }
         g.setBaasDocument(u);    //Actually put the change into the model
 
-        //Notify the GroupFragment that a change has occurred
-        GroupsAdapter.updateData(lG);
-
         //Save the Model
         Model.saveModel(this);
 
         //Reload the views
-        populateTextViews();
+        //populateTextViews();  SHOULD NO LONGER BE NECESSARY AFTER SAVE MODEL
 
         //Toast user success
         Toast.makeText(getApplicationContext(), "Group updated.", Toast.LENGTH_SHORT).show();
