@@ -156,6 +156,10 @@
             android:name="com.team16.swipeinvite.PushSender"
             android:exported="false" >
         </service>
+        <service
+            android:name="com.team16.swipeinvite.LocalSaveService"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>

@@ -17,13 +17,6 @@ public class StartUp extends Application {
     private final static String LOG_TAG = "APPLICATION";
     /* -------------------- END LOG TAG CONSTANTS ----------------------- */
 
-    /* --------------------- CONTEXT ---------------------------------------*/
-    private static Context context;
-
-    public static Context getAppContext() {
-        return StartUp.context;
-    }
-    /* -------------------- END CONTEXT -------------------------------------- */
 
     /* ------------------ OVERRIDE METHODS FOR APPLICATION CLASS ---------------------- */
     //The onCreate method is where startup procedures should be run.
@@ -31,9 +24,6 @@ public class StartUp extends Application {
     public void onCreate() {
         super.onCreate();
         Log.d(LOG_TAG, "onCreate called");
-
-        // Get context for later use
-        StartUp.context = getApplicationContext();
 
         //Create a new BaasBox builder object to set the configs
         BaasBox.Builder b = new BaasBox.Builder(this);
@@ -58,5 +48,22 @@ public class StartUp extends Application {
         return box;
     }
     /* ----------------------- END BAASBOX SETUP ------------------------------ */
+
+    //region Methods to protect restricted substrings from appearing in documents
+    private static final String delim1 = ">><---*---><<";
+    private static final String delim2 = "<<>-*-<>>";
+    protected String getDelim1() {
+        return delim1;
+    }
+    protected String getDelim2() {
+        return delim2;
+    }
+    protected boolean checkStringGlobal(String s) {
+        if (s.contains(delim1) || s.contains(delim2)) {
+            return true;
+        }
+        return false;
+    }
+    //endregion
 
 }

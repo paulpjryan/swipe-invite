@@ -200,7 +200,7 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
         groupnameField.setFocusable(perm);
         descriptionField.setEnabled(perm);
         descriptionField.setFocusable(perm);
-
+        Log.d(LOG_TAG, "Json string of group: " + g.getBaasDocument().toJson().encode());
     }
     //endregion
 

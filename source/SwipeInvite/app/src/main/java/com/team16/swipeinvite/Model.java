@@ -2,6 +2,7 @@ package com.team16.swipeinvite;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -14,6 +15,11 @@ import com.baasbox.android.json.JsonArray;
 import com.baasbox.android.json.JsonObject;
 import com.google.gson.Gson;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -44,7 +50,6 @@ class Model {
     private ArrayList<Event> rejectedEvents;   //List of events that the user has rejected
     private ArrayList<Acquaintence> friends;   //List of users that the user has invited or been in a group with
     protected CurrentUser currentUser;    //The current user object
-    private ArrayList<BaasDocument> modelList;    //This is just for easy passing of model object
     //endregion
 
 
@@ -60,6 +65,199 @@ class Model {
             Log.d(LOG_TAG, "No current user, cannot save model.");
             return;
         }
+        //Save model locally
+        Log.d(LOG_TAG, "Send intent to save local object.");
+        Intent intent = new Intent(context, LocalSaveService.class);
+        context.startService(intent);
+        //Save model to server
+        //Notify the observers
+        theModel.notifyObservers();
+    }
+
+    private static void loadModel(Context context)
+    {
+        //Check for current user
+        if (BaasUser.current() == null) {    //Need to make sure there is a valid user
+            Log.d(LOG_TAG, "No current user, cannot load model.");
+            return;
+        }
+
+        //Get the application
+        StartUp application = (StartUp) context.getApplicationContext();
+
+        //Open the file
+        FileInputStream fis;
+        try {
+            fis = context.openFileInput(BaasUser.current().getName());
+        } catch (FileNotFoundException f) {
+            Log.d(LOG_TAG, "No such file: " + f.getMessage());
+            return;
+        }
+        //Figure out how many bytes are in the file
+        int size = 0;
+        try {
+            while (fis.read() != -1) {
+                size++;
+            }
+        } catch (IOException e) {
+            Log.d(LOG_TAG, "Error counting file: " + e.getMessage());
+            return;
+        }
+        //Close the file
+        try {
+            fis.close();
+        } catch (IOException i) {
+            Log.d(LOG_TAG, "Error closing file: " + i.getMessage());
+            return;
+        }
+
+        //Open the file again
+        try {
+            fis = context.openFileInput(BaasUser.current().getName());
+        } catch (FileNotFoundException f) {
+            Log.d(LOG_TAG, "Error opening file again: " + f.getMessage());
+            return;
+        }
+
+        //Read the bytes into an array
+        byte[] bytes = new byte[size];
+        try {
+            int n = fis.read(bytes, 0, bytes.length);
+            if (n != bytes.length) {
+                Log.d(LOG_TAG, "Read incorrect number of bytes.");
+                return;
+            }
+        } catch (IOException e) {
+            Log.d(LOG_TAG, "Error reading all bytes: " + e.getMessage());
+        }
+
+        //Convert the byte array to a string
+        String total = new String(bytes, Charset.defaultCharset());
+        Log.d(LOG_TAG, "Got total: " + total);
+
+        //Parse the string into subsets
+        String serverModelString = "";
+        String activeGroupString = "";
+        String acceptedEventsString = "";
+        String waitingEventsString = "";
+        String rejectedEventsString = "";
+        int delim2pos = total.indexOf(application.getDelim2());
+        int n = 0;
+        for (int i = 0; i < 5; i++) {
+            Log.d(LOG_TAG, "Getting substrings for model lists");
+            switch (i) {
+                case 0:
+                    serverModelString = total.substring(n, delim2pos);
+                    break;
+                case 1:
+                    activeGroupString = total.substring(n, delim2pos);
+                    break;
+                case 2:
+                    acceptedEventsString = total.substring(n, delim2pos);
+                    break;
+                case 3:
+                    waitingEventsString = total.substring(n, delim2pos);
+                    break;
+                case 4:
+                    rejectedEventsString = total.substring(n, delim2pos);
+                    break;
+            }
+            n = delim2pos + application.getDelim2().length();
+            delim2pos = total.indexOf(application.getDelim2(), n);
+        }
+
+        //Decode the server model string
+        Log.d(LOG_TAG, "Decoding server model.");
+        theModel.setServerVersion(BaasDocument.from(JsonObject.decode(serverModelString)));
+
+        //Decode the active group string
+        Log.d(LOG_TAG, "Decoding active groups.");
+        int delim1pos = activeGroupString.indexOf(application.getDelim1());
+        int g = 0;
+        while (g < activeGroupString.length()) {
+            String group = activeGroupString.substring(g, delim1pos);
+            theModel.activeGroups.add(new Group2(JsonObject.decode(group)));
+            g = delim1pos + application.getDelim1().length();
+            delim1pos = activeGroupString.indexOf(application.getDelim1(), g);
+        }
+
+        //Decode the accepted events string
+        Log.d(LOG_TAG, "Decoding accepted events.");
+        delim1pos = acceptedEventsString.indexOf(application.getDelim1());
+        g = 0;
+        while (g < acceptedEventsString.length()) {
+            String group = acceptedEventsString.substring(g, delim1pos);
+            theModel.acceptedEvents.add(new Event(JsonObject.decode(group)));
+            g = delim1pos + application.getDelim1().length();
+            delim1pos = acceptedEventsString.indexOf(application.getDelim1(), g);
+        }
+
+        //Decode the waiting events string
+        Log.d(LOG_TAG, "Decoding waiting events.");
+        delim1pos = waitingEventsString.indexOf(application.getDelim1());
+        g = 0;
+        while (g < waitingEventsString.length()) {
+            String group = waitingEventsString.substring(g, delim1pos);
+            theModel.waitingEvents.add(new Event(JsonObject.decode(group)));
+            g = delim1pos + application.getDelim1().length();
+            delim1pos = waitingEventsString.indexOf(application.getDelim1(), g);
+        }
+
+        //Decode the rejected events string
+        Log.d(LOG_TAG, "Decoding rejected events.");
+        delim1pos = rejectedEventsString.indexOf(application.getDelim1());
+        g = 0;
+        while (g < rejectedEventsString.length()) {
+            String group = rejectedEventsString.substring(g, delim1pos);
+            theModel.rejectedEvents.add(new Event(JsonObject.decode(group)));
+            g = delim1pos + application.getDelim1().length();
+            delim1pos = rejectedEventsString.indexOf(application.getDelim1(), g);
+        }
+
+        Log.d(LOG_TAG, "Model repopulated.");
+
+        return;
+    }
+    //endregion
+
+
+    //region Old load and save and getInstance
+    private void placeHolder() {
+        /*
+        //context = context.getApplicationContext();
+        Gson gson = new Gson();
+        //Log.d(LOG_TAG, "Context: " + context.toString());
+        SharedPreferences sprefs = context.getApplicationContext().getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE);
+        Log.d(LOG_TAG, "Shared Prefs: " + sprefs.toString());
+        String gsonString = sprefs.getString("model", null);
+        if (gsonString == null) {
+            Log.d(LOG_TAG, "No local data for current user: " + BaasUser.current().getName());
+            return null;
+        }
+        Log.d(LOG_TAG, "Model loaded: " + gsonString);
+        Model model = gson.fromJson(gsonString, Model.class);
+        try {
+            model.activeGroups.get(0).getUserList();
+        } catch (Exception e) {
+            Log.d(LOG_TAG, "Model not working: " + e.getMessage());
+            Toast.makeText(context, "Data corrupted, please contact admin.", Toast.LENGTH_LONG).show();
+            return model;
+        }
+
+        Log.d(LOG_TAG, "Loaded model for user: " + BaasUser.current().getName()); */
+
+        /*
+        if (theModel == null) {
+            Log.d(LOG_TAG, "The singeton model object was null.");
+            theModel = Model.loadModel(context);
+            Log.d(LOG_TAG, "The singeton model repopulated from shared prefs.");
+            if (theModel == null) {
+                Log.d(LOG_TAG, "Loading from shared prefs failed, creating new model instance");
+                theModel = new Model();
+            }
+        }
+        Log.d(LOG_TAG, "Giving model to something."); */
+        /*
         //context = context.getApplicationContext();
         Gson gson = new Gson();
         String gsonString;
@@ -87,38 +285,7 @@ class Model {
         sprefEdit.apply();
         Log.d(LOG_TAG, "Saved model for user: " + BaasUser.current().getName());
         //Notify the observers
-        theModel.notifyObservers();
-        //Save model to server
-    }
-
-    private static Model loadModel(Context context)
-    {
-        if (BaasUser.current() == null) {    //Need to make sure there is a valid user
-            Log.d(LOG_TAG, "No current user, cannot load model.");
-            return null;
-        }
-        //context = context.getApplicationContext();
-        Gson gson = new Gson();
-        //Log.d(LOG_TAG, "Context: " + context.toString());
-        SharedPreferences sprefs = context.getApplicationContext().getSharedPreferences(BaasUser.current().getName(), Context.MODE_PRIVATE);
-        Log.d(LOG_TAG, "Shared Prefs: " + sprefs.toString());
-        String gsonString = sprefs.getString("model", null);
-        if (gsonString == null) {
-            Log.d(LOG_TAG, "No local data for current user: " + BaasUser.current().getName());
-            return null;
-        }
-        Log.d(LOG_TAG, "Model loaded: " + gsonString);
-        Model model = gson.fromJson(gsonString, Model.class);
-        try {
-            model.activeGroups.get(0).getUserList();
-        } catch (Exception e) {
-            Log.d(LOG_TAG, "Model not working: " + e.getMessage());
-            Toast.makeText(context, "Data corrupted, please contact admin.", Toast.LENGTH_LONG).show();
-            return model;
-        }
-
-        Log.d(LOG_TAG, "Loaded model for user: " + BaasUser.current().getName());
-        return model;
+        theModel.notifyObservers(); */
     }
     //endregion
 
@@ -140,16 +307,17 @@ class Model {
     //region Singleton methods and motifs
     private static Model theModel;
     protected static synchronized Model getInstance(Context context) {
+        //Check to make sure not handing off null model
         if (theModel == null) {
-            Log.d(LOG_TAG, "The singeton model object was null.");
-            theModel = Model.loadModel(context);
-            Log.d(LOG_TAG, "The singeton model repopulated from shared prefs.");
-            if (theModel == null) {
-                Log.d(LOG_TAG, "Loading from shared prefs failed, creating new model instance");
-                theModel = new Model();
-            }
+            Log.d(LOG_TAG, "Singleton instance was null, creating new.");
+            theModel = new Model();
+
+            //Try to load the model
+            Log.d(LOG_TAG, "Started loading model.");
+            loadModel(context);
         }
-        Log.d(LOG_TAG, "Giving model to something.");
+
+        Log.d(LOG_TAG, "Model given.");
         return theModel;
     }
     protected static void dumpInstance() {
@@ -190,15 +358,15 @@ class Model {
 
 
     //region Methods for conversion of a local model object to a server model object
-    protected BaasDocument toServerVersion() {
+    protected synchronized BaasDocument toServerVersion() {
         if (model == null) {
             model = new BaasDocument(COLLECTION_NAME);
         }
         model.put(ACTIVE_GROUPS_KEY, getJAofGroups(getActiveGroups()));
-        model.put(ACCEPTED_EVENTS_KEY, getJAofEvents(acceptedEvents));
-        model.put(WAITING_EVENTS_KEY, getJAofEvents(waitingEvents));
-        model.put(REJECTED_EVENTS_KEY, getJAofEvents(rejectedEvents));
-        model.put(ACQUAINTENCE_KEY, getJAofFriends(friends));
+        model.put(ACCEPTED_EVENTS_KEY, getJAofEvents(getAcceptedEvents()));
+        model.put(WAITING_EVENTS_KEY, getJAofEvents(getWaitingEvents()));
+        model.put(REJECTED_EVENTS_KEY, getJAofEvents(getRejectedEvents()));
+        model.put(ACQUAINTENCE_KEY, getJAofFriends(getFriends()));
         return model;
     }
 
@@ -212,7 +380,7 @@ class Model {
         return ja;
     }
 
-    private static JsonArray getJAofEvents(ArrayList<Event> e) {
+    private static JsonArray getJAofEvents(List<Event> e) {
         JsonArray ja = new JsonArray();
         for (Event x : e) {
             ja.add(x.getId());
@@ -220,7 +388,7 @@ class Model {
         return ja;
     }
 
-    private static JsonArray getJAofFriends(ArrayList<Acquaintence> a) {
+    private static JsonArray getJAofFriends(List<Acquaintence> a) {
         JsonArray ja = new JsonArray();
         for (Acquaintence x : a) {
             ja.add(x.getUsername());
@@ -232,7 +400,7 @@ class Model {
 
     //region Methods for setting and getting the raw server model object  -- LOGIN ONLY
     //ONLY USE THESE METHODS AT LOGIN
-    protected void setServerVersion(BaasDocument d) {
+    protected synchronized void setServerVersion(BaasDocument d) {
         if(!d.getCollection().equals(COLLECTION_NAME)) throw new ModelException("Document is not a model: " + d.toString());
         model = d;
         extractIDs();
@@ -240,10 +408,10 @@ class Model {
 
     //region Method and instance variable used to hold a list of IDS for retrieval  -- LOGIN ONLY
     private ArrayList<ArrayList<String>> idList;
-    protected ArrayList<ArrayList<String>> getIdList() {
+    protected synchronized ArrayList<ArrayList<String>> getIdList() {
         return idList;
     }
-    protected boolean idListEmpty() {
+    protected synchronized boolean idListEmpty() {
         if (idList == null) return true;
         for (int i = 0; i < (idList.size()); i++) {
             if (!idList.get(i).isEmpty()) {
@@ -252,7 +420,7 @@ class Model {
         }
         return true;
     }
-    protected boolean dataIsEmpty() {
+    protected synchronized boolean dataIsEmpty() {
         if (idList == null) return true;
         for (int i = 0; i < (idList.size()-1); i++) {     //account for only document id's
             if (!idList.get(i).isEmpty()) {
@@ -292,7 +460,7 @@ class Model {
     }
     //endregion
 
-    protected BaasDocument getServerVersion() {
+    protected synchronized BaasDocument getServerVersion() {
         return model;
     }
     //endregion
