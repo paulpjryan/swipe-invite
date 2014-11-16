@@ -95,7 +95,7 @@
             android:id="@+id/textView5"
 
             android:enabled="true"
-            android:textSize="18dp" />
+            android:textSize="20dp" />
 
 
     </LinearLayout>
