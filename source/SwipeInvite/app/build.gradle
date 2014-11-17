@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 21
-    buildToolsVersion '21.0.1'
+    buildToolsVersion '21.1.1'
 
     defaultConfig {
         applicationId "com.team16.swipeinvite"
@@ -20,10 +20,9 @@ android {
 }
 
 dependencies {
-    //compile fileTree(dir: 'libs', include: ['*.jar'])
     //compile 'com.android.support:support-v4:20.0.0'
     compile 'com.google.code.gson:gson:2.2.+'
     compile 'com.android.support:appcompat-v7:21.0.0'
     compile 'com.baasbox:baasbox-android:0.8.4'
-    compile "com.google.android.gms:play-services:3.1.+"
+    compile "com.google.android.gms:play-services:6.1.+"
 }
