@@ -134,13 +134,13 @@
                 android:layout_height="wrap_content"
                 android:datePickerMode="spinner"
                 android:calendarViewShown="false"
-                android:id="@+id/event_start_date"></DatePicker>
+                android:id="@+id/event_start_date" />
 
             <TimePicker
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:timePickerMode="spinner"
-                android:id="@+id/event_start_time"></TimePicker>
+                android:id="@+id/event_start_time" />
 
         </LinearLayout>
 
@@ -179,13 +179,13 @@
                 android:layout_height="wrap_content"
                 android:datePickerMode="spinner"
                 android:calendarViewShown="false"
-                android:id="@+id/event_end_date"></DatePicker>
+                android:id="@+id/event_end_date" />
 
             <TimePicker
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:timePickerMode="spinner"
-                android:id="@+id/event_end_time"></TimePicker>
+                android:id="@+id/event_end_time" />
 
         </LinearLayout>
 
@@ -208,10 +208,6 @@
         android:layout_marginTop="20dp"
         android:layout_below="@id/LL_Seperator3"
         android:layout_gravity="right" />
-
-
-
-
 
     </RelativeLayout>
 </ScrollView>

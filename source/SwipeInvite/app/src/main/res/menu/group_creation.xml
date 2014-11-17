@@ -3,6 +3,6 @@
 
     <item android:id="@+id/submit_group_creation"
         android:icon="@drawable/abc_ic_go"
-        android:title="@string/action_create_group"
-        compat:showAsAction="ifRoom"  />
+        android:title="@string/group_create_submit"
+        compat:showAsAction="withText|ifRoom"  />
 </menu>
