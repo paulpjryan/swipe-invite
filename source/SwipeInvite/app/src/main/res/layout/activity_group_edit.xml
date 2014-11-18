@@ -170,8 +170,6 @@
         android:id="@+id/progressBar_group_edit"
         android:layout_gravity="center_horizontal" />
 
-
-
 </LinearLayout>
 
     <!--
