@@ -14,62 +14,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:weightSum="10">
-
-	  		<TextView
-	        android:id="@+id/textView_user_username"
-	        android:layout_weight="3"
-	        android:layout_width="0dp"
-	        android:layout_height="wrap_content"
-	        android:text="@string/user_profile_username"
-	        
-	        android:textAppearance="?android:attr/textAppearanceSmall" />
 	  		
 	  		
 		    <EditText
 		        android:id="@+id/editText_user_username"
 		        android:layout_weight="7"
-		        android:layout_width="0dp"
+		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
                 android:autoText="true"
-                android:hint="Not Edibale "
+                android:hint="Username is Not Editable "
+                android:background="@drawable/textinputborder"
 
-                android:gravity="center"
                 android:singleLine="true"
                 android:maxLength="20"
                 android:enabled="false" />
 		      
-		        
-    </LinearLayout>
-    
-     <LinearLayout
-         android:id="@+id/linearLayout_profile_password"
-         android:layout_width="match_parent"
-         android:layout_height="wrap_content"
-         android:orientation="horizontal">
-		    
- 	  		<TextView
-		        android:id="@+id/textView_user_password"
-		        android:layout_weight="3"
-		        android:layout_width="0dp"
-		        android:layout_height="wrap_content"
-		        android:text="@string/user_profile_password"
-		        android:textAppearance="?android:attr/textAppearanceSmall" />
-
- 	  		<EditText
-		        android:id="@+id/editText_user_password"
-		        android:layout_weight="7"
-		        android:layout_width="0dp"
-		        android:layout_height="wrap_content"
- 	  		    android:inputType="textPassword"
-                android:singleLine="true"
-                android:gravity="center"
-
-                android:hint="Not Ediable"
-                android:maxLength="20"
-                android:enabled="false">
-
- 	  		  
- 	  		</EditText>
 		        
     </LinearLayout>
 
@@ -77,16 +36,8 @@
         android:id="@+id/linearLayout_profile_person_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" 
-        android:orientation="horizontal">
-		    
- 	  		<TextView
-		        android:id="@+id/textView_user_name"
-		        android:layout_weight="3"
-		        android:layout_width="0dp"
-		        android:layout_height="wrap_content"
-		     
-		        android:text="@string/user_profile_name"
-		        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp">
 
  	  		<EditText
 		        android:id="@+id/editText_user_name"
@@ -94,7 +45,9 @@
 		        android:layout_width="0dp"
 		        android:layout_height="wrap_content"
  	  		    android:inputType="textPersonName"
-                android:gravity="center"
+                android:background="@drawable/textinputborder"
+                android:hint="Full Name"
+
                 android:singleLine="true"
                 android:maxLength="20" />
       
@@ -105,16 +58,8 @@
 		        android:id="@+id/linearLayout_profile_email"
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content" 
-		        android:orientation="horizontal">
-		    
- 	  		<TextView
-		        android:id="@+id/textView_user_email"
-		        android:layout_weight="3"
-		        android:layout_width="0dp"
-		        android:layout_height="wrap_content"
-		     
-		        android:text="@string/user_profile_email"
-		        android:textAppearance="?android:attr/textAppearanceSmall" />
+		        android:orientation="horizontal"
+                android:layout_marginTop="10dp">
 
  	  		<EditText
 		        android:id="@+id/editText_user_email"
@@ -122,7 +67,8 @@
 		        android:layout_width="0dp"
 		        android:layout_height="wrap_content"
 		        android:inputType="textEmailAddress"
-                android:gravity="center"
+                android:background="@drawable/textinputborder"
+                android:hint="@string/email_hint_new_login"
                 android:singleLine="true"
                 android:maxLength="20" />
 

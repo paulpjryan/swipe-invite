@@ -1,6 +1,7 @@
 package com.team16.swipeinvite;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +12,14 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 // The standard text view adapter only seems to search from the beginning of whole words
 // so we've had to write this whole class to make it possible to search
 // for parts of the arbitrary string we want
 public class GroupsAdapter extends BaseAdapter implements Filterable {
+    private static final String LOG_TAG = "Groups_Adapter";
 
     private List<Group2>originalData = null;
     private List<Group2>filteredData = null;
@@ -30,13 +34,20 @@ public class GroupsAdapter extends BaseAdapter implements Filterable {
         GroupsAdapter.selfInstance = this;     //keep track of the instance of this class that is used
     }
 
+
     //region Methods to handle updating the list view from other threads in a static context
     protected static synchronized void updateData(List<Group2> g) {
         if (selfInstance == null) {
             return;
         }
+        Log.d(LOG_TAG, "Received request to update list view.");
         selfInstance.originalData = g;
-        selfInstance.notifyDataSetChanged();
+        try {
+            selfInstance.notifyDataSetChanged();
+        } catch (Exception e) {
+            Log.d(LOG_TAG, "Caught exception: " + e.toString());
+            return;
+        }
     }
     //endregion
 

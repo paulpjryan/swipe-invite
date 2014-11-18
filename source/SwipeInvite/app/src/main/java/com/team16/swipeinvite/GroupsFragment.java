@@ -14,6 +14,9 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import java.util.Observable;
+import java.util.Observer;
+
 /**
  * Fragment that shows which groups a user has been invited to
  */
@@ -28,26 +31,11 @@ public class GroupsFragment extends Fragment {
         // Empty constructor required for fragment subclasses
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d(LOG_TAG, "onCreateViewCalled");
-
-        // Create some dummy data for the ListView.  Here's a sample weekly forecast
-        String[] data = {
-                "CS307 - Group 16",
-                "CS354 Project Group",
-                "SIGAPP Purdue",
-                "Zombie Impersonators of Tippecanoe County",
-                "Friends of Miur Valley",
-                "The three best friends that anyone could have",
-                "BBQ Sauce Club",
-                "We like wine and we don't care who knows",
-                "Mountain biking friends",
-                "People who don't go to Indiana University",
-                "The whitest kids u know",
-                "CS 391"
-        };
 
         m = Model.getInstance(getActivity());
         //List<Group2> groupData = m.activeGroups;   //OLD implementation

@@ -105,5 +105,9 @@
     <string name="radio_text_female">Female</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_event_creation">Create Event</string>
+    <string name="search_spec_member">Search</string>
+    <string name="group_create_submit">Create Group</string>
+    <string name="edit_group_add_members">Add members</string>
+    <string name="edit_group_submit">Submit</string>
 
 </resources>

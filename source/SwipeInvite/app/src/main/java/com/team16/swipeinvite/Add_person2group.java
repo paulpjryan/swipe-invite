@@ -112,7 +112,7 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
                 //Make sure to avoid spamming the search button
                 if (saveRT != null || grantRT != null || searchRT != null) {
                     Log.d(LOG_TAG, "Preventing list change while adding member.");
-                    Toast.makeText(getParent(), "Server busy.", Toast.LENGTH_SHORT).show();
+                    makeToast("Server busy.");
                     return;
                 }
 
@@ -131,7 +131,7 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
                     }
                 }
                 if (g == null) {
-                    Toast.makeText(getParent(), "This group is no longer available.", Toast.LENGTH_SHORT).show();
+                    makeToast("This group is no longer available.");
                     returnCancelled();
                     finish();
                     return;
@@ -139,7 +139,7 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
                 //Check to make sure the user is not already in the group
                 if (g.containsUser(username)) {
                     Log.d(LOG_TAG, "User is already in group.");
-                    Toast.makeText(getParent(), "User is already a member.", Toast.LENGTH_SHORT).show();
+                    makeToast("User is already a member.");
                     progressSpinner.setVisibility(View.GONE);
                     return;
                 }
@@ -175,6 +175,11 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
             progressSpinner.setVisibility(View.VISIBLE);
             pushRT.resume(onPushComplete);
         }
+        if (model == null) {
+            model = Model.getInstance(this);
+        }
+        model.addObserver(this);
+        checkForGone();
     }
     @Override
     protected void onPause() {
@@ -214,6 +219,12 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
         if (userToInvite != null) {
             outState.putString(USER_KEY, userToInvite);
         }
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(LOG_TAG, "onStop");
+        model.deleteObserver(this);
     }
     //endregion
 
@@ -402,7 +413,7 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
                 }
             }
             if (g == null) {
-                Toast.makeText(getParent(), "This group is no longer available.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "This group is no longer available.", Toast.LENGTH_SHORT).show();
                 returnCancelled();
                 finish();
                 return;
@@ -410,11 +421,9 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
             //Update the local group
             g.setBaasDocument(result.value());
 
-            //Notify the Group Adapter
-            GroupsAdapter.updateData(lG);
-
             //Save the model
             Model.saveModel(this);
+
         } else if (result.isCanceled()) {
             Log.d(LOG_TAG, "Save cancelled.");
             return;
@@ -471,8 +480,39 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
         message.put("type", "group");
         message.put("id", groupToEdit);
 
+        //Figure out what users to send to
+        //Get the current group to edit
+        List<Group2> lG = model.getActiveGroups();
+        Group2 g = null;
+        synchronized (lG) {
+            for (Group2 x : lG) {
+                if (x.equals(groupToEdit)) {
+                    g = x;
+                }
+            }
+        }
+        if (g == null) {
+            Toast.makeText(this, "This group is no longer available.", Toast.LENGTH_SHORT).show();
+            returnCancelled();
+            finish();
+            return;
+        }
+
+        String notificationMessage = userToInvite + " joined the group.";
+
+        //Start the intent service to send the push
+        Intent intent = new Intent(this, PushSender.class);
+        intent.putStringArrayListExtra("users", g.getUserList());
+        intent.putExtra("message", message);
+        intent.putExtra("notification", notificationMessage);
+        startService(intent);
+
+
         //Send the push notification
-        pushRT = BaasBox.messagingService().newMessage().extra(message).to(userToInvite).send(onPushComplete);
+        //pushRT = BaasBox.messagingService().newMessage().extra(message).to(userToInvite)
+                //.text(notificationMessage).send(onPushComplete);
+        makeToast("Invite sent");
+        progressSpinner.setVisibility(View.GONE);
     }
     //endregion
 
@@ -486,11 +526,10 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
             pushRT = null;
             if (result.isFailed()) {
                 Log.d(LOG_TAG, "Push error: " + result.error());
-                Toast.makeText(getParent(), "Unable to complete invite.", Toast.LENGTH_SHORT).show();
+                makeToast("Unable to complete invite.");
             } else if (result.isSuccess()) {
                 Log.d(LOG_TAG, "Push success.");
-                Toast.makeText(getParent(), "Invite sent.", Toast.LENGTH_SHORT).show();
-                completeSearch(new ArrayList<BaasUser>());
+                makeToast("Invite sent.");
             }
             userToInvite = null;
             progressSpinner.setVisibility(View.GONE);
@@ -499,11 +538,46 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
     //endregion
 
 
-    //region Method for observer callback
-    @Override
-    public void update(Observable observable, Object data) {
-        // TODO Auto-generated method stub
+    //region Method to make toast
+    private void makeToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+    //endregion
 
+
+    //region Method for observer callback
+    public void update(Observable observable, Object data) {
+        // MAKE SURE UI THREAD IS USED
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //Check for the group deletion
+                checkForGone();
+            }
+        });
+
+    }
+    //endregion
+
+
+    //region Method to check if the current group has been deleted
+    private void checkForGone() {
+        //Get the current group to edit
+        List<Group2> lG = model.getActiveGroups();
+        Group2 g = null;
+        synchronized (lG) {
+            for (Group2 x : lG) {
+                if (x.equals(groupToEdit)) {
+                    g = x;
+                }
+            }
+        }
+        if (g == null) {
+            makeToast("This group is no longer available.");
+            returnCancelled();
+            finish();
+            return;
+        }
     }
     //endregion
 

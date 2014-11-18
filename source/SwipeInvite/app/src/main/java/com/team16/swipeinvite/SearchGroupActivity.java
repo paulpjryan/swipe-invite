@@ -1,28 +1,44 @@
 package com.team16.swipeinvite;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.baasbox.android.BaasQuery;
+import com.baasbox.android.BaasUser;
+import com.baasbox.android.Grant;
+import com.baasbox.android.SaveMode;
+import com.google.android.gms.games.Game;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Observer;
+
 
 import static com.team16.swipeinvite.R.id.list_add_person_tv;
 
-public class SearchGroupActivity extends ActionBarActivity {
-    private ListView ListView_search_group;
+public class SearchGroupActivity extends ActionBarActivity implements View.OnClickListener {
+    private  ListView ListView_search_group;
     private ArrayAdapter<String> ListAdapter;
-
+    private static final String LOG_TAG = "ADD_P2G";
+    private ImageButton bt_search;
 
 
 	@Override
@@ -31,21 +47,40 @@ public class SearchGroupActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_search_group);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Button bt_join = (Button) findViewById(R.id.button_searchgroup_add);
-        Button bt_search = (Button) findViewById(R.id.button_searchgroup_search);
+       // Button bt_join = (Button) findViewById(R.id.button_searchgroup_add);
+        bt_search = (ImageButton) findViewById(R.id.button_searchgroup_search);
+        bt_search.setOnClickListener(this);
+        ListView_search_group = (ListView) findViewById(R.id.lv_search_group);
+        ListAdapter = new ArrayAdapter<String>(SearchGroupActivity.this,R.layout.list_item_group_search, new ArrayList<String>());
+        ListView_search_group.setAdapter(ListAdapter);
+
+        ListView_search_group.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id)
+            {
+               // String username = ListAdapter.getItem(position);
+                if (position == 1) {
+                    Intent intent = new Intent(SearchGroupActivity.this, SearchSpeMemberActivity.class);
+                    startActivity(intent);
+                }
+
+
+            }
+        });
+
 
 
 
 
         //region Codes for join group button
-
+/*
         bt_join.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast msg = Toast.makeText(SearchGroupActivity.this,"Successfully send the invitation",Toast.LENGTH_LONG);
                 msg.show();
             }
-        });
+        });*/
         //endregion
 
 
@@ -64,7 +99,7 @@ public class SearchGroupActivity extends ActionBarActivity {
 
 
         //region Codes for searching button
-
+/*
         bt_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,6 +110,7 @@ public class SearchGroupActivity extends ActionBarActivity {
                 // Dummy data
                 String[] data = {
                         "Engl 101 + Description: Fall 2014",
+                        "Engl 101 + Description:"
                 };
 
                 ListView_search_group = (ListView) findViewById(R.id.lv_search_group);
@@ -85,21 +121,31 @@ public class SearchGroupActivity extends ActionBarActivity {
                 ListAdapter = new ArrayAdapter<String>(SearchGroupActivity.this,R.layout.list_item_group_search,GroupList);
                 ListView_search_group.setAdapter(ListAdapter);
 
-
             }
+        });*/
 
-        });
+        // !!!!!!!!!!!!!!!!!   Things needed to be fixed here !!!!!!!!!!!!!!!!
+        //  LISTVIEW IS ALWAYS NULL WHEN TRY TO LOAD IT !!!!!!!!!!!!!
+/*
+        if (ListView_search_group != null ) {
+            ListView_search_group.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    if (position == 1) {
+                        Intent intent = new Intent(SearchGroupActivity.this, SearchSpeMemberActivity.class);
+                        startActivity(intent);
+                    }
+                }
+            });
+            return;
+        }
+        else {
+            Log.d(LOG_TAG, "Still Null");
+
+        };
+        */
 
         //endregion
-
-
-
-
-
-
-
-
-
 	}
 
 	@Override
@@ -120,6 +166,32 @@ public class SearchGroupActivity extends ActionBarActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
+
+    public void onClick(View v) {
+        switch(v.getId())
+        {
+
+            case R.id.button_searchgroup_search:
+
+                String[] data = {
+                        "Engl 101 + Description: Fall 2014",
+                        "Engl 101 + Description:"
+                };
+
+                ArrayList<String> GroupList = new ArrayList<String>();
+                GroupList.addAll(Arrays.asList(data));
+
+                ListAdapter = new ArrayAdapter<String>(SearchGroupActivity.this,R.layout.list_item_group_search, GroupList);
+                ListView_search_group.setAdapter(ListAdapter);
+
+                break;
+        }
+
+    }
+
+
+
+
 
 
 }
