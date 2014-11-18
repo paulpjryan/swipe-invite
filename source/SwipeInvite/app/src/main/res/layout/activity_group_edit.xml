@@ -172,7 +172,7 @@
         android:layout_below="@id/linearLayout_profile_group_description"
         android:layout_marginTop="10dp"
         android:layout_weight="1"
-        android:weightSum="8">
+        android:weightSum="10">
 
         <Button
         android:theme="@android:style/Theme.Translucent"
@@ -183,7 +183,14 @@
         android:layout_alignParentBottom="true"
         android:layout_alignLeft="@+id/listView_group_member"
         android:onClick="addMemListener"
-        android:layout_weight="4"/>
+        android:layout_weight="1"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:id="@+id/textView"
+            android:layout_weight="6" />
 
         <Button
             android:theme="@android:style/Theme.Translucent"
@@ -191,11 +198,12 @@
             android:layout_height="wrap_content"
             android:text="Submit"
             android:id="@+id/group_edit_submit"
+
             android:layout_alignParentBottom="true"
             android:layout_alignRight="@+id/listView_group_member"
             android:layout_alignEnd="@+id/listView_group_member"
             android:onClick="submitListener"
-            android:layout_weight="4"/>
+            android:layout_weight="3"/>
     </LinearLayout>
 
 
