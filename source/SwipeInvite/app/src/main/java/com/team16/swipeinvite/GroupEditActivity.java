@@ -97,6 +97,7 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
         //Load the model
         model = Model.getInstance(this);
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -106,7 +107,7 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
             saveRT.resume(onSaveComplete);
         }
         if (model == null) {
-            model.getInstance(this);
+            model = Model.getInstance(this);
         }
         model.addObserver(this);
 
@@ -117,6 +118,7 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
         populateEventList();
         populateMemberList();
     }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -126,6 +128,7 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
             saveRT.suspend();
         }
     }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -135,6 +138,7 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
             outState.putParcelable(SAVE_TOKEN_KEY, saveRT);
         }
     }
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -157,7 +161,6 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
                 populateMemberList();
             }
         });
-        return;
     }
     //endregion
 
@@ -282,9 +285,10 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
     //region Methods for menus
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d(LOG_TAG, "onCreateOptionsMenu called");
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.group_edit, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -292,22 +296,26 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                if (saveRT != null) {
+                    returnCancelled();
+                } else {
+                    returnOk();
+                }
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+            case R.id.bt_add_member:
+                addMemberListener();
+                return true;
+            case R.id.group_edit_submit:
+                submitListener();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        else if(id == android.R.id.home)
-        {
-            if (saveRT != null) {
-                returnCancelled();
-            } else {
-                returnOk();
-            }
-            NavUtils.navigateUpFromSameTask(this);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
+
     @Override
     public void onBackPressed() {
         if (saveRT != null) {
@@ -321,7 +329,7 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
 
 
     //region Methods for add member button
-    public void addMemListener(View v) {
+    public void addMemberListener() {
         //Check to make sure the button is not spammed
         if (saveRT != null) {
             Log.d(LOG_TAG, "Preventing spam of submit button.");
@@ -383,7 +391,7 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
 
 
     //region Methods for the submit button
-    public void submitListener(View v)
+    public void submitListener()
     {
         //Check to make sure the button is not spammed
         if (saveRT != null) {

@@ -115,10 +115,8 @@
                     android:layout_height="wrap_content"
                     android:text="Private"
                     android:id="@+id/text_private"
-                    android:checked="false"
+                    android:checked="true"
                     android:layout_marginTop="31dp"
-
-
                     android:onClick="onRadioButtonClicked" />
 
                 <RadioButton
@@ -134,19 +132,6 @@
 
             </RadioGroup>
         </LinearLayout>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Submit"
-            android:id="@+id/button_submit_groupCreation"
-            android:onClick="submitResponder"
-            android:layout_alignParentBottom="true"
-            android:layout_alignRight="@+id/group_create_group_type"
-            android:layout_alignEnd="@+id/group_create_group_type" />
-
-
-
     </RelativeLayout>
 
 </merge>
