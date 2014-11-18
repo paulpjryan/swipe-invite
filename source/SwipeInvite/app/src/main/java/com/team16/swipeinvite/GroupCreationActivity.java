@@ -29,10 +29,10 @@ import com.baasbox.android.Role;
 import com.baasbox.android.SaveMode;
 
 public class GroupCreationActivity extends ActionBarActivity {
+
     /* -------------------- LOG TAG CONSTANTS --------------------------- */
     private final static String LOG_TAG = "GROUP_CREATE_ACT";
     /* -------------------- END LOG TAG CONSTANTS ----------------------- */
-
 
     //region Local instance variables for view elements
     //Variables for form view
@@ -70,16 +70,12 @@ public class GroupCreationActivity extends ActionBarActivity {
             saveRT = savedInstanceState.getParcelable(SAVE_TOKEN_KEY);
             readRT = savedInstanceState.getParcelable(READ_TOKEN_KEY);
             updateRT = savedInstanceState.getParcelable(UPDATE_TOKEN_KEY);
-            model = savedInstanceState.getParcelable(MODEL_KEY);
+            //model = savedInstanceState.getParcelable(MODEL_KEY);
             newGroup = savedInstanceState.getParcelable(GROUP_KEY);
-        } else {
-            model = getIntent().getParcelableExtra(MODEL_INTENT_KEY);
-            try {
-                Log.d(LOG_TAG, "Got model from intent, size: " + model.activeGroups.size());
-            } catch (NullPointerException e) {
-                Log.d(LOG_TAG, "Model got messed up.");
-            }
         }
+
+        model = Model.getInstance(this);
+        Log.d(LOG_TAG, "Got model, size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
 
         //Setting the content view and support action bar
         setContentView(R.layout.activity_group_creation);
@@ -90,7 +86,6 @@ public class GroupCreationActivity extends ActionBarActivity {
         this.nameview = (EditText) findViewById(R.id.textView_group_name);
 		this.descview = (EditText) findViewById(R.id.textView_group_description);
         this.radgroup = (RadioGroup) findViewById(R.id.radioGroup);
-        this.submit = (Button) findViewById(R.id.button_submit_groupCreation);
 
         //Status View creation to local variables
         this.groupStatusView = (View) findViewById(R.id.group_create_status);
@@ -104,7 +99,7 @@ public class GroupCreationActivity extends ActionBarActivity {
         Log.d(LOG_TAG, "onCreateOptionsMenu called");
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.group_creation, menu);
-		return true;
+		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
@@ -114,20 +109,20 @@ public class GroupCreationActivity extends ActionBarActivity {
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-        else if(id == android.R.id.home)
-        {
-            Log.d(LOG_TAG, "Navigating away from group creation, return CANCEL.");
-            showProgress(false);
-            Intent returnIntent = new Intent();
-            setResult(RESULT_CANCELED, returnIntent);
-            NavUtils.navigateUpFromSameTask(this);
-            return true;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Log.d(LOG_TAG, "Navigating away from group creation, return CANCEL.");
+                showProgress(false);
+                Intent returnIntent = new Intent();
+                setResult(RESULT_CANCELED, returnIntent);
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+            case R.id.submit_group_creation:
+                submitResponder();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-		return super.onOptionsItemSelected(item);
 	}
 
     @Override
@@ -182,9 +177,6 @@ public class GroupCreationActivity extends ActionBarActivity {
         if (updateRT != null) {
             outState.putParcelable(UPDATE_TOKEN_KEY, updateRT);
         }
-        if (model != null) {
-            outState.putParcelable(MODEL_KEY, model);
-        }
         if (newGroup != null) {
             outState.putParcelable(GROUP_KEY, newGroup);
         }
@@ -192,6 +184,7 @@ public class GroupCreationActivity extends ActionBarActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        Log.d(LOG_TAG, "onStop called");
     }
     //endregion
 
@@ -199,7 +192,7 @@ public class GroupCreationActivity extends ActionBarActivity {
     //region Radio Group responder
     //Method to respond to the radio button clicked
     //Listener set in the xml
-    private int ispriv = -1;  //start at -1 to represent nothing checked
+    private boolean isPrivate = true;  // default is checked
     public void onRadioButtonClicked(View v) {
         // Is the button now checked?
         boolean checked = ((RadioButton) v).isChecked();
@@ -208,14 +201,13 @@ public class GroupCreationActivity extends ActionBarActivity {
         switch(v.getId()) {
             case R.id.text_private:
                 if (checked)
-                    ispriv = 1;
-                    break;
+                    isPrivate = true;
+                break;
             case R.id.text_public:
                 if (checked)
-                    ispriv = 0;
-                    break;
+                    isPrivate = false;
+                break;
         }
-        return;
     }
     //endregion
 
@@ -223,7 +215,7 @@ public class GroupCreationActivity extends ActionBarActivity {
     //region Submit button responder
     //Method to respond to the actual button click
     //Listener is set in the xml
-    public void submitResponder(View v) {
+    public void submitResponder() {
         //Change the views
         showProgress(true);
 
@@ -244,11 +236,6 @@ public class GroupCreationActivity extends ActionBarActivity {
             descview.setError("Cannot be left blank");
             descview.requestFocus();
             return;
-        } else if (ispriv == -1) {
-            Log.d(LOG_TAG, "Privacy field cannot be blank.");
-            showProgress(false);
-            radgroup.requestFocus();
-            return;
         } else if (name.length() > 20 ) {
             Log.d(LOG_TAG, "Name field cannot be longer than 20 characters.");
             showProgress(false);
@@ -264,16 +251,11 @@ public class GroupCreationActivity extends ActionBarActivity {
         }
 
         //Proceed to create new group with information
-        boolean priv = true;
-        if (ispriv == 0) {
-            priv = false;
-        }
         Log.d(LOG_TAG, "Saving group to server.");
-        Group2 g = new Group2(name, description, priv);
+        Group2 g = new Group2(name, description, isPrivate);
         saveRT = g.getBaasDocument().save(SaveMode.IGNORE_VERSION, onSaveComplete);
-
-        return;
     }
+
     public void textFieldResponder(View v) {
         //Reset the error messages if you click the text views
         nameview.setError(null);
@@ -320,7 +302,8 @@ public class GroupCreationActivity extends ActionBarActivity {
         if (newGroup.isPrivate()) {
             Log.d(LOG_TAG, "Created private group.");
             //Update model, return to main activity
-            model.activeGroups.add(newGroup);
+            //model.activeGroups.add(newGroup);      //OLD way
+            model.getActiveGroups().add(newGroup);    //Synchronized meth. 1
             returnToMainSuccess();
             return;
         }
@@ -399,7 +382,8 @@ public class GroupCreationActivity extends ActionBarActivity {
         //Check if both grants have finished
         if (readRT == null && updateRT == null) {
             Log.d(LOG_TAG, "Created public group.");
-            model.activeGroups.add(newGroup);
+            //model.activeGroups.add(newGroup);    //OLD Methodology
+            model.getActiveGroups().add(newGroup);     //Synchronized methodology 1
             returnToMainSuccess();
             return;
         }
@@ -429,7 +413,7 @@ public class GroupCreationActivity extends ActionBarActivity {
     private void returnToMainSuccess() {
         showProgress(false);
         Intent returnIntent = new Intent();
-        returnIntent.putExtra(MODEL_INTENT_KEY, model);
+        Model.saveModel(this);
         setResult(RESULT_OK, returnIntent);
         finish();
     }

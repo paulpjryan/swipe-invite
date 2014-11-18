@@ -4,22 +4,29 @@
     tools:context="com.team16.swipeinvite.MainActivity" >
 
 
+
+    <item android:id="@+id/action_event_creation"
+        android:title="@string/action_event_creation"
+        app:showAsAction="withText|ifRoom" />
+
     <item android:id="@+id/action_create_group"
     android:title="@string/action_create_group"
-    app:showAsAction="withText|ifRoom" />
+    app:showAsAction="never" />
 
-    <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
+    <item android:id="@+id/action_search_group"
+        android:title="@string/action_search_group"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/action_profile"
+        android:title="@string/action_profile"
         app:showAsAction="never" />
 
     <item android:id="@+id/action_logout"
         android:title="@string/action_logout"
         app:showAsAction="never" />
 
-    <item android:id="@+id/action_profile"
-        android:title="@string/action_profile"
+    <item android:id="@+id/action_settings"
+        android:title="@string/action_settings"
         app:showAsAction="never" />
-    <item android:id="@+id/action_search_group"
-        android:title="@string/action_search_group"
-        app:showAsAction="never" />
+
 </menu>

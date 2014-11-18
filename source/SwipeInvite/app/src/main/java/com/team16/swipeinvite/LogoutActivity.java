@@ -23,8 +23,11 @@ import com.baasbox.android.BaasUser;
 import com.baasbox.android.RequestToken;
 import com.baasbox.android.SaveMode;
 
+import java.util.Observable;
+import java.util.Observer;
 
-public class LogoutActivity extends ActionBarActivity {
+
+public class LogoutActivity extends ActionBarActivity implements Observer {
     private static final String LOG_TAG = "LOGOUT_ACTIVITY";
 
     //region Local instance of the model
@@ -49,16 +52,19 @@ public class LogoutActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logout);
-
+        setTitle("Logout");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //Check for resumed states and retrieve model from somewhere
         if (savedInstanceState != null) {
-            model = savedInstanceState.getParcelable(MODEL_KEY);
+            //model = savedInstanceState.getParcelable(MODEL_KEY);
             modelRT = savedInstanceState.getParcelable(MODEL_TOKEN_KEY);
             cloudRT = savedInstanceState.getParcelable(CLOUD_TOKEN_KEY);
             logoutRT = savedInstanceState.getParcelable(LOGOUT_TOKEN_KEY);
-        } else {
+        } /*else {
             model = getIntent().getParcelableExtra("model_data");
-        }
+        } */
+        model = Model.getInstance(this);
+        Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
 
         //Setup the form views
         formLogout = findViewById(R.id.form_logout);
@@ -82,6 +88,11 @@ public class LogoutActivity extends ActionBarActivity {
             showProgress(true);
             logoutRT.resume(onLogout);
         }
+        if (model == null) {
+            model = Model.getInstance(this);
+            Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
+        }
+        model.addObserver(this);
     }
     @Override
     protected void onPause() {
@@ -100,7 +111,7 @@ public class LogoutActivity extends ActionBarActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(MODEL_KEY, model);
+        //outState.putParcelable(MODEL_KEY, model);
         if (modelRT != null) {
             outState.putParcelable(MODEL_TOKEN_KEY, modelRT);
         } else if (cloudRT != null) {
@@ -109,7 +120,27 @@ public class LogoutActivity extends ActionBarActivity {
             outState.putParcelable(LOGOUT_TOKEN_KEY, logoutRT);
         }
     }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        model.deleteObserver(this);
+    }
     //endregion
+
+
+    //region Implementation of observer
+    public void update(Observable ob, Object o) {
+        //MAKE SURE TO RUN ON UI THREAD
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //UPDATE ANYTHING THAT RELIES ON MODEL
+            }
+        });
+        return;
+    }
+    //endregion
+
 
 
     //region Method to respond to logout button
@@ -207,6 +238,7 @@ public class LogoutActivity extends ActionBarActivity {
     private void launchLoginActivity() {
         Intent intent = new Intent(this, LoginActivity2.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Model.dumpInstance();   //Delete the model from singleton
         startActivity(intent);
         finish();
     }
@@ -217,7 +249,7 @@ public class LogoutActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.logout, menu);
+        //getMenuInflater().inflate(R.menu.logout, menu);
         return true;
     }
 

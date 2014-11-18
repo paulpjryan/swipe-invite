@@ -23,7 +23,10 @@ import com.baasbox.android.BaasUser;
 import com.baasbox.android.RequestToken;
 import com.baasbox.android.SaveMode;
 
-public class UserProfileActivity extends ActionBarActivity {
+import java.util.Observable;
+import java.util.Observer;
+
+public class UserProfileActivity extends ActionBarActivity implements Observer {
     private static final String LOG_TAG = "USERPROFILE";
 
     //region Local variables for views
@@ -56,14 +59,14 @@ public class UserProfileActivity extends ActionBarActivity {
         //Retrieve model from somewhere
         if (savedInstanceState != null) {
             saveRT = savedInstanceState.getParcelable(SAVE_TOKEN_KEY);
-            model = savedInstanceState.getParcelable(MODEL_KEY);
-        } else {
-            model = getIntent().getParcelableExtra(MODEL_INTENT_KEY);
+            //model = savedInstanceState.getParcelable(MODEL_KEY);
         }
+        model = Model.getInstance(this);
+        Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
 
         //Setup local variables for the views
         usernameField = (EditText) findViewById(R.id.editText_user_username);
-        passwordField = (EditText) findViewById(R.id.editText_user_password);
+        //passwordField = (EditText) findViewById(R.id.editText_user_password);
 		fullnameField = (TextView) findViewById(R.id.editText_user_name);
         emailField = (TextView) findViewById(R.id.editText_user_email);
         genderGroup = (RadioGroup) findViewById(R.id.RadioGroup_gender);
@@ -72,8 +75,6 @@ public class UserProfileActivity extends ActionBarActivity {
         progressSpinner = (ProgressBar) findViewById(R.id.progressBar_user_profile);
         progressSpinner.setVisibility(View.GONE);
 
-        //Populate the views with data from the model
-        populateViews();
 	}
     @Override
     protected void onPause() {
@@ -90,20 +91,44 @@ public class UserProfileActivity extends ActionBarActivity {
             progressSpinner.setVisibility(View.VISIBLE);
             saveRT.resume(onSaveComplete);
         }
+        if (model == null) {
+            model = Model.getInstance(this);
+            Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
+        }
+        model.addObserver(this);
+        //Populate the views with data from the model
+        populateViews();
     }
     @Override
     protected void onStop() {
         super.onStop();
+        Log.d(LOG_TAG, "onStop");
+        model.deleteObserver(this);
     }
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (model != null) {
-            outState.putParcelable(MODEL_KEY, model);
+            //outState.putParcelable(MODEL_KEY, model);
         }
         if (saveRT != null) {
             outState.putParcelable(SAVE_TOKEN_KEY, saveRT);
         }
+    }
+    //endregion
+
+
+    //region Implementation of observer
+    public void update(Observable ob, Object o) {
+        //MAKE SURE TO RUN ON UI THREAD
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //UPDATE ANYTHING THAT RELIES ON MODEL
+                populateViews();
+            }
+        });
+        return;
     }
     //endregion
 
@@ -160,7 +185,6 @@ public class UserProfileActivity extends ActionBarActivity {
             Log.d(LOG_TAG, "Navigating away from profile edit, return OK.");
             progressSpinner.setVisibility(View.GONE);
             Intent returnIntent = new Intent();
-            returnIntent.putExtra(MODEL_INTENT_KEY, model);
             setResult(RESULT_OK, returnIntent);
         } else {
             Log.d(LOG_TAG, "Navigating away from profile edit, return CANCEL.");
@@ -175,6 +199,13 @@ public class UserProfileActivity extends ActionBarActivity {
     //region Method for clicking the submit button
     public void onClickListener(View v)
     {
+        //Make sure to avoid the spamming of the submit button
+        if (saveRT != null) {
+            Log.d(LOG_TAG, "Preventing spam of submit button.");
+            Toast.makeText(this, "Already contacting server...", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         progressSpinner.setVisibility(View.VISIBLE);
         //show progress here **************************************
 
@@ -274,9 +305,10 @@ public class UserProfileActivity extends ActionBarActivity {
         progressSpinner.setVisibility(View.GONE);
         //Put the current user info into the model
         model.currentUser = new CurrentUser(u);
+        Model.saveModel(this);
 
         //Reload the views
-        populateViews();
+        //populateViews();  SHOULDN'T NEED TO DO THIS AFTER MODEL SAVE
 
         //Toast user success
         Toast.makeText(getApplicationContext(), "Profile updated.", Toast.LENGTH_SHORT).show();

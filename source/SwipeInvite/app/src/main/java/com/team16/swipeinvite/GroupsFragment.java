@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +14,14 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Fragment that shows which groups a user has been invited to
  */
 public class GroupsFragment extends Fragment {
+    private static final String LOG_TAG = "GROUP_FRAGMENT";
 
     private GroupsAdapter mArrayAdapter;
 
@@ -28,32 +31,19 @@ public class GroupsFragment extends Fragment {
         // Empty constructor required for fragment subclasses
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(LOG_TAG, "onCreateViewCalled");
 
-        // Create some dummy data for the ListView.  Here's a sample weekly forecast
-        String[] data = {
-                "CS307 - Group 16",
-                "CS354 Project Group",
-                "SIGAPP Purdue",
-                "Zombie Impersonators of Tippecanoe County",
-                "Friends of Miur Valley",
-                "The three best friends that anyone could have",
-                "BBQ Sauce Club",
-                "We like wine and we don't care who knows",
-                "Mountain biking friends",
-                "People who don't go to Indiana University",
-                "The whitest kids u know",
-                "CS 391"
-        };
-
-        List<Group2> groupData = getArguments().getParcelableArrayList("group_list");
+        m = Model.getInstance(getActivity());
+        //List<Group2> groupData = m.activeGroups;   //OLD implementation
+        //List<Group2> groupData = m.getActiveGroups();    //Synchronized methodology 1
         mArrayAdapter =
                 new GroupsAdapter(
-                        getActivity(), // The current context (this activity)
-                        //R.layout.list_item_group, // The name of the layout ID.
-                        groupData);
+                        getActivity(),
+                        m.getActiveGroups());
 
 
         View rootView = inflater.inflate(R.layout.fragment_group, container, false);
@@ -92,9 +82,10 @@ public class GroupsFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id)
             {
-                Intent intent = new Intent(getActivity(), GroupEditActivity.class);
-                //ADD ARGUMENTS
-                startActivity(intent);
+                //Figure out which group is being referred to and pass it to the activity
+                Group2 g = (Group2) mArrayAdapter.getItem(position);
+                //Call the method in the main activity to start the group edit activity
+                ((MainActivity) getActivity()).startGroupEdit(g.getId());
             }
         });
 

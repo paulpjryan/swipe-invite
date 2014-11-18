@@ -1,7 +1,6 @@
 package com.team16.swipeinvite;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,42 +11,32 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 // The standard text view adapter only seems to search from the beginning of whole words
 // so we've had to write this whole class to make it possible to search
 // for parts of the arbitrary string we want
-public class GroupsAdapter extends BaseAdapter implements Filterable {
-    private static final String LOG_TAG = "Groups_Adapter";
+public class EventsAdapter extends BaseAdapter implements Filterable {
 
-    private List<Group2>originalData = null;
-    private List<Group2>filteredData = null;
+    private List<Event>originalData = null;
+    private List<Event>filteredData = null;
     private LayoutInflater mInflater;
     private ItemFilter mFilter = new ItemFilter();
-    private static GroupsAdapter selfInstance;
+    private static EventsAdapter selfInstance;
 
-    public GroupsAdapter(Context context, List<Group2> data) {
+    public EventsAdapter(Context context, List<Event> data) {
         this.filteredData = data ;
         this.originalData = data ;
         mInflater = LayoutInflater.from(context);
-        GroupsAdapter.selfInstance = this;     //keep track of the instance of this class that is used
+        EventsAdapter.selfInstance = this;     //keep track of the instance of this class that is used
     }
 
-
     //region Methods to handle updating the list view from other threads in a static context
-    protected static synchronized void updateData(List<Group2> g) {
+    protected static synchronized void updateData(List<Event> g) {
         if (selfInstance == null) {
             return;
         }
-        Log.d(LOG_TAG, "Received request to update list view.");
         selfInstance.originalData = g;
-        try {
-            selfInstance.notifyDataSetChanged();
-        } catch (Exception e) {
-            Log.d(LOG_TAG, "Caught exception: " + e.toString());
-            return;
-        }
+        selfInstance.notifyDataSetChanged();
     }
     //endregion
 
@@ -72,16 +61,16 @@ public class GroupsAdapter extends BaseAdapter implements Filterable {
         // to reinflate it. We only inflate a new View when the convertView supplied
         // by ListView is null.
         //if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.list_item_group, null);
+        convertView = mInflater.inflate(R.layout.list_item_event, null);
 
-            // Creates a ViewHolder and store references to the two children views
-            // we want to bind data to.
-            holder = new ViewHolder();
-            holder.text = (TextView) convertView.findViewById(R.id.list_item_group_name);
+        // Creates a ViewHolder and store references to the two children views
+        // we want to bind data to.
+        holder = new ViewHolder();
+        holder.text = (TextView) convertView.findViewById(R.id.list_item_event_name);
 
-            // Bind the data efficiently with the holder.
+        // Bind the data efficiently with the holder.
 
-            convertView.setTag(holder);
+        convertView.setTag(holder);
        /* } else {
             // Get the ViewHolder back to get fast access to the TextView
             // and the ImageView.
@@ -110,10 +99,10 @@ public class GroupsAdapter extends BaseAdapter implements Filterable {
 
             FilterResults results = new FilterResults();
 
-            final List<Group2> list = originalData;
+            final List<Event> list = originalData;
 
             int count = list.size();
-            final ArrayList<Group2> nlist = new ArrayList<Group2>(count);
+            final ArrayList<Event> nlist = new ArrayList<Event>(count);
 
             String filterableString ;
 
@@ -133,10 +122,11 @@ public class GroupsAdapter extends BaseAdapter implements Filterable {
         @SuppressWarnings("unchecked")
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            filteredData = (ArrayList<Group2>) results.values;
+            filteredData = (ArrayList<Event>) results.values;
             notifyDataSetChanged();
         }
 
     }
 }
+
 

@@ -4,10 +4,10 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content">
 -->
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="fill_parent"
     android:orientation="vertical"
 
     xmlns:tools="http://schemas.android.com/tools"
@@ -17,7 +17,9 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.team16.swipeinvite.group_edit">
+    tools:context="com.team16.swipeinvite.group_edit"
+    android:weightSum="22.5"
+   >
 
 <!--
     android:layout_width="match_parent"
@@ -29,26 +31,56 @@
         android:id="@+id/linearLayout_profile_group_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Group Name:"
-        android:id="@+id/textView"
-        android:layout_weight="2"
-        android:gravity="center_vertical"/>
-
+        android:orientation="horizontal"
+        android:layout_weight="1.5">
 
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
         android:ems="8"
+        android:background="@drawable/textinputborder"
+        android:hint="Group Name"
         android:id="@+id/textView_new_group"
         android:layout_weight="8"
         android:maxLength="35"
         android:maxLines="2" />
+
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:id="@+id/linearLayout_profile_group_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/linearLayout_profile_group_name"
+        android:layout_weight="3">
+
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:ems="8"
+                android:id="@+id/et_edit_group_des"
+
+
+                android:layout_alignRight="@+id/linearLayout_profile_group_description"
+                android:layout_alignEnd="@+id/linearLayout_profile_group_description"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:background="@drawable/textinputborder"
+                android:hint="Description"
+                android:scrollbars="vertical"
+                android:lines="3"
+                android:singleLine="false"
+                android:maxLines="6"
+                android:maxLength="800"
+                />
 
 
     </LinearLayout>
@@ -58,7 +90,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@id/linearLayout_profile_group_name"
+        android:layout_below="@id/linearLayout_profile_group_description"
+        android:layout_marginTop="10dp"
+        android:layout_weight="1.5"
         android:weightSum="8">
 
         <TextView
@@ -83,62 +117,14 @@
     </LinearLayout>
 
 
-        <LinearLayout
-            android:id="@+id/linearLayout_profile_group_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_below="@id/linearLayout_profile_group_nameType"
-            android:weightSum="8">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Description: "
-                android:id="@+id/textView5"
-
-                android:enabled="true"
-                android:textSize="18dp" />
-
-
-    </LinearLayout>
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textMultiLine"
-        android:ems="8"
-        android:id="@+id/et_edit_group_des"
-        android:layout_below="@+id/linearLayout_profile_group_description"
-
-        android:layout_alignRight="@+id/linearLayout_profile_group_description"
-        android:layout_alignEnd="@+id/linearLayout_profile_group_description"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:scrollbars="vertical"
-        android:lines="2"
-        android:singleLine="false"
-        android:maxLines="6"
-        android:maxLength="800"
-        />
-
-
-
-
-
-
-
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Events:"
         android:id="@+id/textView2"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/et_edit_group_des" />
+        android:layout_marginTop="10dp"
+        android:layout_weight="0.5"/>
 
     <ListView
         android:layout_width="match_parent"
@@ -152,7 +138,8 @@
         android:scrollbarStyle="outsideOverlay"
         android:scrollbars="vertical"
         android:scrollingCache="true"
-        android:smoothScrollbar="true"/>
+        android:smoothScrollbar="true"
+        android:layout_weight="6"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -163,45 +150,29 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/listView_events_group"
-        android:paddingTop="25dp" />
+        android:paddingTop="25dp"
+        android:layout_weight="0.5"/>
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="350px"
+        android:layout_height="250px"
         android:id="@+id/listView_group_member"
         android:layout_below="@+id/textView_groupMember"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="15dp" />
+        android:layout_marginTop="15dp"
+        android:layout_weight="6"/>
 
-
-
-    <Button
-    android:layout_width="wrap_content"
-    android:layout_height="10dp"
-    android:text="Submit"
-    android:id="@+id/group_edit_submit"
-    android:layout_below="@+id/listView_group_member"
-    android:layout_alignParentBottom="true"
-    android:layout_alignRight="@+id/listView_group_member"
-    android:layout_alignEnd="@+id/listView_group_member"
-    android:onClick="submitListener"/>
-
-    <Button
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
-        android:layout_height="10dp"
-        android:text="Add members"
-        android:id="@+id/bt_add_member"
-        android:layout_below="@+id/listView_group_member"
-        android:layout_alignParentBottom="true"
-
-        android:layout_alignLeft="@+id/listView_group_member"
-
-         />
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar_group_edit"
+        android:layout_gravity="center_horizontal" />
 
 
 
-</RelativeLayout>
+</LinearLayout>
 
     <!--
     </ScrollView>

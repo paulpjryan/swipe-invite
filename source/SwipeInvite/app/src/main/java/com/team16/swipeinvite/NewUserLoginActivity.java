@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,12 +20,16 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baasbox.android.BaasBox;
+import com.baasbox.android.BaasCloudMessagingService;
 import com.baasbox.android.BaasDocument;
 import com.baasbox.android.BaasHandler;
 import com.baasbox.android.BaasResult;
 import com.baasbox.android.BaasUser;
 import com.baasbox.android.RequestToken;
 import com.baasbox.android.SaveMode;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import java.util.List;
 
@@ -37,6 +42,7 @@ public class NewUserLoginActivity extends Activity {
     private static final String MODEL_KEY = "model_d";
     //endregion
 
+
     //region Private instance variables for the view
     //The form view
     private View formView;
@@ -44,6 +50,7 @@ public class NewUserLoginActivity extends Activity {
     private EditText nameField;
     private EditText emailField;
     private EditText passwordField;
+    private EditText confirmPasswordField;
     private Button submitButton;
     private RadioGroup radGroup;
     //The status display
@@ -64,7 +71,18 @@ public class NewUserLoginActivity extends Activity {
             signInRT = savedInstanceState.getParcelable(SIGN_IN_TOKEN_KEY);
             groupRT = savedInstanceState.getParcelable(GROUP_TOKEN_KEY);
             modelRT = savedInstanceState.getParcelable(MODEL_TOKEN_KEY);
-            model = savedInstanceState.getParcelable(MODEL_KEY);
+            cloudRT = savedInstanceState.getParcelable(CLOUD_TOKEN_KEY);
+            try {
+                model = Model.getInstance(this);
+            } catch (Model.ModelException e) {
+                Log.d(LOG_TAG, "Caught a model exception.");
+                model = null;
+            }
+        }
+
+        //Check for google play services
+        if (!checkPlayServices()) {
+            return;
         }
 
         //Setup the form view variables
@@ -73,6 +91,7 @@ public class NewUserLoginActivity extends Activity {
         nameField = (EditText) findViewById(R.id.name_new_login);
         emailField = (EditText) findViewById(R.id.email_new_login);
         passwordField = (EditText) findViewById(R.id.password_new_login);
+        confirmPasswordField = (EditText) findViewById(R.id.password_new_confirm);
         submitButton = (Button) findViewById(R.id.create_user_button);
         radGroup = (RadioGroup) findViewById(R.id.radioGroup_male_female);
 
@@ -84,12 +103,16 @@ public class NewUserLoginActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        checkPlayServices();   //Need to check for valid google play services
         if (signInRT != null) {
             showProgress(true);
             signInRT.resume(onComplete);
         } else if (groupRT != null) {
             showProgress(true);
             groupRT.resume(onGroupComplete);
+        } else if (cloudRT != null) {
+            showProgress(true);
+            cloudRT.resume(onCloudComplete);
         } else if (modelRT != null) {
             showProgress(true);
             modelRT.resume(onModelComplete);
@@ -105,6 +128,9 @@ public class NewUserLoginActivity extends Activity {
         } else if (groupRT != null) {
             showProgress(false);
             groupRT.suspend();
+        } else if (cloudRT != null) {
+            showProgress(true);
+            cloudRT.suspend();
         } else if (modelRT != null) {
             showProgress(false);
             modelRT.suspend();
@@ -114,15 +140,18 @@ public class NewUserLoginActivity extends Activity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        Log.d(LOG_TAG, "onSaveInstanceState called.");
         if (signInRT != null) {
             outState.putParcelable(SIGN_IN_TOKEN_KEY, signInRT);
         } else if (groupRT != null) {
             outState.putParcelable(GROUP_TOKEN_KEY, groupRT);
+        } else if (cloudRT != null) {
+            outState.putParcelable(CLOUD_TOKEN_KEY, cloudRT);
         } else if (modelRT != null) {
             outState.putParcelable(MODEL_TOKEN_KEY, modelRT);
         }
         if (model != null) {
-            outState.putParcelable(MODEL_KEY, model);
+            Model.saveModel(this);
         }
     }
     //endregion
@@ -155,6 +184,7 @@ public class NewUserLoginActivity extends Activity {
         String name = nameField.getText().toString();
         String email = emailField.getText().toString();
         String password = passwordField.getText().toString();
+        String confirmpassword = confirmPasswordField.getText().toString();
 
         //Catch faulty inputs
         if (TextUtils.isEmpty(username)) {
@@ -204,6 +234,12 @@ public class NewUserLoginActivity extends Activity {
             Log.d(LOG_TAG, "Gender cannot be empty");
             showProgress(false);
             radGroup.requestFocus();
+            return;
+        } else if (!(password.equals(confirmpassword)) ) {
+            Log.d(LOG_TAG, "Passwords do not match");
+            showProgress(false);
+            confirmPasswordField.setError("Password does not match");
+            confirmPasswordField.requestFocus();
             return;
         }
         //Create new user based on fields
@@ -261,13 +297,15 @@ public class NewUserLoginActivity extends Activity {
     //region Method that is called after the signup is complete
     private void completeSignup(BaasUser u) {
         //Create the model, this also stores the current user into it
-        model = new Model();
+        //model = new Model();
+        model = Model.getInstance(this);
 
         //Create the user's personal group
         Group2 g = new Group2("Personal", "A group just for you to push your own events to.", true);
 
         //Store the group in the local model object
-        model.activeGroups.add(g);
+        //model.activeGroups.add(g);
+        model.getActiveGroups().add(g);
 
         //Attempt to send the group to the server
         groupRT = g.getBaasDocument().save(SaveMode.IGNORE_VERSION, onGroupComplete);
@@ -306,16 +344,46 @@ public class NewUserLoginActivity extends Activity {
     //region Method called after group creation
     private void completeGroup(BaasDocument g) {
         //Check if the local model has a group in it (which it should)
-        if (model.activeGroups.size() != 1) {
-            Log.d(LOG_TAG, "Model is not the correct size: " + model.activeGroups.size());
+        if (/*model.activeGroups.size()*/ model.getActiveGroups().size() != 1) {
+            Log.d(LOG_TAG, "Model is not the correct size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
             showProgress(false);
             return;
         }
-        model.activeGroups.get(0).setBaasDocument(g);   //set the personal group from server object
+        model.getActiveGroups().get(0).setBaasDocument(g);
 
-        //Convert the model object to a server version for storage on server
-        modelRT = model.toServerVersion().save(SaveMode.IGNORE_VERSION, onModelComplete);
+        //Send the cloud setup
+        BaasCloudMessagingService box = BaasBox.messagingService();
+        cloudRT = box.enable(onCloudComplete);
     }
+    //endregion
+
+
+    //region Variables and methods to deal with cloud signup
+    private static final String CLOUD_TOKEN_KEY = "cloud";
+    private RequestToken cloudRT;
+    private final BaasHandler<Void> onCloudComplete = new BaasHandler<Void>() {
+        @Override
+        public void handle(BaasResult<Void> result) {
+            cloudRT = null;
+            if (result.isFailed()) {
+                //NOTIFY USER OF ERROR
+                Log.d(LOG_TAG, "Server request error: " + result.error());
+                showProgress(false);
+                return;
+            } else if (result.isSuccess()) {
+                //COMPLETE THE  CLOUD SIGNUP
+                Log.d(LOG_TAG, "Cloud request received.");
+                //Save model to server
+                //Convert the model object to a server version for storage on server
+                modelRT = model.toServerVersion().save(SaveMode.IGNORE_VERSION, onModelComplete);
+
+                return;
+            }
+            Log.d(LOG_TAG, "Server request weird: " + result.toString());
+            showProgress(false);
+            return;
+        }
+    };
     //endregion
 
 
@@ -359,7 +427,7 @@ public class NewUserLoginActivity extends Activity {
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.putExtra("model_data", model);
+        Model.saveModel(this);
         startActivity(intent);
         finish();
     }
@@ -384,6 +452,25 @@ public class NewUserLoginActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+    //endregion
+
+
+    //region Method and variables to check if a valid Google play services is found
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Log.i(LOG_TAG, "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
     }
     //endregion
 
