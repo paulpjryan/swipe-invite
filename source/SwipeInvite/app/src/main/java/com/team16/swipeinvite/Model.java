@@ -70,6 +70,9 @@ class Model {
         Intent intent = new Intent(context, LocalSaveService.class);
         context.startService(intent);
         //Save model to server
+        Log.d(LOG_TAG, "Send intent to save model to server.");
+        Intent intent2 = new Intent(context, ServerSaveService.class);
+        context.startService(intent2);
         //Notify the observers
         theModel.notifyObservers();
     }
@@ -382,16 +385,20 @@ class Model {
 
     private static JsonArray getJAofEvents(List<Event> e) {
         JsonArray ja = new JsonArray();
-        for (Event x : e) {
-            ja.add(x.getId());
+        synchronized (e) {
+            for (Event x : e) {
+                ja.add(x.getId());
+            }
         }
         return ja;
     }
 
     private static JsonArray getJAofFriends(List<Acquaintence> a) {
         JsonArray ja = new JsonArray();
-        for (Acquaintence x : a) {
-            ja.add(x.getUsername());
+        synchronized (a) {
+            for (Acquaintence x : a) {
+                ja.add(x.getUsername());
+            }
         }
         return ja;
     }
