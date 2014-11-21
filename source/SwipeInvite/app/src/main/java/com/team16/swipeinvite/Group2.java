@@ -115,7 +115,7 @@ class Group2 implements Parcelable {
 
 
     //region Getter and setter for the BaasDocument
-    protected void setBaasDocument(BaasDocument d) throws GroupException {
+    protected synchronized void setBaasDocument(BaasDocument d) throws GroupException {
         if (!(d.getCollection().equals(COLLECTION_NAME))) {   //If the json object was not a group
             throw new GroupException("BaasDocument was not a group: " + d.toString());
         }
@@ -125,14 +125,14 @@ class Group2 implements Parcelable {
         this.group = d;
     }
 
-    protected BaasDocument getBaasDocument() {
+    protected synchronized BaasDocument getBaasDocument() {
         return this.group;
     }
     //endregion
 
 
     //region Getter and setter with JsonObjects
-    protected void setFromJson(JsonObject j) throws GroupException {
+    protected synchronized void setFromJson(JsonObject j) throws GroupException {
         if ((j.getString("@class") != null) && !(j.getString("@class").equals(COLLECTION_NAME))) {   //If the json object was not a group
             throw new GroupException("Json object was not a group: " + j.toString());
         }
@@ -142,50 +142,50 @@ class Group2 implements Parcelable {
         this.group = BaasDocument.from(j);
     }
 
-    protected JsonObject toJson() {
+    protected synchronized JsonObject toJson() {
         return this.group.toJson();
     }
     //endregion
 
 
     //region Getter and setter for group name
-    protected void setName(String name) throws GroupException {
+    protected synchronized void setName(String name) throws GroupException {
         if (!hasDetailPermission()) throw new GroupException("User does not have detail permission.");
         group.put(NAME_KEY, name);
     }
 
-    protected String getName() {
+    protected synchronized String getName() {
         return group.getString(NAME_KEY);
     }
     //endregion
 
 
     //region Getter and setter for description
-    protected void setDescription(String desc) throws GroupException {
+    protected synchronized void setDescription(String desc) throws GroupException {
         if (!hasDetailPermission()) throw new GroupException("User does not have detail permission.");
         group.put(DESCRIPTION_KEY, desc);
     }
 
-    protected String getDescription() {
+    protected synchronized String getDescription() {
         return group.getString(DESCRIPTION_KEY);
     }
     //endregion
 
 
     //region Getters and setters for privacy
-    protected void setPrivate(boolean privacy) throws GroupException {
+    protected synchronized void setPrivate(boolean privacy) throws GroupException {
         if (!hasDetailPermission()) throw new GroupException("User does not have detail permission.");
         group.put(PRIVACY_KEY, privacy);
     }
 
-    protected boolean isPrivate () {
+    protected synchronized boolean isPrivate () {
         return group.getBoolean(PRIVACY_KEY);
     }
     //endregion
 
 
     //region Getter for author
-    protected String getCreator() {
+    protected synchronized String getCreator() {
         return group.getAuthor();
     }
     //endregion
@@ -193,13 +193,13 @@ class Group2 implements Parcelable {
 
     //region Methods for dealing with the server ID for a specific group
     //Method to check if the current group instance is on the server
-    protected boolean isOnServer() {
+    protected synchronized boolean isOnServer() {
         if (this.group != null && this.group.getId() != null) {
             return true;
         }
         return false;
     }
-    protected String getId() {
+    protected synchronized String getId() {
         if (isOnServer()) {
             return this.group.getId();
         }
@@ -209,7 +209,7 @@ class Group2 implements Parcelable {
 
 
     //region Methods for altering the members of the group
-    protected void addUser(String username) throws GroupException {
+    protected synchronized void addUser(String username) throws GroupException {
         if (!hasMemberPermission()) throw new GroupException("User does not have detail permission.");
         if (containsUser(username)) return;
         JsonArray ja = this.group.getArray(MEMBER_ARRAY_KEY);
@@ -217,7 +217,7 @@ class Group2 implements Parcelable {
         this.group.put(MEMBER_ARRAY_KEY, ja);
     }
 
-    protected void removeUser(String username) throws GroupException {
+    protected synchronized void removeUser(String username) throws GroupException {
         if (!hasMemberPermission()) throw new GroupException("User does not have detail permission.");
         if (username.equals(getCreator())) throw new GroupException("Cannot remove the creator.");
         JsonArray ja = this.group.getArray(MEMBER_ARRAY_KEY);
@@ -233,11 +233,11 @@ class Group2 implements Parcelable {
         this.group.put(MEMBER_ARRAY_KEY, ja);
     }
 
-    protected int getUserCount() {
+    protected synchronized int getUserCount() {
         return this.group.getArray(MEMBER_ARRAY_KEY).size();
     }
 
-    protected ArrayList<String> getUserList() {
+    protected synchronized ArrayList<String> getUserList() {
         JsonArray ja = this.group.getArray(MEMBER_ARRAY_KEY);
         ArrayList<String> users = new ArrayList<String>();
         for (int i = 0; i < ja.size(); i++) {
@@ -246,14 +246,14 @@ class Group2 implements Parcelable {
         return users;
     }
 
-    protected boolean containsUser(String username) {
+    protected synchronized boolean containsUser(String username) {
         return this.group.getArray(MEMBER_ARRAY_KEY).contains(username);
     }
     //endregion
 
 
     //region Methods for altering the events of the group
-    protected void addEvent(String eventID) throws GroupException {
+    protected synchronized void addEvent(String eventID) throws GroupException {
         if (!hasEventPermission()) throw new GroupException("User does not have detail permission.");
         if (containsEvent(eventID)) return;
         JsonArray ja = this.group.getArray(EVENT_ARRAY_KEY);
@@ -261,7 +261,7 @@ class Group2 implements Parcelable {
         this.group.put(EVENT_ARRAY_KEY, ja);
     }
 
-    protected void removeEvent(String eventID) throws GroupException {
+    protected synchronized void removeEvent(String eventID) throws GroupException {
         if (!hasMemberPermission()) throw new GroupException("User does not have detail permission.");
         if (!containsEvent(eventID)) {
             return;
@@ -276,11 +276,11 @@ class Group2 implements Parcelable {
         this.group.put(EVENT_ARRAY_KEY, ja);
     }
 
-    protected int getEventCount() {
+    protected synchronized int getEventCount() {
         return this.group.getArray(EVENT_ARRAY_KEY).size();
     }
 
-    protected ArrayList<String> getEventList() {
+    protected synchronized ArrayList<String> getEventList() {
         JsonArray ja = this.group.getArray(EVENT_ARRAY_KEY);
         ArrayList<String> events = new ArrayList<String>();
         for (int i = 0; i < ja.size(); i++) {
@@ -289,14 +289,14 @@ class Group2 implements Parcelable {
         return events;
     }
 
-    protected boolean containsEvent(String eventID) {
+    protected synchronized boolean containsEvent(String eventID) {
         return this.group.getArray(EVENT_ARRAY_KEY).contains(eventID);
     }
     //endregion
 
 
     //region Methods to manage the Detail Admins
-    protected void promoteToDetailAdmin(String username) throws GroupException {
+    protected synchronized void promoteToDetailAdmin(String username) throws GroupException {
         if (!hasTotalPermission()) throw new GroupException("User does not have total permission.");
         if (!containsUser(username) || containsDetailAdmin(username)) {
             return;
@@ -306,7 +306,7 @@ class Group2 implements Parcelable {
         this.group.put(DETAIL_ADMIN_ARRAY_KEY, ja);
     }
 
-    protected void demoteFromDetailAdmin(String username) throws GroupException {
+    protected synchronized void demoteFromDetailAdmin(String username) throws GroupException {
         if (!hasTotalPermission()) throw new GroupException("User does not have total permission.");
         if (username.equals(getCreator())) throw new GroupException("Cannot demote the creator.");
         if (!containsDetailAdmin(username)) {
@@ -322,18 +322,18 @@ class Group2 implements Parcelable {
         this.group.put(DETAIL_ADMIN_ARRAY_KEY, ja);
     }
 
-    protected int getDetailAdminCount() {
+    protected synchronized int getDetailAdminCount() {
         return this.group.getArray(DETAIL_ADMIN_ARRAY_KEY).size();
     }
 
-    protected boolean containsDetailAdmin(String username) {
+    protected synchronized boolean containsDetailAdmin(String username) {
         return this.group.getArray(DETAIL_ADMIN_ARRAY_KEY).contains(username);
     }
     //endregion
 
 
     //region Methods to manage the Member Admins
-    protected void promoteToMemberAdmin(String username) throws GroupException {
+    protected synchronized void promoteToMemberAdmin(String username) throws GroupException {
         if (!hasTotalPermission()) throw new GroupException("User does not have total permission.");
         if (!containsUser(username) || containsMemberAdmin(username)) {
             return;
@@ -343,7 +343,7 @@ class Group2 implements Parcelable {
         this.group.put(MEMBER_ADMIN_ARRAY_KEY, ja);
     }
 
-    protected void demoteFromMemberAdmin(String username) throws GroupException {
+    protected synchronized void demoteFromMemberAdmin(String username) throws GroupException {
         if (!hasTotalPermission()) throw new GroupException("User does not have total permission.");
         if (username.equals(getCreator())) throw new GroupException("Cannot demote the creator.");
         if (!containsMemberAdmin(username)) {
@@ -359,18 +359,18 @@ class Group2 implements Parcelable {
         this.group.put(MEMBER_ADMIN_ARRAY_KEY, ja);
     }
 
-    protected int getMemberAdminCount() {
+    protected synchronized int getMemberAdminCount() {
         return this.group.getArray(MEMBER_ADMIN_ARRAY_KEY).size();
     }
 
-    protected boolean containsMemberAdmin(String username) {
+    protected synchronized boolean containsMemberAdmin(String username) {
         return this.group.getArray(MEMBER_ADMIN_ARRAY_KEY).contains(username);
     }
     //endregion
 
 
     //region Methods to manage the Event Admins
-    protected void promoteToEventAdmin(String username) throws GroupException {
+    protected synchronized void promoteToEventAdmin(String username) throws GroupException {
         if (!hasTotalPermission()) throw new GroupException("User does not have total permission.");
         if (!containsUser(username) || containsEventAdmin(username)) {
             return;
@@ -380,7 +380,7 @@ class Group2 implements Parcelable {
         this.group.put(EVENT_ADMIN_ARRAY_KEY, ja);
     }
 
-    protected void demoteFromEventAdmin(String username) throws GroupException {
+    protected synchronized void demoteFromEventAdmin(String username) throws GroupException {
         if (!hasTotalPermission()) throw new GroupException("User does not have total permission.");
         if (username.equals(getCreator())) throw new GroupException("Cannot demote the creator.");
         if (!containsEventAdmin(username)) {
@@ -396,38 +396,45 @@ class Group2 implements Parcelable {
         this.group.put(EVENT_ADMIN_ARRAY_KEY, ja);
     }
 
-    protected int getEventAdminCount() {
+    protected synchronized int getEventAdminCount() {
         return this.group.getArray(EVENT_ADMIN_ARRAY_KEY).size();
     }
 
-    protected boolean containsEventAdmin(String username) {
+    protected synchronized boolean containsEventAdmin(String username) {
         return this.group.getArray(EVENT_ADMIN_ARRAY_KEY).contains(username);
     }
     //endregion
 
 
     //region Methods to check permissions of a user
-    protected boolean hasDetailPermission() {
+    protected synchronized boolean hasDetailPermission() {
         return containsDetailAdmin(BaasUser.current().getName());
     }
-    protected boolean hasMemberPermission() {
+    protected synchronized boolean hasMemberPermission() {
         return containsMemberAdmin(BaasUser.current().getName());
     }
-    protected boolean hasEventPermission() {
+    protected synchronized boolean hasEventPermission() {
         return containsEventAdmin(BaasUser.current().getName());
     }
-    protected boolean hasTotalPermission() {
+    protected synchronized boolean hasTotalPermission() {
         return (hasDetailPermission() && hasMemberPermission() && hasEventPermission());
     }
     //endregion
 
 
     //region Methods for checking equality
-    protected boolean equals(Group2 other) {
+    protected synchronized boolean equals(Group2 other) {
         return equals(other.getId());
     }
 
-    protected boolean equals(String id) {
+    protected synchronized boolean equals(BaasDocument other) {
+        if (!other.getCollection().equals(COLLECTION_NAME)) {
+            return false;
+        }
+        return equals(other.getId());
+    }
+
+    protected synchronized boolean equals(String id) {
         try {
             return this.getId().equals(id);
         } catch (NullPointerException e) {

@@ -12,6 +12,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -36,6 +38,20 @@ public class LocalSaveService extends IntentService {
 
         //Get the model
         Model model = Model.getInstance(this);
+
+        //Delete user data files if necessary
+        String[] files = fileList();
+        if (files.length > 5) {
+            Log.d(LOG_TAG, "Need to delete a user file.");
+            ArrayList<String> filesArray = new ArrayList<String>(Arrays.asList(files));
+            for (String y : filesArray) {  //Iterate to find a non current user file
+                if (!y.equals(BaasUser.current().getName())) {
+                    deleteFile(y);   //Delete first possible file
+                    Log.d(LOG_TAG, "Deleted user data: " + y);
+                    break;
+                }
+            }
+        }
 
         //Get all of the arraylists and the BaasDocument model
         List<Group2> activeGroups = model.getActiveGroups();
