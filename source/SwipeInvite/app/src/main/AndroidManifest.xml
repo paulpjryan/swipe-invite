@@ -168,6 +168,10 @@
             android:name="com.team16.swipeinvite.ServerSaveService"
             android:exported="false" >
         </service>
+        <service
+            android:name="com.team16.swipeinvite.UpdateService"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>

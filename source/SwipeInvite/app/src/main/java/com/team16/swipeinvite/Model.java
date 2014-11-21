@@ -320,6 +320,13 @@ class Model {
             loadModel(context);
         }
 
+        if ((context instanceof Activity) && !((context instanceof LoginActivity2) || (context instanceof NewUserLoginActivity))) {
+            //Call the update service at very specific times
+            Log.d(LOG_TAG, "Sending intent to update data.");
+            Intent intent = new Intent(context, UpdateService.class);
+            context.startService(intent);
+        }
+
         Log.d(LOG_TAG, "Model given.");
         return theModel;
     }

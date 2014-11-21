@@ -257,6 +257,13 @@ class Event implements Parcelable {
         return equals(other.getId());
     }
 
+    protected synchronized boolean equals(BaasDocument other) {
+        if (!other.getCollection().equals(COLLECTION_NAME)) {
+            return false;
+        }
+        return equals(other.getId());
+    }
+
     protected synchronized boolean equals(String id) {
         try {
             return this.getId().equals(id);
