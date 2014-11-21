@@ -2,7 +2,8 @@
     xmlns:compat="http://schemas.android.com/apk/res-auto" >
 
     <item android:id="@+id/submit_group_creation"
-        android:icon="@drawable/abc_ic_go"
+        android:icon="@drawable/ic_action_accept"
         android:title="@string/group_create_submit"
         compat:showAsAction="withText|ifRoom"  />
+
 </menu>

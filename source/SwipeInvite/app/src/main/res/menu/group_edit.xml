@@ -2,12 +2,13 @@
     xmlns:compat="http://schemas.android.com/apk/res-auto" >
 
     <item android:id="@+id/bt_add_member"
-        android:icon="@drawable/abc_ic_clear"
+        android:icon="@drawable/ic_action_add_person"
         android:title="@string/edit_group_add_members"
         compat:showAsAction="ifRoom"  />
 
     <item android:id="@+id/group_edit_submit"
-        android:icon="@drawable/abc_ic_go"
+        android:icon="@drawable/ic_action_accept"
         android:title="@string/edit_group_submit"
         compat:showAsAction="ifRoom"  />
+
 </menu>

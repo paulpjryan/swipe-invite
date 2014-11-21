@@ -54,23 +54,21 @@ public class EventEditActivity extends ActionBarActivity{
         eventnameField = (TextView) findViewById(R.id.textView_new_event);
         locationField = (TextView) findViewById(R.id.textView_event_location);
         descriptionField = (TextView) findViewById(R.id.et_edit_event_description);
-        submitButton = (Button) findViewById(R.id.button_event_submit);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                return true;
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        else if(id == android.R.id.home)
-        {
-            NavUtils.navigateUpFromSameTask(this);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

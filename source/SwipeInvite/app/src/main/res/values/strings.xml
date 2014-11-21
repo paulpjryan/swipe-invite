@@ -109,5 +109,10 @@
     <string name="group_create_submit">Create Group</string>
     <string name="edit_group_add_members">Add members</string>
     <string name="edit_group_submit">Submit</string>
+    <string name="user_profile_not_editable">Username is Not Editable</string>
+    <string name="user_profile_full_name">Full Name</string>
+    <string name="user_profile_gender_male">Male</string>
+    <string name="user_profile_gender_female">Female</string>
+    <string name="user_profile_submit">Submit</string>
 
 </resources>

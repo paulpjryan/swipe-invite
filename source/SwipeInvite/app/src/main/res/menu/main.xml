@@ -3,8 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.team16.swipeinvite.MainActivity" >
 
-
-
     <item android:id="@+id/action_event_creation"
         android:title="@string/action_event_creation"
         app:showAsAction="withText|ifRoom" />

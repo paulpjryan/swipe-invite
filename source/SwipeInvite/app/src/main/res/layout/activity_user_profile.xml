@@ -14,22 +14,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:weightSum="10">
-	  		
-	  		
+
 		    <EditText
 		        android:id="@+id/editText_user_username"
 		        android:layout_weight="7"
-		        android:layout_width="match_parent"
+		        android:layout_width="0dp"
 		        android:layout_height="wrap_content"
                 android:autoText="true"
-                android:hint="Username is Not Editable "
+                android:hint="@string/user_profile_not_editable"
                 android:background="@drawable/textinputborder"
 
                 android:singleLine="true"
                 android:maxLength="20"
                 android:enabled="false" />
-		      
-		        
+
     </LinearLayout>
 
  	<LinearLayout
@@ -46,7 +44,7 @@
 		        android:layout_height="wrap_content"
  	  		    android:inputType="textPersonName"
                 android:background="@drawable/textinputborder"
-                android:hint="Full Name"
+                android:hint="@string/user_profile_full_name"
 
                 android:singleLine="true"
                 android:maxLength="20" />
@@ -95,6 +93,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="160dp"
+                android:layout_marginEnd="160dp"
                 android:id="@+id/RadioGroup_gender">
 
                 <RadioButton
@@ -102,14 +101,14 @@
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
                     android:layout_weight="2"
-                   android:text="Male" />
+                   android:text="@string/user_profile_gender_male" />
 
                 <RadioButton
                   android:id="@+id/Radiobutton_user_female"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:layout_weight="3"
-                  android:text= "Female" />
+                  android:text= "@string/user_profile_gender_female" />
 
             </RadioGroup>
 
@@ -121,19 +120,5 @@
         android:layout_height="wrap_content"
         android:id="@+id/progressBar_user_profile"
         android:layout_gravity="center_horizontal" />
-
-    <Button
-
-        android:id="@+id/button_user_submit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-
-        android:text="Submit"
-        android:layout_marginTop="40dp"
-        android:layout_gravity="right"
-        android:onClick="onClickListener"
-        />
-
 
 </LinearLayout>
