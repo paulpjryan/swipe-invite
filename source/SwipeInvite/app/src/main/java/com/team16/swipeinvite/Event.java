@@ -93,7 +93,7 @@ class Event implements Parcelable {
 
 
     //region Getter and setter for the BaasDocument
-    protected void setBaasDocument(BaasDocument d) throws EventException {
+    protected synchronized void setBaasDocument(BaasDocument d) throws EventException {
         if (!(d.getCollection().equals(COLLECTION_NAME))) {   //If the json object was not a group
             throw new EventException("BaasDocument was not an event: " + d.toString());
         }
@@ -103,14 +103,14 @@ class Event implements Parcelable {
         this.event = d;
     }
 
-    protected BaasDocument getBaasDocument() {
+    protected synchronized BaasDocument getBaasDocument() {
         return this.event;
     }
     //endregion
 
 
     //region Getter and setter with JsonObjects
-    protected void setFromJson(JsonObject j) throws EventException {
+    protected synchronized void setFromJson(JsonObject j) throws EventException {
         if ((j.getString("@class") != null) && !(j.getString("@class").equals(COLLECTION_NAME))) {   //If the json object was not a group
             throw new EventException("Json object was not an event: " + j.toString());
         }
@@ -120,81 +120,81 @@ class Event implements Parcelable {
         this.event = BaasDocument.from(j);
     }
 
-    protected JsonObject toJson() {
+    protected synchronized JsonObject toJson() {
         return this.event.toJson();
     }
     //endregion
 
 
     //region Getter and setter for event name
-    protected void setName(String name) throws EventException {
+    protected synchronized void setName(String name) throws EventException {
         if (!hasPermission()) throw new EventException("User does not have permission to edit event.");
         this.event.put(NAME_KEY, name);
     }
 
-    protected String getName() {
+    protected synchronized String getName() {
         return this.event.getString(NAME_KEY);
     }
     //endregion
 
 
     //region Getter and setter for event description
-    protected void setDescription(String description) throws EventException {
+    protected synchronized void setDescription(String description) throws EventException {
         if (!hasPermission()) throw new EventException("User does not have permission to edit event.");
         this.event.put(DESCRIPTION_KEY, description);
     }
 
-    protected String getDescription() {
+    protected synchronized String getDescription() {
         return this.event.getString(DESCRIPTION_KEY);
     }
     //endregion
 
 
     //region Getter and setter for location
-    protected void setLocation(String location) throws EventException {
+    protected synchronized void setLocation(String location) throws EventException {
         if (!hasPermission()) throw new EventException("User does not have permission to edit event.");
         this.event.put(LOCATION_KEY, location);
     }
 
-    protected String getLocation() {
+    protected synchronized String getLocation() {
         return this.event.getString(LOCATION_KEY);
     }
     //endregion
 
 
     //region Getter and setter for begin date
-    protected void setBeginDate(String date) throws EventException {
+    protected synchronized void setBeginDate(String date) throws EventException {
         if (!hasPermission()) throw new EventException("User does not have permission to edit event.");
         this.event.put(BEGIN_DATE_KEY, date);
     }
 
-    protected String getBeginDate() {
+    protected synchronized String getBeginDate() {
         return this.event.getString(BEGIN_DATE_KEY);
     }
     //endregion
 
 
     //region Getter and setter for end date
-    protected void setEndDate(String date) throws EventException {
+    protected synchronized void setEndDate(String date) throws EventException {
         if (!hasPermission()) throw new EventException("User does not have permission to edit event.");
         this.event.put(END_DATE_KEY, date);
     }
 
-    protected String getEndDate() {
+    protected synchronized String getEndDate() {
         return this.event.getString(END_DATE_KEY);
     }
     //endregion
 
 
     //region Getter for author
-    protected String getCreator() {
+    protected synchronized String getCreator() {
         return event.getAuthor();
     }
     //endregion
 
 
     //region Methods for altering the admins of the event
-    protected void addAdmin(String username) throws EventException {
+    protected synchronized void addAdmin(String username) throws EventException {
         if (!hasPermission()) throw new EventException("User does not have permission to edit event.");
         if (containsAdmin(username)) return;
         JsonArray ja = this.event.getArray(ADMIN_ARRAY_KEY);
@@ -202,7 +202,7 @@ class Event implements Parcelable {
         this.event.put(ADMIN_ARRAY_KEY, ja);
     }
 
-    protected void removeAdmin(String username) throws EventException {
+    protected synchronized void removeAdmin(String username) throws EventException {
         if (!hasPermission()) throw new EventException("User does not have permission to edit event.");
         if (username.equals(getCreator())) throw new EventException("Cannot remove the creator.");
         JsonArray ja = this.event.getArray(ADMIN_ARRAY_KEY);
@@ -218,11 +218,11 @@ class Event implements Parcelable {
         this.event.put(ADMIN_ARRAY_KEY, ja);
     }
 
-    protected int getAdminCount() {
+    protected synchronized int getAdminCount() {
         return this.event.getArray(ADMIN_ARRAY_KEY).size();
     }
 
-    protected boolean containsAdmin(String username) {
+    protected synchronized boolean containsAdmin(String username) {
         return this.event.getArray(ADMIN_ARRAY_KEY).contains(username);
     }
     //endregion
@@ -230,13 +230,13 @@ class Event implements Parcelable {
 
     //region Methods for dealing with the server ID for a specific group
     //Method to check if the current group instance is on the server
-    protected boolean isOnServer() {
+    protected synchronized boolean isOnServer() {
         if (this.event != null && this.event.getId() != null) {
             return true;
         }
         return false;
     }
-    protected String getId() {
+    protected synchronized String getId() {
         if (isOnServer()) {
             return this.event.getId();
         }
@@ -246,18 +246,18 @@ class Event implements Parcelable {
 
 
     //region Method to check if the current user has permission to edit this event
-    protected boolean hasPermission() {
+    protected synchronized boolean hasPermission() {
         return (containsAdmin(BaasUser.current().getName()));
     }
     //endregion
 
 
     //region Methods for checking equality
-    protected boolean equals(Event other) {
+    protected synchronized boolean equals(Event other) {
         return equals(other.getId());
     }
 
-    protected boolean equals(String id) {
+    protected synchronized boolean equals(String id) {
         try {
             return this.getId().equals(id);
         } catch (NullPointerException e) {
