@@ -210,7 +210,7 @@ class Group2 implements Parcelable {
 
     //region Methods for altering the members of the group
     protected synchronized void addUser(String username) throws GroupException {
-        if (!hasMemberPermission()) throw new GroupException("User does not have detail permission.");
+        if (!hasMemberPermission()) throw new GroupException("User does not have member permission.");
         if (containsUser(username)) return;
         JsonArray ja = this.group.getArray(MEMBER_ARRAY_KEY);
         ja.add(username);
@@ -218,8 +218,13 @@ class Group2 implements Parcelable {
     }
 
     protected synchronized void removeUser(String username) throws GroupException {
-        if (!hasMemberPermission()) throw new GroupException("User does not have detail permission.");
+        if (!hasMemberPermission()) throw new GroupException("User does not have member permission.");
         if (username.equals(getCreator())) throw new GroupException("Cannot remove the creator.");
+        //If user is an admin, try to demote
+        demoteFromDetailAdmin(username);
+        demoteFromEventAdmin(username);
+        demoteFromMemberAdmin(username);
+        //Removing user
         JsonArray ja = this.group.getArray(MEMBER_ARRAY_KEY);
         if (!(ja.contains(username))) {
             return;
@@ -228,9 +233,15 @@ class Group2 implements Parcelable {
         for (int i = 0; i < size; i++) {
             if (username.equals(ja.getString(i))) {
                 ja.remove(i);
+                break;
             }
         }
         this.group.put(MEMBER_ARRAY_KEY, ja);
+    }
+
+    protected synchronized void removeSelf() throws GroupException{
+        if (BaasUser.current().getName().equals(getCreator())) throw new GroupException("Creator cannot remove themself.");
+        //TODO private functions for removal without checks
     }
 
     protected synchronized int getUserCount() {
@@ -271,6 +282,7 @@ class Group2 implements Parcelable {
         for (int i = 0; i < size; i++) {
             if (ja.getString(i).equals(eventID)) {
                 ja.remove(i);
+                break;
             }
         }
         this.group.put(EVENT_ARRAY_KEY, ja);
@@ -317,6 +329,7 @@ class Group2 implements Parcelable {
         for (int i = 0; i < size; i++) {
             if (ja.getString(i).equals(username)) {
                 ja.remove(i);
+                break;
             }
         }
         this.group.put(DETAIL_ADMIN_ARRAY_KEY, ja);
@@ -354,6 +367,7 @@ class Group2 implements Parcelable {
         for (int i = 0; i < size; i++) {
             if (ja.getString(i).equals(username)) {
                 ja.remove(i);
+                break;
             }
         }
         this.group.put(MEMBER_ADMIN_ARRAY_KEY, ja);
@@ -391,6 +405,7 @@ class Group2 implements Parcelable {
         for (int i = 0; i < size; i++) {
             if (ja.getString(i).equals(username)) {
                 ja.remove(i);
+                break;
             }
         }
         this.group.put(EVENT_ADMIN_ARRAY_KEY, ja);
