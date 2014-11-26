@@ -3,13 +3,17 @@ package com.team16.swipeinvite;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.baasbox.android.BaasDocument;
 import com.baasbox.android.BaasUser;
 import com.baasbox.android.json.JsonArray;
 import com.baasbox.android.json.JsonObject;
+import com.google.android.gms.games.GamesMetadata;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by kylekrynski on 10/22/14.
@@ -25,6 +29,7 @@ class Event implements Parcelable {
     private static final String BEGIN_DATE_KEY = "begin_date";
     private static final String END_DATE_KEY = "end_date";
     private static final String ADMIN_ARRAY_KEY = "admins";
+    private static final String PARENT_GROUP_ARRAY_KEY = "groups";
     //endregion
 
 
@@ -61,7 +66,7 @@ class Event implements Parcelable {
 
     //region Constructors for the event class
     //Create a brand new event object from scratch
-    protected Event(String name, String description, String location, String begdate, String enddate) {
+    protected Event(String name, String description, String location, String begdate, String enddate, List<?> groups) {
         this.event = new BaasDocument(COLLECTION_NAME);
         initializeAdminArray();
         this.event.put(NAME_KEY, name);
@@ -69,6 +74,7 @@ class Event implements Parcelable {
         this.event.put(LOCATION_KEY, location);
         this.event.put(BEGIN_DATE_KEY, begdate);
         this.event.put(END_DATE_KEY, enddate);
+        setParentGroups(groups);
     }
 
     //Create a brand new group object from an existing BaasDocument
@@ -189,6 +195,37 @@ class Event implements Parcelable {
     //region Getter for author
     protected synchronized String getCreator() {
         return event.getAuthor();
+    }
+    //endregion
+
+
+    //region Methods for setting and getting parent groups
+    protected synchronized void setParentGroups(List<?> groupList) throws EventException {
+        if (groupList.size() <= 0) throw new EventException("Parentless event not accepatable.");
+        //Create new json array
+        JsonArray ja = new JsonArray();
+       //Convert groups to json array of id's
+        for (Object x : groupList) {
+            if (x instanceof Group2) {
+                ja.add(((Group2) x).getId());
+            } else if (x instanceof String) {
+                ja.add(((String) x));
+            } else {
+                throw new EventException("Illegal group type in list.");
+            }
+        }
+        //Put json array into event
+        this.event.put(PARENT_GROUP_ARRAY_KEY, ja);
+    }
+    protected synchronized ArrayList<String> getParentGroups() {
+        //Get json array from event doc
+        JsonArray ja = this.event.getArray(PARENT_GROUP_ARRAY_KEY);
+        //Convert to arraylist
+        ArrayList<String> pgList = new ArrayList<String>();
+        for (Object x : ja) {
+            pgList.add(((String) x));
+        }
+        return pgList;
     }
     //endregion
 
