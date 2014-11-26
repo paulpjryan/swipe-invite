@@ -76,6 +76,7 @@
             android:name="com.team16.swipeinvite.SearchGroupActivity"
             android:label="@string/title_activity_search_group"
             android:parentActivityName="com.team16.swipeinvite.MainActivity"
+            android:launchMode="singleTop"
             android:windowSoftInputMode="stateHidden" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

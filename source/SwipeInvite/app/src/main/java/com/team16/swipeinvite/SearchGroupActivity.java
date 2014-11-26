@@ -29,23 +29,51 @@ import com.google.android.gms.games.Game;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Observable;
 import java.util.Observer;
 
 
 import static com.team16.swipeinvite.R.id.list_add_person_tv;
 
-public class SearchGroupActivity extends ActionBarActivity implements View.OnClickListener {
+public class SearchGroupActivity extends ActionBarActivity implements View.OnClickListener, Observer {
+    private static final String LOG_TAG = "SearchGroup";
+
+
+    //region Local variables for views
     private  ListView ListView_search_group;
     private ArrayAdapter<String> ListAdapter;
-    private static final String LOG_TAG = "ADD_P2G";
     private ImageButton bt_search;
+    //endregion
 
 
-	@Override
+    //region Local model variable
+    private Model model;
+    //endregion
+
+
+    //region Implementation of observer
+    public void update(Observable ob, Object o) {
+        //NEEDS TO RUN ON UI THREAD
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //Refresh anything
+            }
+        });
+        return;
+    }
+    //endregion
+
+
+    //region Lifecycle methods
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_search_group);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        //Get the model instance
+        model = Model.getInstance(this);
 
        // Button bt_join = (Button) findViewById(R.id.button_searchgroup_add);
         bt_search = (ImageButton) findViewById(R.id.button_searchgroup_search);
@@ -67,88 +95,30 @@ public class SearchGroupActivity extends ActionBarActivity implements View.OnCli
 
             }
         });
-
-
-
-
-
-        //region Codes for join group button
-/*
-        bt_join.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast msg = Toast.makeText(SearchGroupActivity.this,"Successfully send the invitation",Toast.LENGTH_LONG);
-                msg.show();
-            }
-        });*/
-        //endregion
-
-
-/*
-        String[] data = {
-                "Engl 101 + Description: Fall 2014",
-                "Engl 101i + Description: Spring 2014",
-
-        };
-        */
-
-        //region codes for group listview Make listview blank first before the user click search Button
-
-        //endregion
-
-
-
-        //region Codes for searching button
-/*
-        bt_search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                //To-do
-                //Add search code in the server here
-
-                // Dummy data
-                String[] data = {
-                        "Engl 101 + Description: Fall 2014",
-                        "Engl 101 + Description:"
-                };
-
-                ListView_search_group = (ListView) findViewById(R.id.lv_search_group);
-
-                ArrayList<String> GroupList = new ArrayList<String>();
-                GroupList.addAll(Arrays.asList(data));
-
-                ListAdapter = new ArrayAdapter<String>(SearchGroupActivity.this,R.layout.list_item_group_search,GroupList);
-                ListView_search_group.setAdapter(ListAdapter);
-
-            }
-        });*/
-
-        // !!!!!!!!!!!!!!!!!   Things needed to be fixed here !!!!!!!!!!!!!!!!
-        //  LISTVIEW IS ALWAYS NULL WHEN TRY TO LOAD IT !!!!!!!!!!!!!
-/*
-        if (ListView_search_group != null ) {
-            ListView_search_group.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    if (position == 1) {
-                        Intent intent = new Intent(SearchGroupActivity.this, SearchSpeMemberActivity.class);
-                        startActivity(intent);
-                    }
-                }
-            });
-            return;
-        }
-        else {
-            Log.d(LOG_TAG, "Still Null");
-
-        };
-        */
-
-        //endregion
 	}
+    protected void onResume() {
+        super.onResume();
+        Log.d(LOG_TAG, "onResume");
+        //Make sure model exists
+        if (model == null) {
+            model = Model.getInstance(this);
+        }
+        model.addObserver(this);
+    }
+    protected void onPause() {
+        super.onPause();
+        Log.d(LOG_TAG, "onPause");
+    }
+    protected void onStop() {
+        super.onStop();
+        Log.d(LOG_TAG, "onStop");
+        model.deleteObserver(this);
+    }
+    //endregion
 
-	@Override
+
+    //region Methods for menus and options
+    @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.search_group, menu);
@@ -166,7 +136,10 @@ public class SearchGroupActivity extends ActionBarActivity implements View.OnCli
 		}
 		return super.onOptionsItemSelected(item);
 	}
+    //endregion
 
+
+    //region Methods for the clicking of a button
     public void onClick(View v) {
         switch(v.getId())
         {
@@ -188,6 +161,7 @@ public class SearchGroupActivity extends ActionBarActivity implements View.OnCli
         }
 
     }
+    //endregion
 
 
 

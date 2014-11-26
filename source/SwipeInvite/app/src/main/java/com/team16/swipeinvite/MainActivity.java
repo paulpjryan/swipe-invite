@@ -216,11 +216,13 @@ public class MainActivity extends ActionBarActivity implements Observer {
     //endregion
 
 
+    //region Method to start group edit activity
     protected void startGroupEdit(String id) {
         Intent intent = new Intent(this, GroupEditActivity.class);
         intent.putExtra("id", id);
         startActivityForResult(intent, GROUP_EDIT_REQUEST_CODE);
     }
+    //endregion
 
 
     //region Method to start the profile edit activity
