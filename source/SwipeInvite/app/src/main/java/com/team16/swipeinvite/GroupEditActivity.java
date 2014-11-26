@@ -36,6 +36,7 @@ import com.baasbox.android.BaasResult;
 import com.baasbox.android.BaasUser;
 import com.baasbox.android.RequestToken;
 import com.baasbox.android.SaveMode;
+import com.baasbox.android.json.JsonObject;
 
 import org.apache.http.HttpRequest;
 import org.apache.http.protocol.HTTP;
@@ -52,6 +53,7 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
     private EditText groupnameField;
     private EditText descriptionField;
     private EditText groupTypeField;
+    private EditText groupOpenField;
 
     private ArrayAdapter<String> ListAdapter2;
     private ProgressBar progressSpinner;
@@ -88,6 +90,9 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
         groupTypeField = (EditText) findViewById(R.id.textView_new_group_type);
         groupTypeField.setEnabled(false);
         groupTypeField.setFocusable(false);
+        groupOpenField = (EditText) findViewById(R.id.textView_new_group_typeOpen);
+        groupOpenField.setEnabled(false);
+        groupOpenField.setFocusable(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         progressSpinner = (ProgressBar) findViewById(R.id.progressBar_group_edit);
         progressSpinner.setVisibility(View.GONE);
@@ -192,11 +197,16 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
         } else {
             groupTypeField.setText("public");
         }
+        if (g.isOpen()) {
+            groupOpenField.setText("open");
+        } else {
+            groupOpenField.setText("closed");
+        }
 
         //Decide whether or not the user has access to edit
         boolean perm = false;
-        if (g.hasDetailPermission()) {
-            Log.d(LOG_TAG, "The user has detail permission on group.");
+        if (g.hasDetailPermission() || g.isOpen()) {
+            Log.d(LOG_TAG, "The user has detail permission on group or it is open group.");
             perm = true;
         }
         groupnameField.setEnabled(perm);
@@ -353,11 +363,13 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
             finish();
             return;
         }
-        if (!g.hasMemberPermission()) {   //If the user does not have permission, don't submit
-            Log.d(LOG_TAG, "User does not have permission to add members.");
-            Toast.makeText(this, "You are not a member admin for this group.", Toast.LENGTH_SHORT).show();
-            //RELOAD the Member list view
-            return;
+        if (!g.isOpen()) {
+            if (!g.hasMemberPermission()) {   //If the user does not have permission, don't submit
+                Log.d(LOG_TAG, "User does not have permission to add members.");
+                Toast.makeText(this, "You are not a member admin for this group.", Toast.LENGTH_SHORT).show();
+                //RELOAD the Member list view
+                return;
+            }
         }
 
         //Start intent to add a person to a group
@@ -456,12 +468,14 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
            finish();
            return;
        }
-       if (!g.hasDetailPermission()) {   //If the user does not have permission, don't submit
-           Log.d(LOG_TAG, "User does not have permission to submit change.");
-           Toast.makeText(this, "You are not a detail admin for this group.", Toast.LENGTH_SHORT).show();
-           populateTextViews();
-           progressSpinner.setVisibility(View.GONE);
-           return;
+       if (!g.isOpen()) {
+           if (!g.hasDetailPermission()) {   //If the user does not have permission, don't submit
+               Log.d(LOG_TAG, "User does not have permission to submit change.");
+               Toast.makeText(this, "You are not a detail admin for this group.", Toast.LENGTH_SHORT).show();
+               populateTextViews();
+               progressSpinner.setVisibility(View.GONE);
+               return;
+           }
        }
 
        //THIS WILL NEED TO BE CHANGED ONCE THE BAASBOX API INCLUDES UPDATE METHOD
@@ -528,6 +542,21 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
 
         //Reload the views
         //populateTextViews();  SHOULD NO LONGER BE NECESSARY AFTER SAVE MODEL
+
+        //Send the push notifications to members
+        Log.d(LOG_TAG, "Sending push.");
+        //Create the json object
+        JsonObject message = new JsonObject();
+        message.put("type", "group");
+        message.put("id", groupToEdit);
+        String notificationMessage = g.getName() + " has been updated.";
+
+        //Start the intent service to send the push
+        Intent intent = new Intent(this, PushSender.class);
+        intent.putStringArrayListExtra("users", g.getUserList());
+        intent.putExtra("message", message);
+        intent.putExtra("notification", notificationMessage);
+        startService(intent);
 
         //Toast user success
         Toast.makeText(getApplicationContext(), "Group updated.", Toast.LENGTH_SHORT).show();

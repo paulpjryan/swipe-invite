@@ -22,6 +22,7 @@ class Group2 implements Parcelable {
     private static final String NAME_KEY = "name";
     private static final String DESCRIPTION_KEY = "description";
     private static final String PRIVACY_KEY = "privacy";
+    private static final String OPEN_KEY = "open";
     private static final String MEMBER_ARRAY_KEY = "members";
     private static final String EVENT_ARRAY_KEY = "events";
     private static final String DETAIL_ADMIN_ARRAY_KEY = "detail_admins";
@@ -64,7 +65,7 @@ class Group2 implements Parcelable {
 
     //region Constructors for the group class
     //Create a brand new group object from scratch
-    protected Group2(String name, String description, boolean privacy) {
+    protected Group2(String name, String description, boolean privacy, boolean open) {
         this.group = new BaasDocument(COLLECTION_NAME);
         initializeMemberArray();
         initializeEventArray();
@@ -74,6 +75,7 @@ class Group2 implements Parcelable {
         setName(name);
         setDescription(description);
         setPrivate(privacy);
+        setOpen(open);
     }
     //Create a brand new group object from an existing BaasDocument
     protected Group2(BaasDocument d) throws GroupException {
@@ -150,7 +152,10 @@ class Group2 implements Parcelable {
 
     //region Getter and setter for group name
     protected synchronized void setName(String name) throws GroupException {
-        if (!hasDetailPermission()) throw new GroupException("User does not have detail permission.");
+        if (!isOpen()) {
+            if (!hasDetailPermission())
+                throw new GroupException("User does not have detail permission.");
+        }
         group.put(NAME_KEY, name);
     }
 
@@ -162,7 +167,10 @@ class Group2 implements Parcelable {
 
     //region Getter and setter for description
     protected synchronized void setDescription(String desc) throws GroupException {
-        if (!hasDetailPermission()) throw new GroupException("User does not have detail permission.");
+        if (!isOpen()) {
+            if (!hasDetailPermission())
+                throw new GroupException("User does not have detail permission.");
+        }
         group.put(DESCRIPTION_KEY, desc);
     }
 
@@ -180,6 +188,17 @@ class Group2 implements Parcelable {
 
     protected synchronized boolean isPrivate () {
         return group.getBoolean(PRIVACY_KEY);
+    }
+    //endregion
+
+
+    //region Getter and setter for openness
+    protected synchronized boolean isOpen() {
+        return group.getBoolean(OPEN_KEY, false);
+    }
+    protected synchronized void setOpen(boolean isopen) throws GroupException {
+        if (!hasDetailPermission()) throw new GroupException("User does not have detail permission.");
+        group.put(OPEN_KEY, isopen);
     }
     //endregion
 
@@ -210,7 +229,10 @@ class Group2 implements Parcelable {
 
     //region Methods for altering the members of the group
     protected synchronized void addUser(String username) throws GroupException {
-        if (!hasMemberPermission()) throw new GroupException("User does not have detail permission.");
+        if (!isOpen() || !isPrivate()) {  //Dont check for perm if group is open or public
+            if (!hasMemberPermission())
+                throw new GroupException("User does not have member permission.");
+        }
         if (containsUser(username)) return;
         JsonArray ja = this.group.getArray(MEMBER_ARRAY_KEY);
         ja.add(username);
@@ -218,8 +240,16 @@ class Group2 implements Parcelable {
     }
 
     protected synchronized void removeUser(String username) throws GroupException {
-        if (!hasMemberPermission()) throw new GroupException("User does not have detail permission.");
+        if (!isOpen()) {
+            if (!hasMemberPermission())
+                throw new GroupException("User does not have member permission.");
+        }
         if (username.equals(getCreator())) throw new GroupException("Cannot remove the creator.");
+        //If user is an admin, try to demote
+        demoteFromDetailAdmin(username);
+        demoteFromEventAdmin(username);
+        demoteFromMemberAdmin(username);
+        //Removing user
         JsonArray ja = this.group.getArray(MEMBER_ARRAY_KEY);
         if (!(ja.contains(username))) {
             return;
@@ -228,9 +258,67 @@ class Group2 implements Parcelable {
         for (int i = 0; i < size; i++) {
             if (username.equals(ja.getString(i))) {
                 ja.remove(i);
+                break;
             }
         }
         this.group.put(MEMBER_ARRAY_KEY, ja);
+    }
+
+    protected synchronized void removeSelf() throws GroupException{
+        if (BaasUser.current().getName().equals(getCreator())) throw new GroupException("Creator cannot remove themself.");
+        if (!containsUser(BaasUser.current().getName())) return;
+        //Demote from admin spots
+        demoteSelf();
+        //Removing user
+        JsonArray ja = this.group.getArray(MEMBER_ARRAY_KEY);
+        if (!(ja.contains(BaasUser.current().getName()))) {
+            return;
+        }
+        int size = ja.size();
+        for (int i = 0; i < size; i++) {
+            if (BaasUser.current().getName().equals(ja.getString(i))) {
+                ja.remove(i);
+                break;
+            }
+        }
+        this.group.put(MEMBER_ARRAY_KEY, ja);
+    }
+
+    private void demoteSelf() {
+        if (BaasUser.current().getName().equals(getCreator())) throw new GroupException("Cannot demote the creator.");
+        if (containsDetailAdmin(BaasUser.current().getName())) {   //Removing from detail admins
+            JsonArray ja = this.group.getArray(DETAIL_ADMIN_ARRAY_KEY);
+            int size = ja.size();
+            for (int i = 0; i < size; i++) {
+                if (ja.getString(i).equals(BaasUser.current().getName())) {
+                    ja.remove(i);
+                    break;
+                }
+            }
+            this.group.put(DETAIL_ADMIN_ARRAY_KEY, ja);
+        }
+        if (containsMemberAdmin(BaasUser.current().getName())) {
+            JsonArray ja = this.group.getArray(MEMBER_ADMIN_ARRAY_KEY);
+            int size = ja.size();
+            for (int i = 0; i < size; i++) {
+                if (ja.getString(i).equals(BaasUser.current().getName())) {
+                    ja.remove(i);
+                    break;
+                }
+            }
+            this.group.put(MEMBER_ADMIN_ARRAY_KEY, ja);
+        }
+        if (containsEventAdmin(BaasUser.current().getName())) {
+            JsonArray ja = this.group.getArray(EVENT_ADMIN_ARRAY_KEY);
+            int size = ja.size();
+            for (int i = 0; i < size; i++) {
+                if (ja.getString(i).equals(BaasUser.current().getName())) {
+                    ja.remove(i);
+                    break;
+                }
+            }
+            this.group.put(EVENT_ADMIN_ARRAY_KEY, ja);
+        }
     }
 
     protected synchronized int getUserCount() {
@@ -254,7 +342,10 @@ class Group2 implements Parcelable {
 
     //region Methods for altering the events of the group
     protected synchronized void addEvent(String eventID) throws GroupException {
-        if (!hasEventPermission()) throw new GroupException("User does not have detail permission.");
+        if (!isOpen()) {
+            if (!hasEventPermission())
+                throw new GroupException("User does not have event permission.");
+        }
         if (containsEvent(eventID)) return;
         JsonArray ja = this.group.getArray(EVENT_ARRAY_KEY);
         ja.add(eventID);
@@ -262,7 +353,10 @@ class Group2 implements Parcelable {
     }
 
     protected synchronized void removeEvent(String eventID) throws GroupException {
-        if (!hasMemberPermission()) throw new GroupException("User does not have detail permission.");
+        if (!isOpen()) {
+            if (!hasMemberPermission())
+                throw new GroupException("User does not have event permission.");
+        }
         if (!containsEvent(eventID)) {
             return;
         }
@@ -271,6 +365,7 @@ class Group2 implements Parcelable {
         for (int i = 0; i < size; i++) {
             if (ja.getString(i).equals(eventID)) {
                 ja.remove(i);
+                break;
             }
         }
         this.group.put(EVENT_ARRAY_KEY, ja);
@@ -297,7 +392,10 @@ class Group2 implements Parcelable {
 
     //region Methods to manage the Detail Admins
     protected synchronized void promoteToDetailAdmin(String username) throws GroupException {
-        if (!hasTotalPermission()) throw new GroupException("User does not have total permission.");
+        if (!isOpen()) {
+            if (!hasTotalPermission())
+                throw new GroupException("User does not have total permission.");
+        }
         if (!containsUser(username) || containsDetailAdmin(username)) {
             return;
         }
@@ -307,7 +405,10 @@ class Group2 implements Parcelable {
     }
 
     protected synchronized void demoteFromDetailAdmin(String username) throws GroupException {
-        if (!hasTotalPermission()) throw new GroupException("User does not have total permission.");
+        if (!isOpen()) {
+            if (!hasTotalPermission())
+                throw new GroupException("User does not have total permission.");
+        }
         if (username.equals(getCreator())) throw new GroupException("Cannot demote the creator.");
         if (!containsDetailAdmin(username)) {
             return;
@@ -317,6 +418,7 @@ class Group2 implements Parcelable {
         for (int i = 0; i < size; i++) {
             if (ja.getString(i).equals(username)) {
                 ja.remove(i);
+                break;
             }
         }
         this.group.put(DETAIL_ADMIN_ARRAY_KEY, ja);
@@ -334,7 +436,10 @@ class Group2 implements Parcelable {
 
     //region Methods to manage the Member Admins
     protected synchronized void promoteToMemberAdmin(String username) throws GroupException {
-        if (!hasTotalPermission()) throw new GroupException("User does not have total permission.");
+        if (!isOpen()) {
+            if (!hasTotalPermission())
+                throw new GroupException("User does not have total permission.");
+        }
         if (!containsUser(username) || containsMemberAdmin(username)) {
             return;
         }
@@ -344,7 +449,10 @@ class Group2 implements Parcelable {
     }
 
     protected synchronized void demoteFromMemberAdmin(String username) throws GroupException {
-        if (!hasTotalPermission()) throw new GroupException("User does not have total permission.");
+        if (!isOpen()) {
+            if (!hasTotalPermission())
+                throw new GroupException("User does not have total permission.");
+        }
         if (username.equals(getCreator())) throw new GroupException("Cannot demote the creator.");
         if (!containsMemberAdmin(username)) {
             return;
@@ -354,6 +462,7 @@ class Group2 implements Parcelable {
         for (int i = 0; i < size; i++) {
             if (ja.getString(i).equals(username)) {
                 ja.remove(i);
+                break;
             }
         }
         this.group.put(MEMBER_ADMIN_ARRAY_KEY, ja);
@@ -371,7 +480,10 @@ class Group2 implements Parcelable {
 
     //region Methods to manage the Event Admins
     protected synchronized void promoteToEventAdmin(String username) throws GroupException {
-        if (!hasTotalPermission()) throw new GroupException("User does not have total permission.");
+        if (!isOpen()) {
+            if (!hasTotalPermission())
+                throw new GroupException("User does not have total permission.");
+        }
         if (!containsUser(username) || containsEventAdmin(username)) {
             return;
         }
@@ -381,7 +493,10 @@ class Group2 implements Parcelable {
     }
 
     protected synchronized void demoteFromEventAdmin(String username) throws GroupException {
-        if (!hasTotalPermission()) throw new GroupException("User does not have total permission.");
+        if (!isOpen()) {
+            if (!hasTotalPermission())
+                throw new GroupException("User does not have total permission.");
+        }
         if (username.equals(getCreator())) throw new GroupException("Cannot demote the creator.");
         if (!containsEventAdmin(username)) {
             return;
@@ -391,6 +506,7 @@ class Group2 implements Parcelable {
         for (int i = 0; i < size; i++) {
             if (ja.getString(i).equals(username)) {
                 ja.remove(i);
+                break;
             }
         }
         this.group.put(EVENT_ADMIN_ARRAY_KEY, ja);

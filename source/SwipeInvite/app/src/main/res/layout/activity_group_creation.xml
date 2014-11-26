@@ -132,6 +132,55 @@
 
             </RadioGroup>
         </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/group_create_group_open"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/group_create_group_type">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Permission Type:"
+                android:id="@+id/textView5"
+                android:layout_marginTop="34dp"
+                android:layout_marginRight="10dp"
+                android:layout_toStartOf="@+id/textView3"
+                android:layout_toLeftOf="@+id/textView3"
+                android:layout_below="@+id/textView_group_name"
+                android:layout_alignRight="@+id/textView3"
+                android:layout_alignEnd="@+id/textView3" />
+
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/radioGroupOpen">
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Open"
+                    android:id="@+id/text_open"
+                    android:checked="true"
+                    android:layout_marginTop="31dp"
+                    android:onClick="onRadioButtonClickedOpen" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Closed"
+                    android:id="@+id/text_closed"
+                    android:checked="false"
+                    android:layout_below="@+id/text_private"
+                    android:layout_alignLeft="@+id/text_private"
+                    android:layout_alignStart="@+id/text_private"
+                    android:onClick="onRadioButtonClickedOpen" />
+
+            </RadioGroup>
+        </LinearLayout>
+
     </RelativeLayout>
 
 </merge>

@@ -301,7 +301,7 @@ public class NewUserLoginActivity extends Activity {
         model = Model.getInstance(this);
 
         //Create the user's personal group
-        Group2 g = new Group2("Personal", "A group just for you to push your own events to.", true);
+        Group2 g = new Group2("Personal", "A group just for you to push your own events to.", true, false);
 
         //Store the group in the local model object
         //model.activeGroups.add(g);
