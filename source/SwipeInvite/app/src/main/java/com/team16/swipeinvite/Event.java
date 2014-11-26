@@ -66,7 +66,7 @@ class Event implements Parcelable {
 
     //region Constructors for the event class
     //Create a brand new event object from scratch
-    protected Event(String name, String description, String location, String begdate, String enddate, List<?> groups) {
+    protected Event(String name, String description, String location, String begdate, String enddate) {
         this.event = new BaasDocument(COLLECTION_NAME);
         initializeAdminArray();
         this.event.put(NAME_KEY, name);
@@ -74,7 +74,7 @@ class Event implements Parcelable {
         this.event.put(LOCATION_KEY, location);
         this.event.put(BEGIN_DATE_KEY, begdate);
         this.event.put(END_DATE_KEY, enddate);
-        setParentGroups(groups);
+        //setParentGroups(groups);
     }
 
     //Create a brand new group object from an existing BaasDocument
@@ -200,7 +200,7 @@ class Event implements Parcelable {
 
 
     //region Methods for setting and getting parent groups
-    protected synchronized void setParentGroups(List<?> groupList) throws EventException {
+    private synchronized void setParentGroups(List<?> groupList) throws EventException {
         if (groupList.size() <= 0) throw new EventException("Parentless event not accepatable.");
         //Create new json array
         JsonArray ja = new JsonArray();
