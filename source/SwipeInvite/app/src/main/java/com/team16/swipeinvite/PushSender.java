@@ -89,8 +89,8 @@ public class PushSender extends IntentService {
                 iterations++;
                 return;
             }
-        } catch (NullPointerException e) {
-            Log.d(LOG_TAG, "Push service not available.");
+        } catch (Exception e) {
+            Log.d(LOG_TAG, "Push service not available: " + e.getMessage());
             iterations = 0;
             return;
         }

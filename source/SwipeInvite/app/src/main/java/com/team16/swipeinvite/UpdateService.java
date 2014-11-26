@@ -35,12 +35,22 @@ public class UpdateService extends IntentService {
 
         //region Group updating section
         BaasQuery queryG = BaasQuery.builder().where("privacy=true").build();
+        //Fix query to include active public groups
+        List<Group2> activeGroups = model.getActiveGroups();
+        synchronized (activeGroups) {
+            for (Group2 z : activeGroups) {
+                if (!z.isPrivate()) {
+                    Log.d(LOG_TAG, "Added public group to query: " + z.getName());
+                    queryG = queryG.buildUpon().or("id='" + z.getId() + "'").build();
+                }
+            }
+        }
+        //Launch query
         BaasResult<List<BaasDocument>> groupResult = BaasDocument.fetchAllSync("group", queryG.buildUpon().criteria());
         if (groupResult.isFailed()) {
             Log.d(LOG_TAG, "Could not fetch groups.");
         } else {
             //For each group in the model, check to see if there is a group that was fetched
-            List<Group2> activeGroups = model.getActiveGroups();
             List<BaasDocument> pulledGroups = groupResult.value();
             synchronized (activeGroups) {
                 for (final ListIterator<Group2> i = activeGroups.listIterator(); i.hasNext(); ) {  //Setting up iterator
@@ -52,6 +62,7 @@ public class UpdateService extends IntentService {
                         if (current.equals(currentD)) {
                             current.setBaasDocument(currentD);   //update the group object
                             j.remove();  //remove the group from the pull list
+                            Log.d(LOG_TAG, "Updating group: " + current.getName());
                             check = false;
                             break;
                         }
@@ -59,6 +70,7 @@ public class UpdateService extends IntentService {
 
                     //If no pulldown equivalent was found, the group must have been deleted
                     if (check) {
+                        Log.d(LOG_TAG, "Removing group: " + current.getName());
                         i.remove(); //Remove the group from the active groups list
                         //****SEND NOTIFICATION TO THE USER****
                     }
@@ -67,6 +79,7 @@ public class UpdateService extends IntentService {
                 for (BaasDocument d : pulledGroups) {
                     Group2 addition = new Group2(d);
                     activeGroups.add(addition);
+                    Log.d(LOG_TAG, "Adding group: " + addition.getName());
                     //***SEND NOTIFICATION TO THE USER***
                 }
             }

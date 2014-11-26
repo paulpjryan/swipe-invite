@@ -14,15 +14,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baasbox.android.BaasDocument;
+import com.baasbox.android.BaasHandler;
 import com.baasbox.android.BaasQuery;
+import com.baasbox.android.BaasResult;
 import com.baasbox.android.BaasUser;
 import com.baasbox.android.Grant;
+import com.baasbox.android.RequestToken;
 import com.baasbox.android.SaveMode;
 import com.google.android.gms.games.Game;
 
@@ -43,6 +49,8 @@ public class SearchGroupActivity extends ActionBarActivity implements View.OnCli
     private  ListView ListView_search_group;
     private ArrayAdapter<String> ListAdapter;
     private ImageButton bt_search;
+    private EditText nameText;
+    private ProgressBar progressSpinner;
     //endregion
 
 
@@ -75,7 +83,12 @@ public class SearchGroupActivity extends ActionBarActivity implements View.OnCli
         //Get the model instance
         model = Model.getInstance(this);
 
+        //Progress bar
+        progressSpinner = (ProgressBar) findViewById(R.id.progressBar_group_search);
+        loaderSpin(false);
+
        // Button bt_join = (Button) findViewById(R.id.button_searchgroup_add);
+        nameText = (EditText) findViewById(R.id.editText_searchgroup);
         bt_search = (ImageButton) findViewById(R.id.button_searchgroup_search);
         bt_search.setOnClickListener(this);
         ListView_search_group = (ListView) findViewById(R.id.lv_search_group);
@@ -113,6 +126,9 @@ public class SearchGroupActivity extends ActionBarActivity implements View.OnCli
         super.onStop();
         Log.d(LOG_TAG, "onStop");
         model.deleteObserver(this);
+        if (searchRT != null) {
+            searchRT.cancel();
+        }
     }
     //endregion
 
@@ -146,17 +162,41 @@ public class SearchGroupActivity extends ActionBarActivity implements View.OnCli
 
             case R.id.button_searchgroup_search:
 
-                String[] data = {
-                        "Engl 101 + Description: Fall 2014",
-                        "Engl 101 + Description:"
-                };
+                //Need to prevent button spamming
+                if (searchRT != null) {
+                    Log.d(LOG_TAG, "Preventing spam of button.");
+                    makeToast("Server busy.");
+                    return;
+                }
 
-                ArrayList<String> GroupList = new ArrayList<String>();
-                GroupList.addAll(Arrays.asList(data));
+                loaderSpin(true);
 
-                ListAdapter = new ArrayAdapter<String>(SearchGroupActivity.this,R.layout.list_item_group_search, GroupList);
-                ListView_search_group.setAdapter(ListAdapter);
+                //Check the input
+                BaasQuery queryG = BaasQuery.builder().where("privacy=false").build();
+                String groupName = nameText.getText().toString();
+                if (TextUtils.isEmpty(groupName)) {
+                    Log.d(LOG_TAG, "Correcting blank group name.");
+                } else {
+                    queryG = queryG.buildUpon().and("name like '" + groupName + "%'").build();
+                }
 
+                //Create the query
+                //Filter out any active groups
+                List<Group2> activeGroups = model.getActiveGroups();
+                synchronized (activeGroups) {
+                    for (Group2 x : activeGroups) {
+                        if (!x.isPrivate()) {
+                            queryG = queryG.buildUpon().and("id<>'" + x.getId() + "'").build();
+                        }
+                    }
+                }
+                //Launch query
+                searchRT = BaasDocument.fetchAll("group", queryG.buildUpon().criteria(), onSearchComplete);
+
+                break;
+
+            case R.id.editText_searchgroup:
+                nameText.setError(null);
                 break;
         }
 
@@ -164,8 +204,69 @@ public class SearchGroupActivity extends ActionBarActivity implements View.OnCli
     //endregion
 
 
+    //region Methods for async search request
+    private static final String SEARCH_TOKEN_KEY = "search";
+    private RequestToken searchRT;
+    private final BaasHandler<List<BaasDocument>> onSearchComplete = new BaasHandler<List<BaasDocument>>() {
+        @Override
+        public void handle(BaasResult<List<BaasDocument>> result) {
+            searchRT = null;
+            if (result.isFailed()) {
+                Log.d(LOG_TAG, "Server query failed: " + result.error());
+                failedSearch();
+                return;
+            } else if (result.isSuccess()) {
+                Log.d(LOG_TAG, "Server query success.");
+                completeSearch(result.value());
+                return;
+            }
+            loaderSpin(false);
+            Log.d(LOG_TAG, "Server weird.");
+        }
+    };
+    //endregion
 
 
+    //region Methods to deal with search result
+    private void failedSearch() {
+        loaderSpin(false);
+        makeToast("Server unavailable");
+        GroupsAdapter ga = new GroupsAdapter(this, new ArrayList<Group2>());
+        ListView_search_group.setAdapter(ga);
+        return;
+    }
+    private void completeSearch(List<BaasDocument> groupList) {
+        loaderSpin(false);
+        if (groupList == null || groupList.size() == 0) {
+            makeToast("No inactive public groups available with that name");
+            GroupsAdapter ga = new GroupsAdapter(this, new ArrayList<Group2>());
+            ListView_search_group.setAdapter(ga);
+            return;
+        }
+        //Convert to list of groups
+        ArrayList<Group2> gList = new ArrayList<Group2>();
+        for (BaasDocument x : groupList) {
+            gList.add(new Group2(x));
+        }
+        //Create Group Adapter for list
+        GroupsAdapter ga = new GroupsAdapter(this, gList);
+        ListView_search_group.setAdapter(ga);
+        return;
+    }
+    //endregion
 
+
+    //region Helper methods for toasts and loading
+    private void makeToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+    private void loaderSpin(boolean visible) {
+        if (visible) {
+            progressSpinner.setVisibility(View.VISIBLE);
+        } else {
+            progressSpinner.setVisibility(View.GONE);
+        }
+    }
+    //endregion
 
 }
