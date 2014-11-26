@@ -212,6 +212,29 @@ public class GroupCreationActivity extends ActionBarActivity {
     //endregion
 
 
+    //region Radio Group responder -- OPEN or CLOSED group
+    //Method to respond to the radio button clicked
+    //Listener set in the xml
+    private boolean isOpen = true;  // default is checked
+    public void onRadioButtonClickedOpen(View v) {
+        // Is the button now checked?
+        boolean checked = ((RadioButton) v).isChecked();
+
+        // Check which radio button was clicked
+        switch(v.getId()) {
+            case R.id.text_open:
+                if (checked)
+                    isOpen = true;
+                break;
+            case R.id.text_closed:
+                if (checked)
+                    isOpen = false;
+                break;
+        }
+    }
+    //endregion
+
+
     //region Submit button responder
     //Method to respond to the actual button click
     //Listener is set in the xml
@@ -252,7 +275,7 @@ public class GroupCreationActivity extends ActionBarActivity {
 
         //Proceed to create new group with information
         Log.d(LOG_TAG, "Saving group to server.");
-        Group2 g = new Group2(name, description, isPrivate);
+        Group2 g = new Group2(name, description, isPrivate, isOpen); //UPDATE TO ASK FOR OPENNESS
         saveRT = g.getBaasDocument().save(SaveMode.IGNORE_VERSION, onSaveComplete);
     }
 

@@ -49,7 +49,7 @@ public class PushSender extends IntentService {
         }
 
         //Create a server query for users with these names
-        BaasQuery queryU = BaasQuery.builder().users().build();
+        BaasQuery queryU = BaasQuery.builder().users().where("user.name='a'").build();
         for (String u : users) {
             if (BaasUser.current().getName().equals(u)) {
                 Log.d(LOG_TAG, "Not sending push to current user.");
@@ -72,6 +72,10 @@ public class PushSender extends IntentService {
 
         //Get the list of users
         List<BaasUser> groupUsers = result.value();
+        if (groupUsers.size() <= 0) {
+            Log.d(LOG_TAG, "No users to push to.");
+            return;
+        }
 
         //Launch the push notification
         BaasResult<Void> resultPush = BaasBox.messagingService().newMessage().extra(message)

@@ -117,6 +117,38 @@
     </LinearLayout>
 
 
+    <LinearLayout
+        android:id="@+id/linearLayout_profile_group_permType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/linearLayout_profile_group_nameType"
+        android:layout_marginTop="10dp"
+        android:layout_weight="1.5"
+        android:weightSum="8">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Permission Type: "
+            android:layout_weight="2"
+            android:gravity="center_vertical"/>
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="8"
+            android:id="@+id/textView_new_group_typeOpen"
+            android:layout_weight="6"
+            android:maxLength="35"
+            android:maxLines="2"
+            android:enabled="false"
+            android:hint="open/closed"/>
+    </LinearLayout>
+
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
