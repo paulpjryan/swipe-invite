@@ -154,6 +154,17 @@
                 android:value="com.team16.swipeinvite.SearchGroupActivity" />
         </activity>
 
+        <activity
+            android:name="com.team16.swipeinvite.Add_group2eventActivity"
+            android:label="@string/add_group2event"
+            android:parentActivityName="com.team16.swipeinvite.EventCreationActivity">
+
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.team16.swipeinvite.EventCreationActivity" />
+        </activity>
+
         <service
             android:name="com.team16.swipeinvite.PushSender"
             android:exported="false" >
