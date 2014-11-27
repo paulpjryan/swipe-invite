@@ -41,8 +41,6 @@ public class LoginActivity extends ActionBarActivity {
     private View mLoginStatusView;
     private TextView mLoginStatusMessageView;
 
-
-
     private RequestToken mSignupOrLogin;
 
     @Override

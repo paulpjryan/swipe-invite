@@ -128,7 +128,6 @@ public class UserProfileActivity extends ActionBarActivity implements Observer {
                 populateViews();
             }
         });
-        return;
     }
     //endregion
 
@@ -163,10 +162,13 @@ public class UserProfileActivity extends ActionBarActivity implements Observer {
 		// as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
+                navigateToMain();
+                super.onBackPressed();
                 return true;
-            case R.id.button_user_submit:
-                onClickListener();
+            case R.id.action_submit:
+                submitListener();
+                navigateToMain();
+                super.onBackPressed();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -182,7 +184,7 @@ public class UserProfileActivity extends ActionBarActivity implements Observer {
 
     //region Method to figure out how to go back to main
     private void navigateToMain() {
-        if (saveRT == null) {
+        if (saveRT != null) {
             Log.d(LOG_TAG, "Navigating away from profile edit, return OK.");
             progressSpinner.setVisibility(View.GONE);
             Intent returnIntent = new Intent();
@@ -198,7 +200,7 @@ public class UserProfileActivity extends ActionBarActivity implements Observer {
 
 
     //region Method for clicking the submit button
-    public void onClickListener()
+    public void submitListener()
     {
         //Make sure to avoid the spamming of the submit button
         if (saveRT != null) {
