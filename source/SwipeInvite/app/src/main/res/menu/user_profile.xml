@@ -1,9 +1,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:compat="http://schemas.android.com/apk/res-auto" >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.team16.swipeinvite.UserProfileActivity" >
 
-    <item android:id="@+id/button_user_submit"
+    <item android:id="@+id/action_submit"
         android:icon="@drawable/ic_action_accept"
         android:title="@string/user_profile_submit"
-        compat:showAsAction="withText|always"  />
+        app:showAsAction="withText|always"  />
 
 </menu>

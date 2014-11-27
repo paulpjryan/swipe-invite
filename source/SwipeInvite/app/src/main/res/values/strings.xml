@@ -114,5 +114,7 @@
     <string name="user_profile_gender_male">Male</string>
     <string name="user_profile_gender_female">Female</string>
     <string name="user_profile_submit">Submit</string>
+    <string name="login_new_user">New User</string>
+    <string name="login_sign_in">Sign In</string>
 
 </resources>

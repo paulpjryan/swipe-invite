@@ -37,14 +37,7 @@ public class SearchSpeMemberActivity extends Activity {
 
         ListAdapter = new ArrayAdapter<String>(SearchSpeMemberActivity.this,R.layout.list_item_search_spec,GroupList);
         ListView_search_group.setAdapter(ListAdapter);
-
-
-
-
     }
-
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -57,8 +50,4 @@ public class SearchSpeMemberActivity extends Activity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-
-
-
 }

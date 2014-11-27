@@ -1,18 +1,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:compat="http://schemas.android.com/apk/res-auto" >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.team16.swipeinvite.LoginActivity" >
 
-    <item android:id="@+id/login_button"
+    <item android:id="@+id/action_login"
         android:icon="@drawable/ic_action_accept"
-        android:title="Sign In"
-        compat:showAsAction="withText|always" />
+        android:title="@string/login_sign_in"
+        app:showAsAction="withText|always" />
 
-    <item android:id="@+id/new_user_button"
+    <item android:id="@+id/action_new_user"
         android:icon="@drawable/ic_action_new"
-        android:title="New User"
-        compat:showAsAction="never" />
+        android:title="@string/login_new_user"
+        app:showAsAction="never" />
 
     <item android:id="@+id/action_forgot_password"
         android:title="@string/action_forgot_password"
-        compat:showAsAction="never" />
+        app:showAsAction="never" />
 
 </menu>

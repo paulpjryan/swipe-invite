@@ -159,12 +159,13 @@ public class NewUserLoginActivity extends Activity {
 
     //region Responders and variables for button clicks
     private int male = -1;
+
     public void onRadioButtonClicked(View v) {
         // Is the button now checked?
         boolean checked = ((RadioButton) v).isChecked();
 
         // Check which radio button was clicked
-        switch(v.getId()) {
+        switch (v.getId()) {
             case R.id.radiobutton_male:
                 if (checked)
                     male = 1;
@@ -235,7 +236,7 @@ public class NewUserLoginActivity extends Activity {
             showProgress(false);
             radGroup.requestFocus();
             return;
-        } else if (!(password.equals(confirmpassword)) ) {
+        } else if (!(password.equals(confirmpassword))) {
             Log.d(LOG_TAG, "Passwords do not match");
             showProgress(false);
             confirmPasswordField.setError("Password does not match");
@@ -256,6 +257,7 @@ public class NewUserLoginActivity extends Activity {
         signInRT = user.getBaasUser().signup(onComplete);
 
     }
+
     public void textFieldResponder(View v) {
         //Reset the error messages if you click the text views
         usernameField.setError(null);
@@ -279,7 +281,7 @@ public class NewUserLoginActivity extends Activity {
                 Log.d(LOG_TAG, "Server request error: " + result.error());
                 showProgress(false);
                 //SAY ERROR MESSAGE TO USER
-                Toast.makeText(getApplicationContext() , "Server unavailable.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Server unavailable.", Toast.LENGTH_SHORT).show();
                 return;
             } else if (result.isSuccess()) {
 
@@ -326,7 +328,7 @@ public class NewUserLoginActivity extends Activity {
                 Log.d(LOG_TAG, "Server request error: " + result.error());
                 showProgress(false);
                 //SAY ERROR MESSAGE TO USER
-                Toast.makeText(getApplicationContext() , "Server unavailable.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Server unavailable.", Toast.LENGTH_SHORT).show();
                 return;
             } else if (result.isSuccess()) {
                 //MOVE ON TO MODEL SAVE
@@ -400,7 +402,7 @@ public class NewUserLoginActivity extends Activity {
                 Log.d(LOG_TAG, "Server request error: " + result.error());
                 showProgress(false);
                 //SAY ERROR MESSAGE TO USER
-                Toast.makeText(getApplicationContext() , "Server unavailable.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Server unavailable.", Toast.LENGTH_SHORT).show();
                 return;
             } else if (result.isSuccess()) {
                 //LAUNCH THE MAIN ACTIVITY
@@ -458,6 +460,7 @@ public class NewUserLoginActivity extends Activity {
 
     //region Method and variables to check if a valid Google play services is found
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+
     private boolean checkPlayServices() {
         int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
         if (resultCode != ConnectionResult.SUCCESS) {

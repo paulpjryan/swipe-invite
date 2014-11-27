@@ -40,11 +40,7 @@ public class GroupsFragment extends Fragment {
         m = Model.getInstance(getActivity());
         //List<Group2> groupData = m.activeGroups;   //OLD implementation
         //List<Group2> groupData = m.getActiveGroups();    //Synchronized methodology 1
-        mArrayAdapter =
-                new GroupsAdapter(
-                        getActivity(),
-                        m.getActiveGroups());
-
+        mArrayAdapter = new GroupsAdapter(getActivity(), m.getActiveGroups());
 
         View rootView = inflater.inflate(R.layout.fragment_group, container, false);
 
