@@ -76,19 +76,26 @@ public class PushSender extends IntentService {
             Log.d(LOG_TAG, "No users to push to.");
             return;
         }
+        Log.d(LOG_TAG, "Pushing to: " + groupUsers.toString());
 
         //Launch the push notification
-        BaasResult<Void> resultPush = BaasBox.messagingService().newMessage().extra(message)
-                .to(groupUsers.toArray(new BaasUser[groupUsers.size()]))
-                .text(notMessage).sendSync();
-
-        if (resultPush.isFailed()) {
-            //Try another time
-            Log.d(LOG_TAG, "Push trying again.");
-            tryAgain(users, message, notMessage);
-            iterations++;
+        try {
+            BaasResult<Void> resultPush = BaasBox.messagingService().newMessage().extra(message)
+                    .to(groupUsers.toArray(new BaasUser[groupUsers.size()]))
+                    .text(notMessage).sendSync();
+            if (resultPush.isFailed()) {
+                //Try another time
+                Log.d(LOG_TAG, "Push trying again.");
+                tryAgain(users, message, notMessage);
+                iterations++;
+                return;
+            }
+        } catch (Exception e) {
+            Log.d(LOG_TAG, "Push service not available: " + e.getMessage());
+            iterations = 0;
             return;
         }
+
         Log.d(LOG_TAG, "Push success.");
         iterations = 0;
         return;

@@ -359,12 +359,18 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
     private void failedSearch() {
         progressSpinner.setVisibility(View.GONE);
         Toast.makeText(this, "Server unavailable.", Toast.LENGTH_SHORT).show();
+        ListAdapter = new ArrayAdapter<String>(Add_person2group.this, R.layout.list_add_person2group_withouticon,
+                new ArrayList<String>());
+        ListView_add_people.setAdapter(ListAdapter);
         return;
     }
     private void completeSearch(List<BaasUser> userList) {
         progressSpinner.setVisibility(View.GONE);
         if (userList == null || userList.size() == 0) {
             Toast.makeText(this, "No user with that name.", Toast.LENGTH_SHORT).show();
+            ListAdapter = new ArrayAdapter<String>(Add_person2group.this, R.layout.list_add_person2group_withouticon,
+                    new ArrayList<String>());
+            ListView_add_people.setAdapter(ListAdapter);
             return;
         }
         ArrayList<String> uList = new ArrayList<String>();

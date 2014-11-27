@@ -14,7 +14,7 @@
         android:layout_height="wrap_content" >
 
         <EditText
-            android:id="@+id/editTest_searchgroup"
+            android:id="@+id/editText_searchgroup"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="7"
@@ -36,6 +36,14 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
      />
+
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar_group_search"
+        android:layout_gravity="center_horizontal" />
 
 
 
