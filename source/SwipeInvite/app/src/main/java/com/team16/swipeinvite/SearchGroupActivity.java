@@ -47,7 +47,7 @@ public class SearchGroupActivity extends ActionBarActivity implements View.OnCli
 
     //region Local variables for views
     private  ListView ListView_search_group;
-    private ArrayAdapter<String> ListAdapter;
+    private GroupsAdapter ListAdapter;
     private ImageButton bt_search;
     private EditText nameText;
     private ProgressBar progressSpinner;
@@ -92,23 +92,24 @@ public class SearchGroupActivity extends ActionBarActivity implements View.OnCli
         bt_search = (ImageButton) findViewById(R.id.button_searchgroup_search);
         bt_search.setOnClickListener(this);
         ListView_search_group = (ListView) findViewById(R.id.lv_search_group);
-        ListAdapter = new ArrayAdapter<String>(SearchGroupActivity.this,R.layout.list_item_group_search, new ArrayList<String>());
-        ListView_search_group.setAdapter(ListAdapter);
 
         ListView_search_group.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id)
             {
-               // String username = ListAdapter.getItem(position);
-                if (position == 1) {
-                    Intent intent = new Intent(SearchGroupActivity.this, SearchSpeMemberActivity.class);
-                    startActivity(intent);
-                }
+                //Get the correct group
+               Group2 group = (Group2) ListAdapter.getItem(position);
 
+                //Create the intent to start the join activity
+                Intent intent = new Intent(SearchGroupActivity.this, SearchSpeMemberActivity.class);
+                intent.putExtra("group", group);
 
+                //Launch the intent
+                startActivity(intent);
             }
         });
 	}
+    @Override
     protected void onResume() {
         super.onResume();
         Log.d(LOG_TAG, "onResume");
@@ -116,12 +117,22 @@ public class SearchGroupActivity extends ActionBarActivity implements View.OnCli
         if (model == null) {
             model = Model.getInstance(this);
         }
-        model.addObserver(this);
+        //Clear the list of searched groups
+        ListAdapter = new GroupsAdapter(this, new ArrayList<Group2>());
+        ListView_search_group.setAdapter(ListAdapter);
     }
+    @Override
     protected void onPause() {
         super.onPause();
         Log.d(LOG_TAG, "onPause");
     }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(LOG_TAG, "onStart");
+        model.addObserver(this);
+    }
+    @Override
     protected void onStop() {
         super.onStop();
         Log.d(LOG_TAG, "onStop");
@@ -231,16 +242,16 @@ public class SearchGroupActivity extends ActionBarActivity implements View.OnCli
     private void failedSearch() {
         loaderSpin(false);
         makeToast("Server unavailable");
-        GroupsAdapter ga = new GroupsAdapter(this, new ArrayList<Group2>());
-        ListView_search_group.setAdapter(ga);
+        ListAdapter = new GroupsAdapter(this, new ArrayList<Group2>());
+        ListView_search_group.setAdapter(ListAdapter);
         return;
     }
     private void completeSearch(List<BaasDocument> groupList) {
         loaderSpin(false);
         if (groupList == null || groupList.size() == 0) {
             makeToast("No inactive public groups available with that name");
-            GroupsAdapter ga = new GroupsAdapter(this, new ArrayList<Group2>());
-            ListView_search_group.setAdapter(ga);
+            ListAdapter = new GroupsAdapter(this, new ArrayList<Group2>());
+            ListView_search_group.setAdapter(ListAdapter);
             return;
         }
         //Convert to list of groups
@@ -249,8 +260,8 @@ public class SearchGroupActivity extends ActionBarActivity implements View.OnCli
             gList.add(new Group2(x));
         }
         //Create Group Adapter for list
-        GroupsAdapter ga = new GroupsAdapter(this, gList);
-        ListView_search_group.setAdapter(ga);
+        ListAdapter = new GroupsAdapter(this, gList);
+        ListView_search_group.setAdapter(ListAdapter);
         return;
     }
     //endregion
@@ -268,5 +279,6 @@ public class SearchGroupActivity extends ActionBarActivity implements View.OnCli
         }
     }
     //endregion
+
 
 }

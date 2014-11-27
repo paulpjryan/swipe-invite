@@ -229,7 +229,7 @@ class Group2 implements Parcelable {
 
     //region Methods for altering the members of the group
     protected synchronized void addUser(String username) throws GroupException {
-        if (!isOpen() || !isPrivate()) {  //Dont check for perm if group is open or public
+        if (isPrivate() && !isOpen()) {  //Dont check for perm if group is open or public
             if (!hasMemberPermission())
                 throw new GroupException("User does not have member permission.");
         }

@@ -76,6 +76,7 @@ public class PushSender extends IntentService {
             Log.d(LOG_TAG, "No users to push to.");
             return;
         }
+        Log.d(LOG_TAG, "Pushing to: " + groupUsers.toString());
 
         //Launch the push notification
         try {

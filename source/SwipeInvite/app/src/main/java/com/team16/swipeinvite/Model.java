@@ -352,7 +352,11 @@ class Model {
     }
     private void notifyObservers() {
         for (Observer x : observers) {
-            x.update(new Observable() , new Object());
+            try {
+                x.update(new Observable(), new Object());
+            } catch (Exception e) {
+                Log.d(LOG_TAG, "Caught notify observer problem: " + e.getMessage());
+            }
         }
     }
     private static ArrayList<Observer> getObservers() {

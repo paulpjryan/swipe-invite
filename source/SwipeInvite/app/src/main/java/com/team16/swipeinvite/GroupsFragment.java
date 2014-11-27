@@ -53,6 +53,9 @@ public class GroupsFragment extends Fragment {
         ListView listView = (ListView) rootView.findViewById(R.id.listview_groups);
         listView.setAdapter(mArrayAdapter);
 
+        //Give the main activity the group adapter
+        ((MainActivity) getActivity()).setGroupsAdapter(mArrayAdapter);
+
         inputSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {

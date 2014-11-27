@@ -24,6 +24,7 @@ import com.baasbox.android.BaasUser;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -49,6 +50,14 @@ public class MainActivity extends ActionBarActivity implements Observer {
     private Model model;
     private static final String MODEL_KEY = "model_d";
     private static final String MODEL_INTENT_KEY = "model_data";
+    //endregion
+
+
+    //region Local variable for group list adapter and method to set
+    private GroupsAdapter groupAdapter;
+    protected void setGroupsAdapter(GroupsAdapter ga) {
+        groupAdapter = ga;
+    }
     //endregion
 
 
@@ -188,7 +197,18 @@ public class MainActivity extends ActionBarActivity implements Observer {
     //region Method to refresh any views
     private void refresh() {
         //UPDATE ANYTHING THAT RELIES ON MODEL
-        GroupsAdapter.updateData(model.getActiveGroups());
+        if (groupAdapter == null) {
+            Log.d(LOG_TAG, "Preventing null group list");
+        } else {
+            groupAdapter.updateData(model.getActiveGroups());
+            Log.d(LOG_TAG, "**Refreshing groups list**");
+            List<Group2> activeGroups = model.getActiveGroups();
+            synchronized (activeGroups) {
+                for (Group2 x : activeGroups) {
+                    Log.d(LOG_TAG, "Group in model: " + x.getName());
+                }
+            }
+        }
     }
     //endregion
 
@@ -236,10 +256,17 @@ public class MainActivity extends ActionBarActivity implements Observer {
     //endregion
 
 
+    private void startGroupSearch() {
+        Intent intent = new Intent(this, SearchGroupActivity.class);
+        startActivityForResult(intent, SEARCH_GROUP_REQUEST_CODE);
+    }
+
+
     //region Method to handle returning results from side activities around the main
     private static final int GROUP_CREATE_REQUEST_CODE = 1;
     private static final int PROFILE_EDIT_REQUEST_CODE = 2;
     private static final int GROUP_EDIT_REQUEST_CODE = 3;
+    private static final int SEARCH_GROUP_REQUEST_CODE = 4;
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //Figure out which activity is returning a result
@@ -267,11 +294,19 @@ public class MainActivity extends ActionBarActivity implements Observer {
                     Log.d(LOG_TAG, "Got canceled result from group edit, bad.");
                 }
                 break;
+            case SEARCH_GROUP_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    Log.d(LOG_TAG, "Got ok result from group search.");
+                } else if (resultCode == RESULT_CANCELED) {
+                    Log.d(LOG_TAG, "Got canceled result from group search, bad.");
+                }
+                break;
             default:
                 Log.d(LOG_TAG, "Request code not set.");
                 break;
         }
         Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
+        refresh();
     }
     //endregion
 
@@ -323,13 +358,8 @@ public class MainActivity extends ActionBarActivity implements Observer {
 
             // Search Group
             case R.id.action_search_group:
-                Intent intent_sg = new Intent(this, SearchGroupActivity.class);
-                if (intent_sg.resolveActivity(getPackageManager()) != null) {
-
-                    startActivity(intent_sg);
-                } else {
-                    Toast.makeText(this, "Action unavailable", Toast.LENGTH_LONG).show();
-                }
+                //Start search activity
+                startGroupSearch();
                 return true;
 
             // Create Group
