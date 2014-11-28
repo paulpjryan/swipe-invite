@@ -30,12 +30,8 @@
             android:layout_gravity="center_vertical"
             android:layout_alignParentLeft="true"
             android:layout_weight="0.000000001"
-
-
             android:textSize="15dp" />
 
-
     </LinearLayout>
-
 
 </LinearLayout>

@@ -2,7 +2,6 @@
 <resources>
 
     <string name="app_name">SwipeInvite</string>
-    <string name="title_activity_test">TestActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_section1">Home</string>
@@ -14,7 +13,6 @@
     <string name="title_activity_base_activity2">BaseActivity2</string>
     <string name="drawer_open">Drawer Open</string>
     <string name="drawer_close">Drawer Close</string>
-    <string name="title_activity_sample">SampleActivity</string>
     <string name="title_activity_add_person2group">Add People</string>
 
     <!-- Add person to group -->
@@ -42,7 +40,7 @@
     <string name="group_creation_private">private </string>
     <string name="group_creation_public">public </string>
 
-    <!-- serach for group -->
+    <!-- Search for group -->
     <string name="title_activity_search_group">Search Group</string>
     <string name="search_group_find">Search</string>
     <string name="search_group_name">Group Name/Keyword</string>
@@ -116,5 +114,13 @@
     <string name="user_profile_submit">Submit</string>
     <string name="login_new_user">New User</string>
     <string name="login_sign_in">Sign In</string>
+    <string name="drawer_layout_description">Navigation</string>
+
+    <!-- Drawer labels -->
+    <string-array name="drawer_items">
+        <item>Invites</item>
+        <item>Events</item>
+        <item>Groups</item>
+    </string-array>
 
 </resources>

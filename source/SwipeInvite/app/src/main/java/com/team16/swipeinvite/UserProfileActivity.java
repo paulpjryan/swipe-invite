@@ -74,8 +74,8 @@ public class UserProfileActivity extends ActionBarActivity implements Observer {
         femaleButton = (RadioButton) findViewById(R.id.Radiobutton_user_female);
         progressSpinner = (ProgressBar) findViewById(R.id.progressBar_user_profile);
         progressSpinner.setVisibility(View.GONE);
-
 	}
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -84,6 +84,7 @@ public class UserProfileActivity extends ActionBarActivity implements Observer {
             saveRT.suspend();
         }
     }
+
     @Override
     protected  void onResume() {
         super.onResume();
@@ -99,12 +100,14 @@ public class UserProfileActivity extends ActionBarActivity implements Observer {
         //Populate the views with data from the model
         populateViews();
     }
+
     @Override
     protected void onStop() {
         super.onStop();
         Log.d(LOG_TAG, "onStop");
         model.deleteObserver(this);
     }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -174,6 +177,7 @@ public class UserProfileActivity extends ActionBarActivity implements Observer {
                 return super.onOptionsItemSelected(item);
         }
 	}
+
     @Override
     public void onBackPressed() {
         navigateToMain();
@@ -272,7 +276,6 @@ public class UserProfileActivity extends ActionBarActivity implements Observer {
 
         //Save the user to BaasBox
         saveRT = updateUser.getBaasUser().save(onSaveComplete);
-
     }
     //endregion
 
@@ -297,7 +300,6 @@ public class UserProfileActivity extends ActionBarActivity implements Observer {
             }
             Log.d(LOG_TAG, "Server request weird: " + result.toString());
             progressSpinner.setVisibility(View.GONE);
-            return;
         }
     };
     //endregion
@@ -315,8 +317,8 @@ public class UserProfileActivity extends ActionBarActivity implements Observer {
 
         //Toast user success
         Toast.makeText(getApplicationContext(), "Profile updated.", Toast.LENGTH_SHORT).show();
-
     }
+
     private void failedSave() {
         progressSpinner.setVisibility(View.GONE);
 
@@ -325,7 +327,6 @@ public class UserProfileActivity extends ActionBarActivity implements Observer {
 
         //Toast the user fail
         Toast.makeText(getApplicationContext(), "Update failed.", Toast.LENGTH_SHORT).show();
-
     }
     //endregion
 
