@@ -1,6 +1,7 @@
 package com.team16.swipeinvite;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,27 +17,31 @@ import java.util.List;
 // so we've had to write this whole class to make it possible to search
 // for parts of the arbitrary string we want
 public class EventsAdapter extends BaseAdapter implements Filterable {
+    private static final String LOG_TAG = "EventsAdapter";
 
     private List<Event>originalData = null;
     private List<Event>filteredData = null;
     private LayoutInflater mInflater;
     private ItemFilter mFilter = new ItemFilter();
-    private static EventsAdapter selfInstance;
+    protected int type;
 
-    public EventsAdapter(Context context, List<Event> data) {
+    public EventsAdapter(Context context, List<Event> data, int type) {
         this.filteredData = data ;
         this.originalData = data ;
         mInflater = LayoutInflater.from(context);
-        EventsAdapter.selfInstance = this;     //keep track of the instance of this class that is used
+        this.type = type;
     }
 
     //region Methods to handle updating the list view from other threads in a static context
-    protected static synchronized void updateData(List<Event> g) {
-        if (selfInstance == null) {
+    protected synchronized void updateData(List<Event> g) {
+        Log.d(LOG_TAG, "Received request to update list view.");
+        this.originalData = g;
+        try {
+            this.notifyDataSetChanged();
+        } catch (Exception e) {
+            Log.d(LOG_TAG, "Caught exception: " + e.toString());
             return;
         }
-        selfInstance.originalData = g;
-        selfInstance.notifyDataSetChanged();
     }
     //endregion
 

@@ -363,7 +363,7 @@ public class LoginActivity2 extends ActionBarActivity {
         }
         if (model.getIdList().get(4).size() != 0) {    //Check if the friend array is empty
             //There is friend profiles, retrieve them
-            BaasQuery fquery = BaasQuery.builder().build();
+            BaasQuery fquery = BaasQuery.builder().users().build();
             for (String s : model.getIdList().get(5)) {
                 fquery = fquery.buildUpon().or("user.name=" + "'" + s + "'").build();
             }
@@ -390,7 +390,7 @@ public class LoginActivity2 extends ActionBarActivity {
                 }
             }
             Log.d(LOG_TAG, "Event list request sent.");
-            eventRT = BaasDocument.fetchAll("group", queryE.buildUpon().criteria(), onEventComplete);
+            eventRT = BaasDocument.fetchAll("event", queryE.buildUpon().criteria(), onEventComplete);
         }
 
         //Signup current user for push notifications
