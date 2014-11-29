@@ -11,7 +11,10 @@ import com.baasbox.android.json.JsonArray;
 import com.baasbox.android.json.JsonObject;
 import com.google.android.gms.games.GamesMetadata;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -67,16 +70,16 @@ class Event implements Parcelable {
 
     //region Constructors for the event class
     //Create a brand new event object from scratch
-    protected Event(String name, String description, String location, String begdate, String enddate) {
+    protected Event(String name, String description, String location, Calendar begdate, Calendar enddate, List<?> groups) {
         this.event = new BaasDocument(COLLECTION_NAME);
         initializeAdminArray();
         this.event.put(NAME_KEY, name);
         this.event.put(DESCRIPTION_KEY, description);
         this.event.put(LOCATION_KEY, location);
-        this.event.put(BEGIN_DATE_KEY, begdate);
-        this.event.put(END_DATE_KEY, enddate);
+        this.setBeginDate(begdate);
+        this.setEndDate(enddate);
         this.event.put(ATTENDEE_KEY, 1);
-        //setParentGroups(groups);
+        setParentGroups(groups);
     }
 
     //Create a brand new group object from an existing BaasDocument
@@ -188,25 +191,45 @@ class Event implements Parcelable {
 
 
     //region Getter and setter for begin date
-    protected synchronized void setBeginDate(String date) throws EventException {
+    protected synchronized void setBeginDate(Calendar startDate) throws EventException {
         if (!hasPermission()) throw new EventException("User does not have permission to edit event.");
+        SimpleDateFormat df = new SimpleDateFormat();
+        String date = df.format(startDate.getTime());
         this.event.put(BEGIN_DATE_KEY, date);
     }
 
-    protected synchronized String getBeginDate() {
-        return this.event.getString(BEGIN_DATE_KEY);
+    protected synchronized Calendar getBeginDate() {
+        String date = this.event.getString(BEGIN_DATE_KEY);
+        SimpleDateFormat df = new SimpleDateFormat();
+        Calendar c = Calendar.getInstance();
+        try {
+            c.setTime(df.parse(date));
+        } catch (ParseException p) {
+            Log.d("EVENT", "****DATE PARSE FAIL: " + p.getMessage());
+        }
+        return c;
     }
     //endregion
 
 
     //region Getter and setter for end date
-    protected synchronized void setEndDate(String date) throws EventException {
+    protected synchronized void setEndDate(Calendar endDate) throws EventException {
         if (!hasPermission()) throw new EventException("User does not have permission to edit event.");
+        SimpleDateFormat df = new SimpleDateFormat();
+        String date = df.format(endDate.getTime());
         this.event.put(END_DATE_KEY, date);
     }
 
-    protected synchronized String getEndDate() {
-        return this.event.getString(END_DATE_KEY);
+    protected synchronized Calendar getEndDate() {
+        String date = this.event.getString(END_DATE_KEY);
+        SimpleDateFormat df = new SimpleDateFormat();
+        Calendar c = Calendar.getInstance();
+        try {
+            c.setTime(df.parse(date));
+        } catch (ParseException p) {
+            Log.d("EVENT", "****DATE PARSE FAIL: " + p.getMessage());
+        }
+        return c;
     }
     //endregion
 

@@ -166,12 +166,12 @@ public class UserProfileActivity extends ActionBarActivity implements Observer {
         switch (item.getItemId()) {
             case android.R.id.home:
                 navigateToMain();
-                super.onBackPressed();
+                NavUtils.navigateUpFromSameTask(this);
                 return true;
             case R.id.action_submit:
                 submitListener();
-                navigateToMain();
-                super.onBackPressed();
+                //navigateToMain();
+                //super.onBackPressed();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
