@@ -30,6 +30,7 @@ class Event implements Parcelable {
     private static final String END_DATE_KEY = "end_date";
     private static final String ADMIN_ARRAY_KEY = "admins";
     private static final String PARENT_GROUP_ARRAY_KEY = "groups";
+    private static final String ATTENDEE_KEY = "users";
     //endregion
 
 
@@ -74,6 +75,7 @@ class Event implements Parcelable {
         this.event.put(LOCATION_KEY, location);
         this.event.put(BEGIN_DATE_KEY, begdate);
         this.event.put(END_DATE_KEY, enddate);
+        this.event.put(ATTENDEE_KEY, 1);
         //setParentGroups(groups);
     }
 
@@ -152,6 +154,23 @@ class Event implements Parcelable {
 
     protected synchronized String getDescription() {
         return this.event.getString(DESCRIPTION_KEY);
+    }
+    //endregion
+
+
+    //region Methods to keep track of attendees
+    protected void addUser() {
+        int count = this.event.getInt(ATTENDEE_KEY, 0);
+        count++;
+        this.event.put(ATTENDEE_KEY, count);
+    }
+    protected void removeUser() {
+        int count = this.event.getInt(ATTENDEE_KEY, 0);
+        if (count == 0) {
+            return;
+        }
+        count--;
+        this.event.put(ATTENDEE_KEY, count);
     }
     //endregion
 
