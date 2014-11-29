@@ -122,5 +122,6 @@
         <item>Events</item>
         <item>Groups</item>
     </string-array>
+    <string name="add_group2event">Add groups</string>
 
 </resources>
