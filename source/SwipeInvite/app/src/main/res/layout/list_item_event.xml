@@ -7,6 +7,3 @@
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:gravity="center_vertical"
     />
-
-
-

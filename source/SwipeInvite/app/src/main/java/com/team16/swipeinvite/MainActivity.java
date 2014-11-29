@@ -17,20 +17,27 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.baasbox.android.BaasUser;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
 public class MainActivity extends ActionBarActivity implements Observer {
     /* -------------------- LOG TAG CONSTANTS --------------------------- */
-    private final static String LOG_TAG = "MAIN_ACT";
+    private final String LOG_TAG = "MAIN_ACT";
+    private final static String DTEXT = "text";
+    private final static String DICON = "icon";
+    private final static String DCOUNT = "count";
     /* -------------------- END LOG TAG CONSTANTS ----------------------- */
 
 
@@ -39,10 +46,23 @@ public class MainActivity extends ActionBarActivity implements Observer {
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
 
+    // Array of strings to initial counts
+    String[] mCount = new String[] {  "", "", "" };
+    // Array of integers points to images stored in /res/drawable-ldpi/
+    int[] mIcons = new int[]{
+            R.drawable.ic_action_new_event_dark,
+            R.drawable.ic_action_event_dark,
+            R.drawable.ic_action_group_dark
+    };
+
+    List<HashMap<String,String>> mList;
+
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
 
     private String[] drawerTitleList;
+
+    private SimpleAdapter mAdapter;
     //endregion
 
 
@@ -55,6 +75,8 @@ public class MainActivity extends ActionBarActivity implements Observer {
 
     //region Local variable for group list adapter and method to set
     private GroupsAdapter groupAdapter;
+    private LinearLayout mDrawer;
+
     protected void setGroupsAdapter(GroupsAdapter ga) {
         groupAdapter = ga;
     }
@@ -84,16 +106,37 @@ public class MainActivity extends ActionBarActivity implements Observer {
         mTitle = getTitle();
         mDrawerTitle = getTitle();
         //Names of tabs in the drawer
-        drawerTitleList = new String[]{"Invites", "Events", "Groups"};
+        drawerTitleList = getResources().getStringArray(R.array.drawer_items);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+        mDrawerList = (ListView) findViewById(R.id.drawer_list);
+        // Getting a reference to the sidebar drawer ( Title + ListView )
+        mDrawer = (LinearLayout) findViewById(R.id.drawer);
+
+        // Each row in the list stores country name, count and flag
+        mList = new ArrayList<HashMap<String,String>>();
+        for(int i = 0; i < drawerTitleList.length; i++){
+            HashMap<String, String> hm = new HashMap<String,String>();
+            hm.put(DTEXT, drawerTitleList[i]);
+            hm.put(DCOUNT, mCount[i]);
+            hm.put(DICON, Integer.toString(mIcons[i]) );
+            mList.add(hm);
+        }
+
+        // Keys used in Hashmap
+        String[] from = { DICON, DTEXT, DCOUNT };
+
+        // Ids of views in listview_layout
+        int[] to = { R.id.drawer_icon , R.id.drawer_text , R.id.drawer_count};
+
+        // Instantiating an adapter to store each items
+        // R.layout.drawer_layout defines the layout of each item
+        mAdapter = new SimpleAdapter(this, mList, R.layout.drawer_layout, from, to);
 
         // set a custom shadow that overlays the main content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         // set up the drawer's list view with items and click listener
-        mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-                R.layout.drawer_list_item, drawerTitleList));
+        mDrawerList.setAdapter(mAdapter);
 
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
@@ -126,6 +169,9 @@ public class MainActivity extends ActionBarActivity implements Observer {
         };
 
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+        // Setting the adapter to the listView
+        mDrawerList.setAdapter(mAdapter);
 
         if (savedInstanceState == null) {
             selectItem(0);
@@ -329,7 +375,7 @@ public class MainActivity extends ActionBarActivity implements Observer {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // If the nav drawer is open, hide action items related to the content view
-        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawer);
         //This gets disabled when the drawer is open
         //menu.findItem(R.id.action_websearch).setVisible(!drawerOpen);
         return super.onPrepareOptionsMenu(menu);
@@ -405,7 +451,7 @@ public class MainActivity extends ActionBarActivity implements Observer {
         mDrawerList.setItemChecked(position, true);
         mTitle = drawerTitleList[position];
 
-        mDrawerLayout.closeDrawer(mDrawerList);
+        mDrawerLayout.closeDrawer(mDrawer);
     }
     //endregion
 
