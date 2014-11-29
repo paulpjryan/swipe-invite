@@ -209,5 +209,13 @@
         android:layout_below="@id/LL_Seperator3"
         android:layout_gravity="right" />
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add group"
+            android:id="@+id/bt_add_group2event"
+            android:layout_alignParentBottom="true"
+            android:layout_alignRight="@+id/LL_Seperator3" />
+
     </RelativeLayout>
 </ScrollView>

@@ -4,6 +4,7 @@ package com.team16.swipeinvite;
  * Created by Tej on 11/6/2014.
  */
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
@@ -35,6 +36,7 @@ public class EventCreationActivity extends ActionBarActivity {
     private TextView locationField;
     private TextView descriptionField;
     private Button submitButton;
+    private Button AddGroupButton;
     private Calendar c;
     private DatePicker startdateField;
     private TimePicker starttimeField;
@@ -72,7 +74,16 @@ public class EventCreationActivity extends ActionBarActivity {
         locationField = (TextView) findViewById(R.id.textView_event_location);
         descriptionField = (TextView) findViewById(R.id.et_edit_event_description);
         submitButton = (Button) findViewById(R.id.button_event_submit);
+        AddGroupButton = (Button) findViewById(R.id.bt_add_group2event);
 
+        AddGroupButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(EventCreationActivity.this, Add_group2eventActivity.class));
+
+            }
+        } );
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
