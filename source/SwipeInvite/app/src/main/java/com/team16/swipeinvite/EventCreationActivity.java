@@ -109,7 +109,6 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
         eventCreateView = (View) findViewById(R.id.event_create_form);
         eventStatusView = (View) findViewById(R.id.event_create_status);
 
-
         startdateField = (DatePicker) findViewById(R.id.event_start_date);
         starttimeField = (TimePicker) findViewById(R.id.event_start_time);
         enddateField = (DatePicker) findViewById(R.id.event_end_date);
@@ -203,7 +202,7 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
     //region Methods for menus and options
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.event_creation, menu);
+        getMenuInflater().inflate(R.menu.event_creation, menu);
         return true;
     }
 
@@ -213,15 +212,17 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        else if(id == android.R.id.home)
+        switch (id)
         {
-            NavUtils.navigateUpFromSameTask(this);
-            return true;
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+            case R.id.submit_event_creation:
+                onEventSubmit(null);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
     //endregion
 
