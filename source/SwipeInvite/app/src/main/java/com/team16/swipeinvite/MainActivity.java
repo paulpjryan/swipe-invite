@@ -83,6 +83,15 @@ public class MainActivity extends ActionBarActivity implements Observer {
     //endregion
 
 
+    //region Local variable for event list adapter and method to set
+    private EventsAdapter eventAdapter;
+
+    protected void setEventsAdapter(EventsAdapter ea) {
+        eventAdapter = ea;
+    }
+    //endregion
+
+
     //region Lifecycle methods for the main activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -244,12 +253,21 @@ public class MainActivity extends ActionBarActivity implements Observer {
             Log.d(LOG_TAG, "Preventing null group list");
         } else {
             groupAdapter.updateData(model.getActiveGroups());
-            Log.d(LOG_TAG, "**Refreshing groups list**");
-            List<Group2> activeGroups = model.getActiveGroups();
-            synchronized (activeGroups) {
-                for (Group2 x : activeGroups) {
-                    Log.d(LOG_TAG, "Group in model: " + x.getName());
-                }
+            Log.d(LOG_TAG, "Refreshed group list.");
+        }
+        if (eventAdapter == null) {
+            Log.d(LOG_TAG, "Preventing null event list.");
+        } else {
+            switch (eventAdapter.type) {
+                case 0:
+                    eventAdapter.updateData(model.getAcceptedEvents());
+                    break;
+                case 1:
+                    eventAdapter.updateData(model.getWaitingEvents());
+                    break;
+                case 2:
+                    eventAdapter.updateData(model.getRejectedEvents());
+                    break;
             }
         }
     }
@@ -432,9 +450,20 @@ public class MainActivity extends ActionBarActivity implements Observer {
     private void selectItem(int position) {
         // update the main content by replacing fragments
         Fragment fragment;
+        Bundle args = new Bundle();
         switch (position) {
             case 2:
                 fragment = new GroupsFragment();
+                break;
+            case 0:
+                fragment = new EventsFragment();
+                args.putString("type", "waiting");
+                fragment.setArguments(args);
+                break;
+            case 1:
+                fragment = new EventsFragment();
+                args.putString("type", "accepted");
+                fragment.setArguments(args);
                 break;
             default:
                 fragment = new EventsFragment();
