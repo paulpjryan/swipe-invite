@@ -113,13 +113,13 @@ public class MainActivity extends ActionBarActivity implements Observer {
         // Getting a reference to the sidebar drawer ( Title + ListView )
         mDrawer = (LinearLayout) findViewById(R.id.drawer);
 
-        // Each row in the list stores country name, count and flag
+        // Each row in the list stores the icon, text and count
         mList = new ArrayList<HashMap<String,String>>();
         for(int i = 0; i < drawerTitleList.length; i++){
             HashMap<String, String> hm = new HashMap<String,String>();
+            hm.put(DICON, Integer.toString(mIcons[i]) );
             hm.put(DTEXT, drawerTitleList[i]);
             hm.put(DCOUNT, mCount[i]);
-            hm.put(DICON, Integer.toString(mIcons[i]) );
             mList.add(hm);
         }
 
@@ -169,9 +169,6 @@ public class MainActivity extends ActionBarActivity implements Observer {
         };
 
         mDrawerLayout.setDrawerListener(mDrawerToggle);
-
-        // Setting the adapter to the listView
-        mDrawerList.setAdapter(mAdapter);
 
         if (savedInstanceState == null) {
             selectItem(0);
