@@ -7,18 +7,24 @@ package com.team16.swipeinvite;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Button;
@@ -45,18 +51,57 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
 
     //region Local variables for views
     private View eventCreateView;
-    private TextView eventnameField;
-    private TextView locationField;
-    private TextView descriptionField;
-    private Button submitButton;
-    private Button AddGroupButton;
-    private Calendar c;
-    private DatePicker startdateField;
-    private TimePicker starttimeField;
-    private DatePicker enddateField;
-    private TimePicker endtimeField;
-
+    private TextView mEventNameField;
+    private TextView mEventLocationField;
+    private TextView mEventDescriptionField;
+    private Button mAddGroupButton;
+    private Calendar mCurrentCalendar;
+    private EditText mStartDateText;
+    private EditText mStartTimeText;
+    private EditText mEndDateText;
+    private EditText mEndTimeText;
     private View eventStatusView;
+    //endregion
+
+    //region Picker setup
+    public static class TimePickerFragment extends DialogFragment
+            implements TimePickerDialog.OnTimeSetListener {
+
+        public int hour, minute;
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Create a new instance of TimePickerDialog and return it
+            return new TimePickerDialog(getActivity(), this, hour, minute,
+                    DateFormat.is24HourFormat(getActivity()));
+        }
+
+        public void onTimeSet(TimePicker view, int hour, int minute) {
+            this.hour = hour;
+            this.minute = minute;
+        }
+    }
+    private TimePickerFragment mStartTimePicker;
+    private TimePickerFragment mEndTimePicker;
+    public static class DatePickerFragment extends DialogFragment
+            implements DatePickerDialog.OnDateSetListener {
+
+        public int year, month, day;
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Create a new instance of DatePickerDialog and return it
+            return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
+
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            this.year = year;
+            this.month = month;
+            this.year = year;
+        }
+    }
+    private DatePickerFragment mStartDatePicker;
+    private DatePickerFragment mEndDatePicker;
     //endregion
 
 
@@ -76,7 +121,6 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
                 //Refresh anything
             }
         });
-        return;
     }
     //endregion
 
@@ -98,37 +142,48 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
         }
 
         //Setting up the calendar
-        c = Calendar.getInstance();
-        int year = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH);
-        int day = c.get(Calendar.DATE);
-        int hour = c.get(Calendar.HOUR_OF_DAY);
-        int minute = c.get(Calendar.MINUTE);
+        mCurrentCalendar = Calendar.getInstance();
+        int currentYear = mCurrentCalendar.get(Calendar.YEAR);
+        int currentMonth = mCurrentCalendar.get(Calendar.MONTH);
+        int currentDay = mCurrentCalendar.get(Calendar.DATE);
+        int currentHour = mCurrentCalendar.get(Calendar.HOUR_OF_DAY);
+        int currentMinute = mCurrentCalendar.get(Calendar.MINUTE);
 
         //Setting up the views
         eventCreateView = (View) findViewById(R.id.event_create_form);
         eventStatusView = (View) findViewById(R.id.event_create_status);
 
-        startdateField = (DatePicker) findViewById(R.id.event_start_date);
-        starttimeField = (TimePicker) findViewById(R.id.event_start_time);
-        enddateField = (DatePicker) findViewById(R.id.event_end_date);
-        endtimeField = (TimePicker) findViewById(R.id.event_end_time);
+        mStartDateText = (EditText) findViewById(R.id.start_date_text);
+        mStartTimeText = (EditText) findViewById(R.id.start_time_text);
+        mEndDateText = (EditText) findViewById(R.id.end_date_text);
+        mEndTimeText = (EditText) findViewById(R.id.end_date_text);
 
-        startdateField.updateDate(year, month, day);
-        starttimeField.setCurrentHour(hour);
-        starttimeField.setCurrentMinute(minute);
-        enddateField.updateDate(year, month, day);
-        endtimeField.setCurrentHour(hour);
-        endtimeField.setCurrentMinute(minute);
+        mEventNameField = (TextView) findViewById(R.id.text_event_name);
+        mEventLocationField = (TextView) findViewById(R.id.text_event_location);
+        mEventDescriptionField = (TextView) findViewById(R.id.text_event_description);
+        mAddGroupButton = (Button) findViewById(R.id.bt_add_group2event);
 
-        eventnameField = (TextView) findViewById(R.id.textView_new_event);
-        locationField = (TextView) findViewById(R.id.textView_event_location);
-        descriptionField = (TextView) findViewById(R.id.et_edit_event_description);
-        submitButton = (Button) findViewById(R.id.button_event_submit);
-        AddGroupButton = (Button) findViewById(R.id.bt_add_group2event);
+        // Setup pickers
+        mStartDatePicker = new DatePickerFragment();
+        mStartDatePicker.year = currentYear;
+        mStartDatePicker.month = currentMonth;
+        mStartDatePicker.day = currentDay;
+
+        mStartTimePicker = new TimePickerFragment();
+        mStartTimePicker.hour = currentHour;
+        mStartTimePicker.minute = currentMinute;
+
+        mEndDatePicker = new DatePickerFragment();
+        mEndDatePicker.year = currentYear;
+        mEndDatePicker.month = currentMonth;
+        mEndDatePicker.day = currentDay + 1; // FIXME
+
+        mEndTimePicker = new TimePickerFragment();
+        mEndTimePicker.hour = currentHour;
+        mEndTimePicker.minute = currentMinute;
 
         //Listener for the add group button
-        AddGroupButton.setOnClickListener(new View.OnClickListener() {
+        mAddGroupButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -226,6 +281,18 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
     }
     //endregion
 
+    public void showStartDatePickerDialog(View v) {
+        mStartDatePicker.show(getFragmentManager(), "startDatePicker");
+    }
+    public void showStartTimePickerDialog(View v) {
+        mStartTimePicker.show(getFragmentManager(), "startTimePicker");
+    }
+    public void showEndDatePickerDialog(View v) {
+        mEndDatePicker.show(getFragmentManager(), "endDatePicker");
+    }
+    public void showEndTimePickerDialog(View v) {
+        mEndTimePicker.show(getFragmentManager(), "endTimePicker");
+    }
 
     //region Method for submit button
     public void onEventSubmit(View v)
@@ -239,19 +306,19 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
 
         showProgress(true);
 
-        String eventname = eventnameField.getText().toString();
-        String location = locationField.getText().toString();
-        String description = descriptionField.getText().toString();
-        int startyear = startdateField.getYear();
-        int startmonth = startdateField.getMonth();
-        int startday = startdateField.getDayOfMonth();
-        int starthour = starttimeField.getCurrentHour();
-        int startminute = starttimeField.getCurrentMinute();
-        int endyear = enddateField.getYear();
-        int endmonth = enddateField.getMonth();
-        int endday = enddateField.getDayOfMonth();
-        int endhour = endtimeField.getCurrentHour();
-        int endminute = endtimeField.getCurrentMinute();
+        String name = mEventNameField.getText().toString();
+        String location = mEventLocationField.getText().toString();
+        String description = mEventDescriptionField.getText().toString();
+        int startYear = mStartDatePicker.year;
+        int startMonth = mStartDatePicker.month;
+        int startDay = mStartDatePicker.day;
+        int startHour = mStartTimePicker.hour;
+        int startMinute = mStartTimePicker.minute;
+        int endYear = mEndDatePicker.year;
+        int endMonth = mEndDatePicker.month;
+        int endDay = mEndDatePicker.day;
+        int endHour = mEndTimePicker.hour;
+        int endMinute = mEndTimePicker.minute;
 
         Calendar startDate, endDate, currentDate;
         startDate = Calendar.getInstance();
@@ -260,52 +327,52 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
         startDate.clear();
         endDate.clear();
 
-        startDate.set(startyear, startmonth, startday, starthour, startminute);
-        endDate.set(endyear, endmonth, endday, endhour, endminute);
+        startDate.set(startYear, startMonth, startDay, startHour, startMinute);
+        endDate.set(endYear, endMonth, endDay, endHour, endMinute);
 
-        if (TextUtils.isEmpty(eventname)) {
+        if (TextUtils.isEmpty(name)) {
             Log.d(LOG_TAG, "Name field cannot be blank.");
             showProgress(false);
-            eventnameField.setError("Cannot be left blank");
-            eventnameField.requestFocus();
+            mEventNameField.setError("Cannot be left blank");
+            mEventNameField.requestFocus();
             return;
         } else if (TextUtils.isEmpty(description)) {
             Log.d(LOG_TAG, "Description field cannot be blank.");
             showProgress(false);
-            descriptionField.setError("Cannot be left blank");
-            descriptionField.requestFocus();
+            mEventDescriptionField.setError("Cannot be left blank");
+            mEventDescriptionField.requestFocus();
             return;
         } else if (TextUtils.isEmpty(location)) {
             Log.d(LOG_TAG, "location field cannot be blank.");
             showProgress(false);
-            locationField.setError("Cannot be left blank");
-            locationField.requestFocus();
+            mEventLocationField.setError("Cannot be left blank");
+            mEventLocationField.requestFocus();
             return;
-        } else if (eventname.length() > 30 ) {
+        } else if (name.length() > 30 ) {
             Log.d(LOG_TAG, "Name field cannot be longer than 20 characters.");
             showProgress(false);
-            eventnameField.setError("Cannot be longer than 20 characters");
-            eventnameField.requestFocus();
+            mEventNameField.setError("Cannot be longer than 20 characters");
+            mEventNameField.requestFocus();
             return;
         } else if (description.length() > 100 || description.length() <= 3) {
             Log.d(LOG_TAG, "Description field not within range.");
             showProgress(false);
-            descriptionField.setError("Must be between 4 and 100 characters");
-            descriptionField.requestFocus();
+            mEventDescriptionField.setError("Must be between 4 and 100 characters");
+            mEventDescriptionField.requestFocus();
             return;
         } else if(endDate.before(startDate)) {
             Log.d(LOG_TAG, "End date must be after start date");
             showProgress(false);
             Toast bread = Toast.makeText(EventCreationActivity.this, "End date must be after start date", Toast.LENGTH_LONG);
             bread.show();
-            enddateField.requestFocus();
+            mEndDateText.requestFocus();
             return;
         } else if(startDate.before(currentDate)) {
             Log.d(LOG_TAG, "start date must be after current date");
             showProgress(false);
             Toast bread = Toast.makeText(EventCreationActivity.this, "Start date must be after current date", Toast.LENGTH_LONG);
             bread.show();
-            startdateField.requestFocus();
+            mStartDateText.requestFocus();
             return;
         }
 
@@ -318,7 +385,7 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
         }
 
         //Create the event
-        Event e = new Event(eventname, description, location, startDate, endDate, groups);
+        Event e = new Event(name, description, location, startDate, endDate, groups);
 
         //Save the event to the server
         saveRT = e.getBaasDocument().save(SaveMode.IGNORE_VERSION, onSaveComplete);
