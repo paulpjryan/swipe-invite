@@ -37,6 +37,7 @@ import com.baasbox.android.BaasResult;
 import com.baasbox.android.RequestToken;
 import com.baasbox.android.SaveMode;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -156,7 +157,7 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
         mStartDateText = (EditText) findViewById(R.id.start_date_text);
         mStartTimeText = (EditText) findViewById(R.id.start_time_text);
         mEndDateText = (EditText) findViewById(R.id.end_date_text);
-        mEndTimeText = (EditText) findViewById(R.id.end_date_text);
+        mEndTimeText = (EditText) findViewById(R.id.end_time_text);
 
         mEventNameField = (TextView) findViewById(R.id.text_event_name);
         mEventLocationField = (TextView) findViewById(R.id.text_event_location);
@@ -181,6 +182,11 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
         mEndTimePicker = new TimePickerFragment();
         mEndTimePicker.hour = currentHour;
         mEndTimePicker.minute = currentMinute;
+
+        mStartDateText.setText(new SimpleDateFormat("MM/dd/yyyy").format(mCurrentCalendar.getTime()));
+        mEndDateText.setText(new SimpleDateFormat("MM/dd/yyyy").format(mCurrentCalendar.getTime()));
+        mStartTimeText.setText(new SimpleDateFormat("hh:mm").format(mCurrentCalendar.getTime()));
+        mEndTimeText.setText(new SimpleDateFormat("hh:mm").format(mCurrentCalendar.getTime()));
 
         //Listener for the add group button
         mAddGroupButton.setOnClickListener(new View.OnClickListener() {
