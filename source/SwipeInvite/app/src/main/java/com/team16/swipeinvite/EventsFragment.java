@@ -16,6 +16,7 @@ import android.widget.ListView;
 public class EventsFragment extends Fragment {
 
     private EventsAdapter mEventsAdapter;
+    RefreshableView refreshableView;
 
     public EventsFragment() {
         // Empty constructor required for fragment subclasses
@@ -53,9 +54,20 @@ public class EventsFragment extends Fragment {
         //TextView mTextView;
         //mTextView = (TextView)getView().findViewById(R.id.textViewGroupsFragment);
         //mTextView.setText("Current User: " + BaasUser.current().getName() + " With PW: " + BaasUser.current().getPassword());
-
+        refreshableView = (RefreshableView) rootView.findViewById(R.id.refreshable_view);
         ListView listView = (ListView) rootView.findViewById(R.id.listview_events);
         listView.setAdapter(mEventsAdapter);
+        refreshableView.setOnRefreshListener(new RefreshableView.PullToRefreshListener() {
+            @Override
+            public void onRefresh() {
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                refreshableView.finishRefreshing();
+            }
+        }, 0);
 
         //Give the main activity the group adapter
         ((MainActivity) getActivity()).setEventsAdapter(mEventsAdapter);

@@ -17,6 +17,12 @@
         android:layout_gravity="left|top"
         android:ems="8"/>
 
+    <com.team16.swipeinvite.RefreshableView
+        android:id="@+id/refreshable_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/et_search_group">
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -24,6 +30,8 @@
         android:layout_gravity="center_horizontal|bottom"
         android:layout_below="@+id/et_search_group"
         />
+
+    </com.team16.swipeinvite.RefreshableView>
     <!--
     <SearchView
         android:layout_width="wrap_content"
