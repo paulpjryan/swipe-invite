@@ -112,7 +112,7 @@ public class GroupCreationActivity extends ActionBarActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 Log.d(LOG_TAG, "Navigating away from group creation, return CANCEL.");
-                showProgress(false);
+                //showProgress(false);
                 Intent returnIntent = new Intent();
                 setResult(RESULT_CANCELED, returnIntent);
                 NavUtils.navigateUpFromSameTask(this);
