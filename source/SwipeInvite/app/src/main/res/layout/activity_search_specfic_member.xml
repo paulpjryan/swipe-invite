@@ -49,34 +49,8 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/linearLayout_profile_group_nameType"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_below="@id/linearLayout_profile_group_name"
-        android:weightSum="8">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Group Type: "
-            android:layout_weight="2"
-            android:gravity="center_vertical"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:ems="8"
-            android:id="@+id/group_join_type"
-            android:layout_weight="6"
-            android:maxLength="35"
-            android:maxLines="2"
-            android:enabled="false"
-            />
-    </LinearLayout>
 
 
     <LinearLayout
@@ -84,7 +58,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@id/linearLayout_profile_group_nameType"
+        android:layout_below="@id/linearLayout_profile_group_name"
         android:weightSum="8">
 
         <TextView
@@ -128,7 +102,7 @@
         android:id="@+id/textView_groupMember"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/et_edit_group_des"
+        android:layout_below="@+id/linearLayout_profile_group_description"
         android:paddingTop="25dp" />
 
     <ListView
