@@ -1,11 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.team16.swipeinvite.GroupCreationActivity" >
+    tools:context="com.team16.swipeinvite.EventCreationActivity" >
 
-    <item android:id="@+id/submit_group_creation"
+    <item android:id="@+id/submit_event_creation"
         android:icon="@drawable/ic_action_accept"
-        android:title="@string/group_create_submit"
+        android:title="@string/event_creation_submit"
         app:showAsAction="withText|always"  />
 
 </menu>

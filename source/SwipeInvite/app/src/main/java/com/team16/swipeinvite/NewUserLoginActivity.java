@@ -281,10 +281,9 @@ public class NewUserLoginActivity extends Activity {
                 Log.d(LOG_TAG, "Server request error: " + result.error());
                 showProgress(false);
                 //SAY ERROR MESSAGE TO USER
-                Toast.makeText(getApplicationContext(), "Server unavailable.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Error: " + result.error().getMessage(), Toast.LENGTH_SHORT).show();
                 return;
             } else if (result.isSuccess()) {
-
                 completeSignup(result.value());
                 return;
             }
