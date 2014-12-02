@@ -8,8 +8,11 @@ import android.util.Log;
 import com.baasbox.android.BaasDocument;
 import com.baasbox.android.BaasQuery;
 import com.baasbox.android.BaasResult;
+import com.baasbox.android.SaveMode;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -137,20 +140,81 @@ public class UpdateService extends IntentService {
                 //***NOTIFY USER OF ADDITON***
             }
 
-            //Save the model
-            Model.saveModel(this);
-
         }
         //endregion
 
 
         //TODO Check for outdated events
+        eventCheck(model);
 
         //TODO Pulldown friends from groups
 
         //Save the model
-        model.saveModel(this);
+        Model.saveModel(this);
 
     }
+
+
+    //region Methods for checking events for outdated ones
+    private void eventCheck(Model model) {
+        Log.d(LOG_TAG, "Looking for outdated events.");
+        //Iterate through all of the events
+        List<Event> acceptedEvents = model.getAcceptedEvents();
+        List<Event> waitingEvents = model.getWaitingEvents();
+        List<Event> rejectedEvents = model.getRejectedEvents();
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat();
+        for (int a = 0; a < 3; a++) {
+            List<Event> currentList = acceptedEvents;
+            switch (a) {
+                case 1:
+                    currentList = waitingEvents;
+                    break;
+                case 2:
+                    currentList = rejectedEvents;
+                    break;
+            }
+            synchronized (currentList) {
+                for (final ListIterator<Event> i = currentList.listIterator(); i.hasNext(); ) {
+                    Event current = i.next();
+                    //If the event is out of date, remove it
+                    if (current.getEndDate().after(cal)) {
+                        BaasResult<Void> result = current.getBaasDocument().deleteSync();
+                        if (result.isFailed()) {
+                            Log.d(LOG_TAG, "Could not remove outdated event: " + current.getName());
+                        } else {
+                            //Need to update the groups that are affected
+                            Log.d(LOG_TAG, "Removed outated event: " + current.getName());
+                            Log.d(LOG_TAG, "Start Date: " + df.format(current.getBeginDate().getTime()));
+                            Log.d(LOG_TAG, "End Date: " + df.format(current.getEndDate().getTime()));
+                            updateGroups(current.getId(), model);
+                            i.remove();
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
+    private void updateGroups(String eventID, Model model) {
+        //Iterate through all groups and remove the outdated event
+        List<Group2> activeGroups = model.getActiveGroups();
+        synchronized(activeGroups) {
+            for (Group2 x : activeGroups) {
+                if (x.containsEvent(eventID)) {
+                    x.removeEvent(eventID);
+                    BaasResult<BaasDocument> result = x.getBaasDocument().saveSync(SaveMode.IGNORE_VERSION);
+                    if (result.isFailed()) {
+                        Log.d(LOG_TAG, "Could not affect group: " + x.getName());
+                    } else {
+                        Log.d(LOG_TAG, "Group updated");
+                        x.setBaasDocument(result.value());
+                    }
+                }
+            }
+        }
+    }
+    //endregion
 
 }
