@@ -18,7 +18,7 @@
 		    <EditText
 		        android:id="@+id/editText_user_username"
 		        android:layout_weight="7"
-		        android:layout_width="0dp"
+		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
                 android:autoText="true"
                 android:hint="@string/user_profile_not_editable"
@@ -40,7 +40,7 @@
  	  		<EditText
 		        android:id="@+id/editText_user_name"
 		        android:layout_weight="7"
-		        android:layout_width="0dp"
+		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
  	  		    android:inputType="textPersonName"
                 android:background="@drawable/textinputborder"
@@ -62,7 +62,7 @@
  	  		<EditText
 		        android:id="@+id/editText_user_email"
 		        android:layout_weight="7"
-		        android:layout_width="0dp"
+		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
 		        android:inputType="textEmailAddress"
                 android:background="@drawable/textinputborder"

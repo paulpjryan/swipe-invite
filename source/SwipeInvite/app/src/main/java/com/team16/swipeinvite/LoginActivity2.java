@@ -63,6 +63,8 @@ public class LoginActivity2 extends ActionBarActivity {
         Log.d(LOG_TAG, "onCreate called.");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_activity2);
+        getSupportActionBar().hide();
+
         setTitle("Login");
         //Load a previous request for onResume to take care of if one exists
         if (savedInstanceState != null) {
@@ -90,7 +92,7 @@ public class LoginActivity2 extends ActionBarActivity {
         usernameField = (EditText) findViewById(R.id.username);
         passwordField = (EditText) findViewById(R.id.password2);
         signinButton = (Button) findViewById(R.id.login_button);
-        newuserButton = (Button) findViewById(R.id.new_user_button);
+        //newuserButton = (Button) findViewById(R.id.new_user_button);
 
         //Instantiate the views to be loaded later
         statusView = (View) findViewById(R.id.status_login);
@@ -516,12 +518,12 @@ public class LoginActivity2 extends ActionBarActivity {
                                 Log.d(LOG_TAG, "Added event to rejected.");
                                 break;
                             default:
-                                Log.d(LOG_TAG, "Event not placed: " + e.toString());
+                                Log.d(LOG_TAG, "Event not placed: " + e);
                         }
                     }
                 }
             } else {
-                Log.d(LOG_TAG, "Data object was not group or event: " + d.toString());
+                Log.d(LOG_TAG, "Data object was not group or event: " + d);
             }
         }
         //Launch main activity if the friend pulldowns are done
