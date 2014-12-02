@@ -22,6 +22,7 @@ public class GroupsFragment extends Fragment {
     private static final String LOG_TAG = "GROUP_FRAGMENT";
 
     private GroupsAdapter mArrayAdapter;
+    RefreshableView refreshableView;
 
     private Model m;
 
@@ -46,10 +47,18 @@ public class GroupsFragment extends Fragment {
         //TextView mTextView;
         //mTextView = (TextView)getView().findViewById(R.id.textViewGroupsFragment);
         //mTextView.setText("Current User: " + BaasUser.current().getName() + " With PW: " + BaasUser.current().getPassword());
-
+        refreshableView = (RefreshableView) rootView.findViewById(R.id.refreshable_view);
         EditText inputSearch = (EditText) rootView.findViewById(R.id.et_search_group);
         ListView listView = (ListView) rootView.findViewById(R.id.listview_groups);
         listView.setAdapter(mArrayAdapter);
+        refreshableView.setOnRefreshListener(new RefreshableView.PullToRefreshListener() {
+            @Override
+            public void onRefresh() {
+                ((MainActivity) getActivity()).startUpdateService();
+            }
+        }, 0);
+
+        ((MainActivity) getActivity()).setRefreshableView(refreshableView);
 
         //Give the main activity the group adapter
         ((MainActivity) getActivity()).setGroupsAdapter(mArrayAdapter);
