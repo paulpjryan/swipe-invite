@@ -58,6 +58,8 @@ public class GroupsFragment extends Fragment {
             }
         }, 0);
 
+        ((MainActivity) getActivity()).setRefreshableView(refreshableView);
+
         //Give the main activity the group adapter
         ((MainActivity) getActivity()).setGroupsAdapter(mArrayAdapter);
 
