@@ -19,6 +19,7 @@ import com.baasbox.android.BaasUser;
 import com.baasbox.android.json.JsonObject;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -97,7 +98,7 @@ public class GcmIntentService extends IntentService {
                     if (result.isFailed()) {
                         Log.d(LOG_TAG, "Event fetch failed: " + result.error());
                     } else if (result.isSuccess()) {
-                        completeEvent(result.value());
+                        completeEvent(result.value(), notificationMessage);
                     }
 
                 } else {   //Something went wrong
@@ -148,7 +149,102 @@ public class GcmIntentService extends IntentService {
         sendNotification(message, title);
     }
 
-    private void completeEvent(BaasDocument d) {
+    private void completeEvent(BaasDocument d, String message) {
+        //Get the model instance
+        Model model = Model.getInstance(this);
+        Event e = new Event(d);
+        Log.d(LOG_TAG, "Received event: " + e.getName());
+
+        //Look through the event lists and decide what to do
+        List<Event> acceptedEvents = model.getAcceptedEvents();
+        List<Event> waitingEvents = model.getWaitingEvents();
+        List<Event> rejectedEvents = model.getRejectedEvents();
+        boolean added = false;
+        //Check to see if all active events have an equivalent
+        for (int a = 0; a < 3; a++) {
+            List<Event> currentList = acceptedEvents;
+            switch (a) {
+                case 1:
+                    currentList = waitingEvents;
+                    break;
+                case 2:
+                    currentList = rejectedEvents;
+                    break;
+            }
+            synchronized (currentList) {
+                for (final ListIterator<Event> i = currentList.listIterator(); i.hasNext(); ) {
+                    Event current = i.next();
+                    //check to see if event exists
+                    if (current.equals(e)) {
+                        Log.d(LOG_TAG, "Found event to replace: " + e.getName() + ",  " + e.getId());
+                        Log.d(LOG_TAG, "Old event replaced: " + current.getName() + ",  " + current.getId());
+                        i.set(e);
+                        added = true;
+                        break;
+                    }
+                }
+            }
+        }
+        //Check to make sure the user actually has a parent group to the event
+        List<Group2> activeGroups = model.getActiveGroups();
+        boolean hasGroup = false;
+        synchronized (activeGroups) {
+            for (Group2 x : activeGroups) {
+                for (String groupID : e.getParentGroups()) {
+                    if (x.equals(groupID)) {
+                        hasGroup = true;
+                        break;
+                    }
+                }
+                if (hasGroup) {
+                    break;
+                }
+            }
+        }
+        if (!hasGroup) {
+            Log.d(LOG_TAG, "User does not have group for event.");
+            return;
+        }
+
+        //If the event was not updated, add it
+        if (!added) {
+            Log.d(LOG_TAG, "Event added: " + e.getName());
+            waitingEvents.add(e);
+            //POSSIBLY DO A SEPARATE NOTIFICATION TO MAKE A DECISION
+        }
+
+        //Update affected groups with the update service
+        updateGroups(e.getParentGroups());
+
+        //Save the changed model
+        Model.saveModel(this);
+
+        //Notify user of change
+        String title = e.getName();
+
+        sendNotification(message, title);
+
+    }
+    private void updateGroups(ArrayList<String> groups) {
+        Model model = Model.getInstance(this);
+
+        List<Group2> activeGroups = model.getActiveGroups();
+        synchronized (activeGroups) {
+            for (Group2 x : activeGroups) {
+                for (String y : groups) {
+                    if (x.equals(y)) {
+                        BaasResult<BaasDocument> result = x.getBaasDocument().refreshSync();
+                        if (result.isFailed()) {
+                            Log.d(LOG_TAG, "Could not refresh group: " + x.getName());
+                            break;
+                        }
+                        Log.d(LOG_TAG, "Refreshed group: " + x.getName());
+                        x.setBaasDocument(result.value());
+                        break;
+                    }
+                }
+            }
+        }
 
     }
     //endregion

@@ -25,11 +25,26 @@ public class EventsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        //Figure out type of list to use
+        String type = getArguments().getString("type");
+
         Model m = Model.getInstance(getActivity());
-        mEventsAdapter =
-                new EventsAdapter(
-                        getActivity(),
-                        m.getWaitingEvents());
+        if (type.equals("accepted")) {
+            mEventsAdapter =
+                    new EventsAdapter(
+                            getActivity(),
+                            m.getAcceptedEvents(), 0);
+        } else if (type.equals("waiting")) {
+            mEventsAdapter =
+                    new EventsAdapter(
+                            getActivity(),
+                            m.getWaitingEvents(), 1);
+        } else {
+            mEventsAdapter =
+                    new EventsAdapter(
+                            getActivity(),
+                            m.getRejectedEvents(), 2);
+        }
 
 
         View rootView = inflater.inflate(R.layout.fragment_events, container, false);
@@ -41,6 +56,9 @@ public class EventsFragment extends Fragment {
 
         ListView listView = (ListView) rootView.findViewById(R.id.listview_events);
         listView.setAdapter(mEventsAdapter);
+
+        //Give the main activity the group adapter
+        ((MainActivity) getActivity()).setEventsAdapter(mEventsAdapter);
 
 
         EditText inputSearch = (EditText) rootView.findViewById(R.id.et_search_group);

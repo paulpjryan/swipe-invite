@@ -75,8 +75,8 @@
         <activity
             android:name="com.team16.swipeinvite.SearchGroupActivity"
             android:label="@string/title_activity_search_group"
-            android:parentActivityName="com.team16.swipeinvite.MainActivity"
             android:launchMode="singleTop"
+            android:parentActivityName="com.team16.swipeinvite.MainActivity"
             android:windowSoftInputMode="stateHidden" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -138,6 +138,7 @@
         <activity
             android:name="com.team16.swipeinvite.EventCreationActivity"
             android:label="@string/title_activity_event_creation"
+            android:launchMode="singleTop"
             android:parentActivityName="com.team16.swipeinvite.MainActivity" >
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
@@ -156,6 +157,16 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.team16.swipeinvite.SearchGroupActivity" />
         </activity>
+        <activity
+            android:name="com.team16.swipeinvite.Add_group2eventActivity"
+            android:label="@string/add_group2event"
+            android:parentActivityName="com.team16.swipeinvite.EventCreationActivity" >
+
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.team16.swipeinvite.EventCreationActivity" />
+        </activity>
 
         <service
             android:name="com.team16.swipeinvite.PushSender"
@@ -171,6 +182,10 @@
         </service>
         <service
             android:name="com.team16.swipeinvite.UpdateService"
+            android:exported="false" >
+        </service>
+        <service
+            android:name="com.team16.swipeinvite.EventCreateService"
             android:exported="false" >
         </service>
     </application>
