@@ -21,6 +21,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -48,7 +49,7 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
     //region Local variables for views
     private ListView mainListView;
     private ListView mainListView2;
-    private ArrayAdapter<String> ListAdapter;
+    private EventsAdapter ListAdapter;
 
     private EditText groupnameField;
     private EditText descriptionField;
@@ -239,10 +240,33 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
             return;
         }
 
-        ArrayList<String> EventList = new ArrayList<String>();
-        EventList.addAll(g.getEventList());
+        //Populate the event list
+        ArrayList<Event> EventList = new ArrayList<Event>();
+        List<Event> acceptedEvents = model.getAcceptedEvents();
+        List<Event> waitingEvents = model.getWaitingEvents();
+        List<Event> rejectedEvents = model.getRejectedEvents();
+        //Check to see if all active events have pulldown equivalents
+        for (int a = 0; a < 3; a++) {
+            List<Event> currentList = acceptedEvents;
+            switch (a) {
+                case 1:
+                    currentList = waitingEvents;
+                    break;
+                case 2:
+                    currentList = rejectedEvents;
+                    break;
+            }
+            synchronized (currentList) {
+                for (final ListIterator<Event> i = currentList.listIterator(); i.hasNext(); ) {
+                    Event current = i.next();
+                    if (g.getEventList().contains(current.getId())) {
+                        EventList.add(current);
+                    }
+                }
+            }
+        }
 
-        ListAdapter = new ArrayAdapter<String>(this,R.layout.list_item_event,EventList);
+        ListAdapter = new EventsAdapter(this, EventList, 0);
 
         mainListView.setAdapter(ListAdapter);
     }
