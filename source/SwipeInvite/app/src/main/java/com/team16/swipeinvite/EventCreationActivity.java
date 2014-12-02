@@ -243,6 +243,7 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
     }
     //endregion
 
+    //region Method called when the add group returns
     private static final int GROUP_ADD_REQUEST_CODE = 1;
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -258,6 +259,7 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
                 break;
         }
     }
+    //endregion
 
 
     //region Methods for menus and options
@@ -287,6 +289,8 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
     }
     //endregion
 
+
+    //region Methods for Date and Time showing
     public void showStartDatePickerDialog(View v) {
         mStartDatePicker.show(getFragmentManager(), "startDatePicker");
     }
@@ -299,6 +303,8 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
     public void showEndTimePickerDialog(View v) {
         mEndTimePicker.show(getFragmentManager(), "endTimePicker");
     }
+    //endregion
+
 
     //region Method for submit button
     public void onEventSubmit(View v)
