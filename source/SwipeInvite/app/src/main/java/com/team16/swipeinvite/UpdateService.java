@@ -137,6 +137,9 @@ public class UpdateService extends IntentService {
                 //***NOTIFY USER OF ADDITON***
             }
 
+            //Save the model
+            Model.saveModel(this);
+
         }
         //endregion
 

@@ -54,12 +54,7 @@ public class GroupsFragment extends Fragment {
         refreshableView.setOnRefreshListener(new RefreshableView.PullToRefreshListener() {
             @Override
             public void onRefresh() {
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                refreshableView.finishRefreshing();
+                ((MainActivity) getActivity()).startUpdateService();
             }
         }, 0);
 

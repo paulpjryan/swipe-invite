@@ -1,6 +1,7 @@
 package com.team16.swipeinvite;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -63,14 +64,12 @@ public class EventsFragment extends Fragment {
         refreshableView.setOnRefreshListener(new RefreshableView.PullToRefreshListener() {
             @Override
             public void onRefresh() {
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                refreshableView.finishRefreshing();
+                ((MainActivity) getActivity()).startUpdateService();
+                //refreshableView.finishRefreshing();
             }
         }, 0);
+
+        ((MainActivity) getActivity()).setRefreshableView(refreshableView);
 
         //Give the main activity the group adapter
         ((MainActivity) getActivity()).setEventsAdapter(mEventsAdapter);
