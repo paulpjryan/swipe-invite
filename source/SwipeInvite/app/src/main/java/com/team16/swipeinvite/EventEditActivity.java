@@ -20,11 +20,16 @@ import android.widget.Button;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Observable;
+import java.util.Observer;
 
-public class EventEditActivity extends ActionBarActivity{
+public class EventEditActivity extends ActionBarActivity implements Observer {
 
     /* -------------------- LOG TAG CONSTANTS --------------------------- */
     private final static String LOG_TAG = "EVENT_EDIT_ACT";
@@ -45,12 +50,49 @@ public class EventEditActivity extends ActionBarActivity{
     //endregion
 
 
+    //region Local model and data instances
+    private Model model;
+    private String eventID;
+    private static final String EVENT_KEY = "eventID";
+    //endregion
+
+
+    //region Implementation of observer
+    public void update(Observable ob, Object o) {
+        //NEEDS TO RUN ON UI THREAD
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //Refresh anything
+            }
+        });
+    }
+    //endregion
+
+
     //region Lifecycle methods
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_edit);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        //Get the event ID
+        if (savedInstanceState != null) {
+            eventID = savedInstanceState.getString(EVENT_KEY);
+        } else {
+            eventID = getIntent().getStringExtra(EVENT_KEY);
+        }
+        if (eventID == null) {
+            Log.d(LOG_TAG, "Event ID has been lost.");
+            makeToast("Event no longer available");
+            finish();
+            return;
+        }
+
+        //Get the model instance
+        model = Model.getInstance(this);
+
+        //Setting up views
         startdateField = (DatePicker) findViewById(R.id.event_start_date);
         starttimeField = (TimePicker) findViewById(R.id.event_start_time);
         enddateField = (DatePicker) findViewById(R.id.event_end_date);
@@ -59,8 +101,95 @@ public class EventEditActivity extends ActionBarActivity{
         eventnameField = (TextView) findViewById(R.id.textView_new_event);
         locationField = (TextView) findViewById(R.id.textView_event_location);
         descriptionField = (TextView) findViewById(R.id.et_edit_event_description);
+
+        //Lock them
+        eventnameField.setEnabled(false);
+        eventnameField.setFocusable(false);
+        locationField.setEnabled(false);
+        locationField.setFocusable(false);
+        descriptionField.setEnabled(false);
+        descriptionField.setFocusable(false);
+
+        //Populate views
+        populateViews();
+
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(LOG_TAG, "onResume");
+        if (model == null) {
+            model = Model.getInstance(this);
+        }
+        model.addObserver(this);
+
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(LOG_TAG, "onPause");
+
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(LOG_TAG, "onStop");
+        model.deleteObserver(this);
+    }
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d(LOG_TAG, "onSaveInstanceState");
+        outState.putString(EVENT_KEY, eventID);
     }
     //endregion
+
+
+    private void populateViews() {
+        //Need to get the event instance
+        List<Event> acceptedEvents = model.getAcceptedEvents();
+        List<Event> waitingEvents = model.getWaitingEvents();
+        List<Event> rejectedEvents = model.getRejectedEvents();
+        Event event = null;
+        //Iterate through all possible event lists
+        for (int a = 0; a < 3; a++) {
+            List<Event> currentList = acceptedEvents;
+            switch (a) {
+                case 1:
+                    currentList = waitingEvents;
+                    break;
+                case 2:
+                    currentList = rejectedEvents;
+                    break;
+            }
+            synchronized (currentList) {
+                for (final ListIterator<Event> i = currentList.listIterator(); i.hasNext(); ) {
+                    Event current = i.next();
+                    if (current.equals(eventID)) {
+                        event = current;
+                    }
+                }
+            }
+        }
+        if (event == null) {
+            Log.d(LOG_TAG, "Event disappeared.");
+            makeToast("Event no longer available");
+            finish();
+            return;
+        }
+
+        //Populate the views
+        eventnameField.setText(event.getName());
+        locationField.setText(event.getLocation());
+        descriptionField.setText(event.getDescription());
+
+        //Populate the date and time
+        Calendar startDate = event.getBeginDate();
+        Calendar endDate = event.getEndDate();
+        //TODO ANDREW NEEDS TO MAKE THE FRAGMENTS AND VIEWS PROPERLY
+
+
+    }
 
 
     //region Methods for menus and options
@@ -87,6 +216,7 @@ public class EventEditActivity extends ActionBarActivity{
     //endregion
 
 
+    //region Method for submitting changes to event
     public void onEventEdit(View v) {
 
         //showprogress(true)
@@ -166,4 +296,13 @@ public class EventEditActivity extends ActionBarActivity{
         bread.show();
 
     }
+    //endregion
+
+
+    //region Helper method to make toast
+    private void makeToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+    //endregion
+
 }

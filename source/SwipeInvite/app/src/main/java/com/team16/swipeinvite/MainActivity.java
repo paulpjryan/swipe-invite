@@ -308,6 +308,13 @@ public class MainActivity extends ActionBarActivity implements Observer {
     //endregion
 
 
+    protected void startEventEdit(String id) {
+        Intent intent = new Intent(this, EventEditActivity.class);
+        intent.putExtra("eventID", id);
+        startActivityForResult(intent, EVENT_EDIT_REQUEST_CODE);
+    }
+
+
     //region Method to start the profile edit activity
     private void startProfileEdit() {
         //Create the intent
@@ -317,10 +324,12 @@ public class MainActivity extends ActionBarActivity implements Observer {
     //endregion
 
 
+    //region Method to start the group search activity
     private void startGroupSearch() {
         Intent intent = new Intent(this, SearchGroupActivity.class);
         startActivityForResult(intent, SEARCH_GROUP_REQUEST_CODE);
     }
+    //endregion
 
 
     //region Method to handle returning results from side activities around the main
@@ -328,6 +337,7 @@ public class MainActivity extends ActionBarActivity implements Observer {
     private static final int PROFILE_EDIT_REQUEST_CODE = 2;
     private static final int GROUP_EDIT_REQUEST_CODE = 3;
     private static final int SEARCH_GROUP_REQUEST_CODE = 4;
+    private static final int EVENT_EDIT_REQUEST_CODE = 5;
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //Figure out which activity is returning a result
@@ -360,6 +370,13 @@ public class MainActivity extends ActionBarActivity implements Observer {
                     Log.d(LOG_TAG, "Got ok result from group search.");
                 } else if (resultCode == RESULT_CANCELED) {
                     Log.d(LOG_TAG, "Got canceled result from group search, bad.");
+                }
+                break;
+            case EVENT_EDIT_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    Log.d(LOG_TAG, "Got ok result from event edit.");
+                } else if (resultCode == RESULT_CANCELED) {
+                    Log.d(LOG_TAG, "Got canceled result from event edit, bad.");
                 }
                 break;
             default:

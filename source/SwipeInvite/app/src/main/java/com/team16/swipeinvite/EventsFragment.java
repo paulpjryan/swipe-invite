@@ -7,6 +7,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -80,6 +81,19 @@ public class EventsFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable arg0) {
                 // TODO Auto-generated method stub
+            }
+        });
+
+
+        //This just opens group_edit on tap. We should have some sort of edit action or button.
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id)
+            {
+                //Figure out which group is being referred to and pass it to the activity
+                Event e = (Event) mEventsAdapter.getItem(position);
+                //Call the method in the main activity to start the group edit activity
+                ((MainActivity) getActivity()).startEventEdit(e.getId());
             }
         });
 
