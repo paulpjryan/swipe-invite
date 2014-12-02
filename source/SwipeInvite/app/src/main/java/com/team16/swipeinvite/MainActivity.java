@@ -239,7 +239,6 @@ public class MainActivity extends ActionBarActivity implements Observer {
             public void run() {
                 //Refresh views
                 refresh();
-                finishRefreshing();
             }
         });
     }
@@ -308,13 +307,11 @@ public class MainActivity extends ActionBarActivity implements Observer {
     //endregion
 
 
-    //region Method to start event edit activity
     protected void startEventEdit(String id) {
         Intent intent = new Intent(this, EventEditActivity.class);
         intent.putExtra("eventID", id);
         startActivityForResult(intent, EVENT_EDIT_REQUEST_CODE);
     }
-    //endregion
 
 
     //region Method to start the profile edit activity
@@ -333,8 +330,6 @@ public class MainActivity extends ActionBarActivity implements Observer {
     }
     //endregion
 
-
-    //region Method to start event creation activity
     protected void startEventCreate() {
         Intent intent_sg2 = new Intent(this, EventCreationActivity.class);
         if (intent_sg2.resolveActivity(getPackageManager()) != null) {
@@ -343,8 +338,6 @@ public class MainActivity extends ActionBarActivity implements Observer {
             Toast.makeText(this, "Action unavailable", Toast.LENGTH_LONG).show();
         }
     }
-    //endregion
-
 
     //region Method to handle returning results from side activities around the main
     private static final int GROUP_CREATE_REQUEST_CODE = 1;
@@ -517,7 +510,6 @@ public class MainActivity extends ActionBarActivity implements Observer {
     }
     //endregion
 
-
     //region Method and variables to check if a valid Google play services is found
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
@@ -536,7 +528,6 @@ public class MainActivity extends ActionBarActivity implements Observer {
         return true;
     }
     //endregion
-
 
     //region Methods for pulldown refresh
     private RefreshableView refreshableView;
