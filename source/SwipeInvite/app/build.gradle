@@ -25,4 +25,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:21.0.2'
     compile 'com.baasbox:baasbox-android:0.8.4'
     compile "com.google.android.gms:play-services:6.1.+"
+    compile 'com.melnykov:floatingactionbutton:1.0.9'
+
 }

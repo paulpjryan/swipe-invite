@@ -4,9 +4,9 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
 
-        <item name="colorPrimary">#536dfe</item>
-        <item name="colorPrimaryDark">#3f51b5</item>
-        <item name="colorAccent">#3f51b5</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primarydark</item>
+        <item name="colorAccent">@color/primarydark</item>
     </style>
 
     <!-- Special style for the login screen -->
@@ -15,5 +15,8 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:padding">16dp</item>
     </style>
+
+    <color name="primary">#536dfe</color>
+    <color name="primarydark">#3f51b5</color>
 
 </resources>
