@@ -243,6 +243,7 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
     }
     //endregion
 
+
     //region Method called when the add group returns
     private static final int GROUP_ADD_REQUEST_CODE = 1;
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
