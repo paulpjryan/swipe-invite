@@ -44,6 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/textView_group_name"
+            android:nestedScrollingEnabled="true"
             android:layout_toRightOf="@+id/textView3"
             android:layout_toEndOf="@+id/textView3"
             android:background="@drawable/textinputborder"
@@ -69,12 +70,14 @@
             android:layout_height="wrap_content"
             android:inputType="textMultiLine"
             android:ems="8"
+            android:nestedScrollingEnabled="true"
             android:id="@+id/textView_group_description"
             android:background="@drawable/textinputborder"
             android:hint="Description"
             android:layout_below="@+id/group_create_group_des"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
+
             android:layout_alignRight="@+id/group_create_group_des"
             android:layout_alignEnd="@+id/group_create_group_des"
             android:maxLines="6"
@@ -108,7 +111,8 @@
             <RadioGroup
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/radioGroup">
+                android:id="@+id/radioGroup"
+                android:layout_marginLeft="33dp">
 
                 <RadioButton
                     android:layout_width="wrap_content"

@@ -46,6 +46,7 @@
             android:inputType="textPersonName"
             android:ems="8"
             android:background="@drawable/textinputborder"
+            android:nestedScrollingEnabled="true"
             android:hint="Event Name"
             android:layout_weight="8"
             android:maxLength="35"
@@ -55,6 +56,7 @@
             android:id="@+id/text_event_location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="true"
             android:hint="Location"
             android:background="@drawable/textinputborder"
             android:inputType="textPersonName"
@@ -71,6 +73,7 @@
             android:layout_height="wrap_content"
             android:inputType="textMultiLine"
             android:ems="8"
+            android:nestedScrollingEnabled="true"
             android:hint="Description"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
@@ -87,7 +90,7 @@
             android:id="@+id/separator_1"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="15dp"
             android:background="#37000000"
             android:orientation="horizontal"
             android:layout_below="@id/text_event_description" />
@@ -96,7 +99,7 @@
             android:id="@+id/linearLayout_profile_event_start_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="15dp"
             android:orientation="horizontal"
             android:layout_below="@id/separator_1">
 
@@ -114,6 +117,8 @@
                 android:layout_height="wrap_content"
                 android:focusable="false"
                 android:inputType="date"
+                android:background="#00ffffff"
+                android:layout_marginLeft="10dp"
                 android:gravity="center"
                 android:onClick="showStartDatePickerDialog"
                 android:layout_weight="3" />
@@ -124,6 +129,7 @@
                 android:layout_height="wrap_content"
                 android:focusable="false"
                 android:inputType="time"
+                android:background="#00ffffff"
                 android:gravity="center"
                 android:onClick="showStartTimePickerDialog"
                 android:layout_weight="2" />
@@ -134,7 +140,7 @@
             android:id="@+id/separator_2"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="15dp"
             android:layout_below="@id/linearLayout_profile_event_start_time"
             android:background="#37000000"
             android:orientation="horizontal" >
@@ -144,8 +150,9 @@
             android:id="@+id/linearLayout_profile_event_end_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="15dp"
             android:orientation="horizontal"
+            android:clickable="true"
             android:layout_below="@id/separator_2">
 
             <TextView
@@ -160,8 +167,11 @@
                 android:id="@+id/end_date_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="18dp"
                 android:focusable="false"
                 android:inputType="date"
+
+                android:background="#00ffffff"
                 android:gravity="center"
                 android:onClick="showEndDatePickerDialog"
                 android:layout_weight="3" />
@@ -171,6 +181,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:focusable="false"
+                android:background="#00ffffff"
                 android:inputType="time"
                 android:gravity="center"
                 android:onClick="showEndTimePickerDialog"
@@ -182,7 +193,7 @@
             android:id="@+id/separator_3"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="15dp"
             android:layout_below="@id/linearLayout_profile_event_end_time"
             android:background="#37000000"
             android:orientation="horizontal" >
