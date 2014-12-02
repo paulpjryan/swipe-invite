@@ -16,7 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -292,7 +291,7 @@ public class MainActivity extends ActionBarActivity implements Observer {
 
 
     //region Method to start the group creation activty
-    private void startGroupCreate() {
+    protected void startGroupCreate() {
         Intent intent = new Intent(this, GroupCreationActivity.class);
         startActivityForResult(intent, GROUP_CREATE_REQUEST_CODE);
     }
@@ -331,6 +330,14 @@ public class MainActivity extends ActionBarActivity implements Observer {
     }
     //endregion
 
+    protected void startEventCreate() {
+        Intent intent_sg2 = new Intent(this, EventCreationActivity.class);
+        if (intent_sg2.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent_sg2);
+        } else {
+            Toast.makeText(this, "Action unavailable", Toast.LENGTH_LONG).show();
+        }
+    }
 
     //region Method to handle returning results from side activities around the main
     private static final int GROUP_CREATE_REQUEST_CODE = 1;
@@ -448,12 +455,7 @@ public class MainActivity extends ActionBarActivity implements Observer {
 
             // Create Event
             case R.id.action_create_event:
-                Intent intent_sg2 = new Intent(this, EventCreationActivity.class);
-                if (intent_sg2.resolveActivity(getPackageManager()) != null) {
-                    startActivity(intent_sg2);
-                } else {
-                    Toast.makeText(this, "Action unavailable", Toast.LENGTH_LONG).show();
-                }
+                startEventCreate();
                 return true;
 
             default:

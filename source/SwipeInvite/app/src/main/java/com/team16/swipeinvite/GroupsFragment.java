@@ -1,7 +1,6 @@
 package com.team16.swipeinvite;
 
 import android.app.Fragment;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,8 +13,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import java.util.Observable;
-import java.util.Observer;
+import com.melnykov.fab.FloatingActionButton;
 
 /**
  * Fragment that shows which groups a user has been invited to
@@ -85,6 +83,16 @@ public class GroupsFragment extends Fragment {
                 Group2 g = (Group2) mArrayAdapter.getItem(position);
                 //Call the method in the main activity to start the group edit activity
                 ((MainActivity) getActivity()).startGroupEdit(g.getId());
+            }
+        });
+
+        FloatingActionButton fab = (FloatingActionButton)rootView.findViewById(R.id.groupsfab);
+        fab.attachToListView(listView);
+        fab.setShadow(true);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity)getActivity()).startGroupCreate();
             }
         });
 

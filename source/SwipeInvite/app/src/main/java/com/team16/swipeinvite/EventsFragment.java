@@ -11,6 +11,8 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.melnykov.fab.FloatingActionButton;
+
 /**
  * Fragment that shows which events a user has been invited to
  */
@@ -98,6 +100,15 @@ public class EventsFragment extends Fragment {
         });
 
 
+        FloatingActionButton fab = (FloatingActionButton)rootView.findViewById(R.id.eventsfab);
+        fab.attachToListView(listView);
+        fab.setShadow(true);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity)getActivity()).startEventCreate();
+            }
+        });
 
         //getActivity().setTitle("TEST");
         return rootView;
