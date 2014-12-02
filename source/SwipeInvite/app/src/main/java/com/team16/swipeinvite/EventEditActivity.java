@@ -4,16 +4,22 @@ package com.team16.swipeinvite;
  * Created by Tej on 11/13/2014.
  */
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Button;
@@ -37,16 +43,57 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
 
 
     //region Local variables for views
-    private View EventEditView;
-    private TextView eventnameField;
-    private TextView locationField;
-    private TextView descriptionField;
+    private View mEventEditView;
+    private TextView mEventNameField;
+    private TextView mEventLocationField;
+    private TextView mEventDescriptionField;
     private Button submitButton;
-    private Calendar c;
-    private DatePicker startdateField;
-    private TimePicker starttimeField;
-    private DatePicker enddateField;
-    private TimePicker endtimeField;
+    private EditText mStartDateText;
+    private EditText mStartTimeText;
+    private EditText mEndDateText;
+    private EditText mEndTimeText;
+    //endregion
+
+
+    //region Picker setup
+    public static class TimePickerFragment extends DialogFragment
+            implements TimePickerDialog.OnTimeSetListener {
+
+        public int hour, minute;
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Create a new instance of TimePickerDialog and return it
+            return new TimePickerDialog(getActivity(), this, hour, minute,
+                    DateFormat.is24HourFormat(getActivity()));
+        }
+
+        public void onTimeSet(TimePicker view, int hour, int minute) {
+            this.hour = hour;
+            this.minute = minute;
+        }
+    }
+    private TimePickerFragment mStartTimePicker;
+    private TimePickerFragment mEndTimePicker;
+    public static class DatePickerFragment extends DialogFragment
+            implements DatePickerDialog.OnDateSetListener {
+
+        public int year, month, day;
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Create a new instance of DatePickerDialog and return it
+            return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
+
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            this.year = year;
+            this.month = month;
+            this.year = year;
+        }
+    }
+    private DatePickerFragment mStartDatePicker;
+    private DatePickerFragment mEndDatePicker;
     //endregion
 
 
@@ -92,23 +139,23 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
         //Get the model instance
         model = Model.getInstance(this);
 
-        //Setting up views
-        startdateField = (DatePicker) findViewById(R.id.event_start_date);
-        starttimeField = (TimePicker) findViewById(R.id.event_start_time);
-        enddateField = (DatePicker) findViewById(R.id.event_end_date);
-        endtimeField = (TimePicker) findViewById(R.id.event_end_time);
+        //Setting up the views
+        mStartDateText = (EditText) findViewById(R.id.edit_start_date_text);
+        mStartTimeText = (EditText) findViewById(R.id.edit_start_time_text);
+        mEndDateText = (EditText) findViewById(R.id.edit_end_date_text);
+        mEndTimeText = (EditText) findViewById(R.id.edit_end_time_text);
 
-        eventnameField = (TextView) findViewById(R.id.textView_new_event);
-        locationField = (TextView) findViewById(R.id.textView_event_location);
-        descriptionField = (TextView) findViewById(R.id.et_edit_event_description);
+        mEventNameField = (TextView) findViewById(R.id.edit_text_event_name);
+        mEventLocationField = (TextView) findViewById(R.id.edit_text_event_location);
+        mEventDescriptionField = (TextView) findViewById(R.id.edit_text_event_description);
 
         //Lock them
-        eventnameField.setEnabled(false);
-        eventnameField.setFocusable(false);
-        locationField.setEnabled(false);
-        locationField.setFocusable(false);
-        descriptionField.setEnabled(false);
-        descriptionField.setFocusable(false);
+        mEventNameField.setEnabled(false);
+        mEventNameField.setFocusable(false);
+        mEventLocationField.setEnabled(false);
+        mEventLocationField.setFocusable(false);
+        mEventDescriptionField.setEnabled(false);
+        mEventDescriptionField.setFocusable(false);
 
         //Populate views
         populateViews();
@@ -179,16 +226,37 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
         }
 
         //Populate the views
-        eventnameField.setText(event.getName());
-        locationField.setText(event.getLocation());
-        descriptionField.setText(event.getDescription());
+        mEventNameField.setText(event.getName());
+        mEventLocationField.setText(event.getLocation());
+        mEventDescriptionField.setText(event.getDescription());
 
         //Populate the date and time
         Calendar startDate = event.getBeginDate();
         Calendar endDate = event.getEndDate();
-        //TODO ANDREW NEEDS TO MAKE THE FRAGMENTS AND VIEWS PROPERLY
 
+        mStartDateText.setText(new SimpleDateFormat("MM/dd/yyyy").format(startDate.getTime()));
+        mEndDateText.setText(new SimpleDateFormat("MM/dd/yyyy").format(endDate.getTime()));
+        mStartTimeText.setText(new SimpleDateFormat("hh:mm").format(startDate.getTime()));
+        mEndTimeText.setText(new SimpleDateFormat("hh:mm").format(endDate.getTime()));
 
+        // Setup pickers
+        mStartDatePicker = new DatePickerFragment();
+        mStartDatePicker.year = startDate.get(Calendar.YEAR);
+        mStartDatePicker.month = startDate.get(Calendar.MONTH);
+        mStartDatePicker.day = startDate.get(Calendar.DAY_OF_MONTH);
+
+        mStartTimePicker = new TimePickerFragment();
+        mStartTimePicker.hour = startDate.get(Calendar.HOUR);
+        mStartTimePicker.minute = startDate.get(Calendar.MONTH);
+
+        mEndDatePicker = new DatePickerFragment();
+        mEndDatePicker.year = endDate.get(Calendar.YEAR);
+        mEndDatePicker.month = endDate.get(Calendar.MONTH);
+        mEndDatePicker.day = endDate.get(Calendar.DAY_OF_MONTH);
+
+        mEndTimePicker = new TimePickerFragment();
+        mEndTimePicker.hour = endDate.get(Calendar.HOUR);
+        mEndTimePicker.minute = endDate.get(Calendar.MINUTE);
     }
 
 
@@ -215,25 +283,39 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
     }
     //endregion
 
+    //region Methods for Date and Time showing
+    public void showStartDatePickerDialog(View v) {
+        mStartDatePicker.show(getFragmentManager(), "startDatePicker");
+    }
+    public void showStartTimePickerDialog(View v) {
+        mStartTimePicker.show(getFragmentManager(), "startTimePicker");
+    }
+    public void showEndDatePickerDialog(View v) {
+        mEndDatePicker.show(getFragmentManager(), "endDatePicker");
+    }
+    public void showEndTimePickerDialog(View v) {
+        mEndTimePicker.show(getFragmentManager(), "endTimePicker");
+    }
+    //endregion
 
     //region Method for submitting changes to event
     public void onEventEdit(View v) {
 
         //showprogress(true)
 
-        String eventname = eventnameField.getText().toString();
-        String location = locationField.getText().toString();
-        String description = descriptionField.getText().toString();
-        int startyear = startdateField.getYear();
-        int startmonth = startdateField.getMonth();
-        int startday = startdateField.getDayOfMonth();
-        int starthour = starttimeField.getCurrentHour();
-        int startminute = starttimeField.getCurrentMinute();
-        int endyear = enddateField.getYear();
-        int endmonth = enddateField.getMonth();
-        int endday = enddateField.getDayOfMonth();
-        int endhour = endtimeField.getCurrentHour();
-        int endminute = endtimeField.getCurrentMinute();
+        String name = mEventNameField.getText().toString();
+        String location = mEventLocationField.getText().toString();
+        String description = mEventDescriptionField.getText().toString();
+        int startYear = mStartDatePicker.year;
+        int startMonth = mStartDatePicker.month;
+        int startDay = mStartDatePicker.day;
+        int startHour = mStartTimePicker.hour;
+        int startMinute = mStartTimePicker.minute;
+        int endYear = mEndDatePicker.year;
+        int endMonth = mEndDatePicker.month;
+        int endDay = mEndDatePicker.day;
+        int endHour = mEndTimePicker.hour;
+        int endMinute = mEndTimePicker.minute;
 
         Calendar startDate, endDate, currentDate;
         startDate = Calendar.getInstance();
@@ -242,20 +324,20 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
         startDate.clear();
         endDate.clear();
 
-        startDate.set(startyear, startmonth, startday, starthour, startminute);
-        endDate.set(endyear, endmonth, endday, endhour, endminute);
+        startDate.set(startYear, startMonth, startDay, startHour, startMinute);
+        endDate.set(endYear, endMonth, endDay, endHour, endMinute);
 
-        if (TextUtils.isEmpty(eventname)) {
+        if (TextUtils.isEmpty(name)) {
             Log.d(LOG_TAG, "Name field cannot be blank.");
             //showProgress(false);
-            eventnameField.setError("Cannot be left blank");
-            eventnameField.requestFocus();
+            mEventNameField.setError("Cannot be left blank");
+            mEventNameField.requestFocus();
             return;
         } else if (TextUtils.isEmpty(description)) {
             Log.d(LOG_TAG, "Description field cannot be blank.");
             //showProgress(false);
-            descriptionField.setError("Cannot be left blank");
-            descriptionField.requestFocus();
+            mEventDescriptionField.setError("Cannot be left blank");
+            mEventDescriptionField.requestFocus();
             return;
         } else if (TextUtils.isEmpty(location)) {
             // Log.d(LOG_TAG, "location field cannot be blank.");
@@ -264,31 +346,31 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
             //descriptionField.requestFocus();
             description = "TBD";
             return;
-        } else if (eventname.length() > 30 ) {
+        } else if (name.length() > 30 ) {
             Log.d(LOG_TAG, "Name field cannot be longer than 20 characters.");
             //showProgress(false);
-            eventnameField.setError("Cannot be longer than 20 characters");
-            eventnameField.requestFocus();
+            mEventNameField.setError("Cannot be longer than 20 characters");
+            mEventNameField.requestFocus();
             return;
         } else if (description.length() > 100 || description.length() <= 3) {
             Log.d(LOG_TAG, "Description field not within range.");
             //showProgress(false);
-            descriptionField.setError("Must be between 4 and 100 characters");
-            descriptionField.requestFocus();
+            mEventDescriptionField.setError("Must be between 4 and 100 characters");
+            mEventDescriptionField.requestFocus();
             return;
         } else if(endDate.before(startDate)) {
             Log.d(LOG_TAG, "End date must be after start date");
             //showProgress(false);
             Toast bread = Toast.makeText(EventEditActivity.this, "End date must be after start date", Toast.LENGTH_LONG);
             bread.show();
-            enddateField.requestFocus();
+            mEndDateText.requestFocus();
             return;
         } else if(startDate.before(currentDate)) {
             Log.d(LOG_TAG, "start date must be after current date");
             //showProgress(false);
             Toast bread = Toast.makeText(EventEditActivity.this, "Start date must be after current date", Toast.LENGTH_LONG);
             bread.show();
-            startdateField.requestFocus();
+            mStartDateText.requestFocus();
             return;
         }
 
