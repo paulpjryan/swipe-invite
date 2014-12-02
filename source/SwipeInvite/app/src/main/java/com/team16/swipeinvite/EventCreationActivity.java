@@ -51,7 +51,7 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
     /* -------------------- END LOG TAG CONSTANTS ----------------------- */
 
     //region Local variables for views
-    private View eventCreateView;
+    private View mEventCreateView;
     private TextView mEventNameField;
     private TextView mEventLocationField;
     private TextView mEventDescriptionField;
@@ -61,7 +61,7 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
     private EditText mStartTimeText;
     private EditText mEndDateText;
     private EditText mEndTimeText;
-    private View eventStatusView;
+    private View mEventStatusView;
     //endregion
 
     //region Picker setup
@@ -151,8 +151,8 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
         int currentMinute = mCurrentCalendar.get(Calendar.MINUTE);
 
         //Setting up the views
-        eventCreateView = (View) findViewById(R.id.event_create_form);
-        eventStatusView = (View) findViewById(R.id.event_create_status);
+        mEventCreateView = (View) findViewById(R.id.event_create_form);
+        mEventStatusView = (View) findViewById(R.id.event_create_status);
 
         mStartDateText = (EditText) findViewById(R.id.start_date_text);
         mStartTimeText = (EditText) findViewById(R.id.start_time_text);
@@ -465,32 +465,32 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            eventStatusView.setVisibility(View.VISIBLE);
-            eventStatusView.animate()
+            mEventStatusView.setVisibility(View.VISIBLE);
+            mEventStatusView.animate()
                     .setDuration(shortAnimTime)
                     .alpha(show ? 1 : 0)
                     .setListener(new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(Animator animation) {
-                            eventStatusView.setVisibility(show ? View.VISIBLE : View.GONE);
+                            mEventStatusView.setVisibility(show ? View.VISIBLE : View.GONE);
                         }
                     });
 
-            eventCreateView.setVisibility(View.VISIBLE);
-            eventCreateView.animate()
+            mEventStatusView.setVisibility(View.VISIBLE);
+            mEventStatusView.animate()
                     .setDuration(shortAnimTime)
                     .alpha(show ? 0 : 1)
                     .setListener(new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(Animator animation) {
-                            eventCreateView.setVisibility(show ? View.GONE : View.VISIBLE);
+                            mEventStatusView.setVisibility(show ? View.GONE : View.VISIBLE);
                         }
                     });
         } else {
             // The ViewPropertyAnimator APIs are not available, so simply show
             // and hide the relevant UI components.
-            eventStatusView.setVisibility(show ? View.VISIBLE : View.GONE);
-            eventCreateView.setVisibility(show ? View.GONE : View.VISIBLE);
+            mEventStatusView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mEventStatusView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
     //endregion
