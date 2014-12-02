@@ -529,4 +529,24 @@ public class MainActivity extends ActionBarActivity implements Observer {
     }
     //endregion
 
+    //region Methods for pulldown refresh
+    private RefreshableView refreshableView;
+    protected void setRefreshableView(RefreshableView rf) {
+        refreshableView = rf;
+    }
+
+    protected void startUpdateService() {
+        //Start the update service
+        Intent intent = new Intent(this, UpdateService.class);
+        intent.putExtra("type", 1);
+        startService(intent);
+    }
+
+    protected void finishRefreshing() {
+        if (refreshableView != null) {
+            refreshableView.finishRefreshing();
+        }
+    }
+    //endregion
+
 }
