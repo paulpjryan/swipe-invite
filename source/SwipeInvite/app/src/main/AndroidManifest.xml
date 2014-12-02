@@ -100,6 +100,17 @@
                 android:value="com.team16.swipeinvite.MainActivity" />
         </activity>
         <activity
+            android:name="com.team16.swipeinvite.EventEditActivity"
+            android:label="Edit Event"
+            android:launchMode="singleTop"
+            android:parentActivityName="com.team16.swipeinvite.MainActivity"
+            android:windowSoftInputMode="stateHidden" >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.team16.swipeinvite.MainActivity" />
+        </activity>
+        <activity
             android:name="com.team16.swipeinvite.LoginActivity2"
             android:label="@string/title_activity_login_activity2"
             android:windowSoftInputMode="stateHidden" >

@@ -239,6 +239,7 @@ public class MainActivity extends ActionBarActivity implements Observer {
             public void run() {
                 //Refresh views
                 refresh();
+                finishRefreshing();
             }
         });
     }
