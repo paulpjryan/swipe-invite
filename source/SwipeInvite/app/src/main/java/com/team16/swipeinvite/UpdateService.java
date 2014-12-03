@@ -185,7 +185,7 @@ public class UpdateService extends IntentService {
                         } else {
                             //Need to update the groups that are affected
                             Log.d(LOG_TAG, "Removed outated event: " + current.getName());
-                            Log.d(LOG_TAG, "Start Date: " + df.format(current.getBeginDate().getTime()));
+                            Log.d(LOG_TAG, "Current Date: " + df.format(cal.getTime()));
                             Log.d(LOG_TAG, "End Date: " + df.format(current.getEndDate().getTime()));
                             updateGroups(current.getId(), model);
                             i.remove();
