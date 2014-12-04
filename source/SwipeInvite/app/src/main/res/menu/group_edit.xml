@@ -13,4 +13,8 @@
         android:title="@string/edit_group_submit"
         app:showAsAction="ifRoom"  />
 
+    <item android:id="@+id/group_edit_leave"
+        android:title="@string/action_leave_group"
+        app:showAsAction="never"  />
+
 </menu>
