@@ -342,15 +342,15 @@ class Model {
 
     //region Methods to deal with observers
     private ArrayList<Observer> observers = new ArrayList<Observer>();
-    protected void addObserver(Observer o) {
+    protected synchronized void addObserver(Observer o) {
         Log.d(LOG_TAG, "Added observer to model.");
         this.observers.add(o);
     }
-    protected void deleteObserver(Observer o) {
+    protected synchronized void deleteObserver(Observer o) {
         Log.d(LOG_TAG, "Removed observer from model.");
         this.observers.remove(o);
     }
-    private void notifyObservers() {
+    private synchronized void notifyObservers() {
         for (Observer x : observers) {
             try {
                 x.update(new Observable(), new Object());

@@ -64,11 +64,13 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
     private View mEventStatusView;
     //endregion
 
+
     //region Picker setup
     public static class TimePickerFragment extends DialogFragment
             implements TimePickerDialog.OnTimeSetListener {
 
         public int hour, minute;
+        protected int type = 0;
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -80,6 +82,7 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
         public void onTimeSet(TimePicker view, int hour, int minute) {
             this.hour = hour;
             this.minute = minute;
+            ((EventCreationActivity) getActivity()).populateTimeView(hour, minute, type);
         }
     }
     private TimePickerFragment mStartTimePicker;
@@ -88,6 +91,7 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
             implements DatePickerDialog.OnDateSetListener {
 
         public int year, month, day;
+        protected int type = 0;
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -99,6 +103,8 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
             this.year = year;
             this.month = month;
             this.year = year;
+            ((EventCreationActivity) getActivity()).populateDateView(year, month, day, type);
+
         }
     }
     private DatePickerFragment mStartDatePicker;
@@ -166,20 +172,24 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
 
         // Setup pickers
         mStartDatePicker = new DatePickerFragment();
+        mStartDatePicker.type = 0;
         mStartDatePicker.year = currentYear;
         mStartDatePicker.month = currentMonth;
         mStartDatePicker.day = currentDay;
 
         mStartTimePicker = new TimePickerFragment();
+        mStartTimePicker.type = 0;
         mStartTimePicker.hour = currentHour;
         mStartTimePicker.minute = currentMinute;
 
         mEndDatePicker = new DatePickerFragment();
+        mEndDatePicker.type = 1;
         mEndDatePicker.year = currentYear;
         mEndDatePicker.month = currentMonth;
-        mEndDatePicker.day = currentDay + 1; // FIXME
+        mEndDatePicker.day = currentDay; // FIXME
 
         mEndTimePicker = new TimePickerFragment();
+        mEndTimePicker.type = 1;
         mEndTimePicker.hour = currentHour;
         mEndTimePicker.minute = currentMinute;
 
@@ -242,6 +252,30 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
         }
     }
     //endregion
+
+
+    protected void populateDateView(int year, int month, int day, int type) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(year, month, day);
+        if (type == 0) {   //Start date
+
+            mStartDateText.setText(new SimpleDateFormat("MM/dd/yyyy").format(cal.getTime()));
+        } else {    //End date
+
+            mEndDateText.setText(new SimpleDateFormat("MM/dd/yyyy").format(cal.getTime()));
+        }
+    }
+
+    protected void populateTimeView(int hour, int minute, int type) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR, hour);
+        cal.set(Calendar.MINUTE, minute);
+        if (type == 0) {
+            mStartTimeText.setText(new SimpleDateFormat("hh:mm").format(cal.getTime()));
+        } else {
+            mEndTimeText.setText(new SimpleDateFormat("hh:mm").format(cal.getTime()));
+        }
+    }
 
 
     //region Method called when the add group returns

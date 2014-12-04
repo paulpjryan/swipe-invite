@@ -19,6 +19,7 @@ import com.melnykov.fab.FloatingActionButton;
 public class EventsFragment extends Fragment {
 
     private EventsAdapter mEventsAdapter;
+    private RefreshableView refreshableView;
 
     public EventsFragment() {
         // Empty constructor required for fragment subclasses
@@ -56,9 +57,17 @@ public class EventsFragment extends Fragment {
         //TextView mTextView;
         //mTextView = (TextView)getView().findViewById(R.id.textViewGroupsFragment);
         //mTextView.setText("Current User: " + BaasUser.current().getName() + " With PW: " + BaasUser.current().getPassword());
-
+        refreshableView = (RefreshableView) rootView.findViewById(R.id.refreshable_view);
         ListView listView = (ListView) rootView.findViewById(R.id.listview_events);
         listView.setAdapter(mEventsAdapter);
+
+        refreshableView.setOnRefreshListener(new RefreshableView.PullToRefreshListener() {
+            @Override
+            public void onRefresh() {
+                ((MainActivity) getActivity()).startUpdateService();
+            }
+        }, 0);
+        ((MainActivity) getActivity()).setRefreshableView(refreshableView);
 
         //Give the main activity the group adapter
         ((MainActivity) getActivity()).setEventsAdapter(mEventsAdapter);

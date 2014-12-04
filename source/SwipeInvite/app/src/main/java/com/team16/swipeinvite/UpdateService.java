@@ -145,7 +145,7 @@ public class UpdateService extends IntentService {
 
 
         //TODO Check for outdated events
-        //eventCheck(model);
+        eventCheck(model);
 
         //TODO Pulldown friends from groups
 
@@ -178,15 +178,16 @@ public class UpdateService extends IntentService {
                 for (final ListIterator<Event> i = currentList.listIterator(); i.hasNext(); ) {
                     Event current = i.next();
                     //If the event is out of date, remove it
-                    if (current.getEndDate().after(cal)) {
+                    Log.d(LOG_TAG, "Comparison: " + current.getEndDate().compareTo(cal));
+                    Log.d(LOG_TAG, "Current Date: " + cal.getTime());
+                    Log.d(LOG_TAG, "End Date: " + current.getEndDate().getTime());
+                    if (current.getEndDate().before(cal)) {
                         BaasResult<Void> result = current.getBaasDocument().deleteSync();
                         if (result.isFailed()) {
                             Log.d(LOG_TAG, "Could not remove outdated event: " + current.getName());
                         } else {
                             //Need to update the groups that are affected
                             Log.d(LOG_TAG, "Removed outated event: " + current.getName());
-                            Log.d(LOG_TAG, "Start Date: " + df.format(current.getBeginDate().getTime()));
-                            Log.d(LOG_TAG, "End Date: " + df.format(current.getEndDate().getTime()));
                             updateGroups(current.getId(), model);
                             i.remove();
                         }
@@ -198,6 +199,7 @@ public class UpdateService extends IntentService {
     }
 
     private void updateGroups(String eventID, Model model) {
+        Log.d(LOG_TAG, "Removing event from groups.");
         //Iterate through all groups and remove the outdated event
         List<Group2> activeGroups = model.getActiveGroups();
         synchronized(activeGroups) {
