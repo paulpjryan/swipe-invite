@@ -21,7 +21,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
     private static final String LOG_TAG = "EventsAdapter";
 
     private List<Event>originalData = null;
-    private List<Event>filteredData = null;
+    protected List<Event>filteredData = null;
     private LayoutInflater mInflater;
     private ItemFilter mFilter = new ItemFilter();
     protected int type; //0 = accepted, 1 = pending, 2 = declined
@@ -67,7 +67,6 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
         // to reinflate it. We only inflate a new View when the convertView supplied
         // by ListView is null.
         //if (convertView == null) {
-
         if(type == 0)
             convertView = mInflater.inflate(R.layout.list_item_event_accepted, null);
 
@@ -95,7 +94,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
         // If weren't re-ordering this you could rely on what you set last time
         holder.title.setText((filteredData.get(position).getName()));
         holder.location.setText((filteredData.get(position).getLocation()));
-        holder.datetime.setText("1/1/2014 10:00pm");
+        holder.datetime.setText((filteredData.get(position).dateToString()));
 
         if(type <= 1)
         {
