@@ -53,6 +53,7 @@
     <string name="action_profile">My Profile</string>
     <string name="action_search_group">Search Group</string>
     <string name="action_event_creation">Create Event</string>
+    <string name="action_leave_group">Leave</string>
     <!-- <string name="title_activity_login">LoginActivity</string> -->
 
 
