@@ -102,7 +102,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
             holder.declineButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //TODO
+                    //TODO Add event to declined events
                 }
             });
         }
@@ -113,7 +113,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
             holder.acceptButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //TODO
+                    //TODO Add event to accepted events
                 }
             });
         }
