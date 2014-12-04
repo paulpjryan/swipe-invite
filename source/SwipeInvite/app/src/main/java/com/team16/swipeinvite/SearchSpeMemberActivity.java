@@ -40,7 +40,7 @@ public class SearchSpeMemberActivity extends Activity implements Observer {
     public ListView ListView_search_group;
     private ProgressBar progressSpinner;
     private TextView nameField;
-    private TextView typeField;
+   // private TextView typeField;
     private TextView descField;
     //endregion
 
@@ -94,7 +94,7 @@ public class SearchSpeMemberActivity extends Activity implements Observer {
         progressSpinner = (ProgressBar) findViewById(R.id.progressBar_group_join);
         loaderSpin(false);
         nameField = (TextView) findViewById(R.id.group_join_name);
-        typeField = (TextView) findViewById(R.id.group_join_type);
+        //typeField = (TextView) findViewById(R.id.group_join_type);
         descField = (TextView) findViewById(R.id.group_join_desc);
         ListView_search_group = (ListView) findViewById(R.id.listView_group_member);
         //Populate views
@@ -135,9 +135,9 @@ public class SearchSpeMemberActivity extends Activity implements Observer {
         nameField.setText(group.getName());
         descField.setText(group.getDescription());
         if (group.isPrivate()) {
-            typeField.setText("private");
+           // typeField.setText("private");
         } else {
-            typeField.setText("public");
+            //typeField.setText("public");
         }
         ListAdapter = new ArrayAdapter<String>(SearchSpeMemberActivity.this,R.layout.list_item_search_spec,group.getUserList());
         ListView_search_group.setAdapter(ListAdapter);
