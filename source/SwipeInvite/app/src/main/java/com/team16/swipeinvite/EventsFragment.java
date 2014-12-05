@@ -53,10 +53,6 @@ public class EventsFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_events, container, false);
 
-        // THIS CRASHES THE APP. IT SHOULD PROBABLY BE SOMEWHERE ELSE
-        //TextView mTextView;
-        //mTextView = (TextView)getView().findViewById(R.id.textViewGroupsFragment);
-        //mTextView.setText("Current User: " + BaasUser.current().getName() + " With PW: " + BaasUser.current().getPassword());
         refreshableView = (RefreshableView) rootView.findViewById(R.id.refreshable_view);
         ListView listView = (ListView) rootView.findViewById(R.id.listview_events);
         listView.setAdapter(mEventsAdapter);

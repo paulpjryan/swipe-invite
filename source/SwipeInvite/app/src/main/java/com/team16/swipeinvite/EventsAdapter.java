@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -20,10 +21,10 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
     private static final String LOG_TAG = "EventsAdapter";
 
     private List<Event>originalData = null;
-    private List<Event>filteredData = null;
+    protected List<Event>filteredData = null;
     private LayoutInflater mInflater;
     private ItemFilter mFilter = new ItemFilter();
-    protected int type;
+    protected int type; //0 = accepted, 1 = pending, 2 = declined
 
     public EventsAdapter(Context context, List<Event> data, int type) {
         this.filteredData = data ;
@@ -66,13 +67,21 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
         // to reinflate it. We only inflate a new View when the convertView supplied
         // by ListView is null.
         //if (convertView == null) {
-        convertView = mInflater.inflate(R.layout.list_item_event, null);
+        if(type == 0)
+            convertView = mInflater.inflate(R.layout.list_item_event_accepted, null);
+
+        else if(type == 1)
+            convertView = mInflater.inflate(R.layout.list_item_event, null);
+
+        else
+            convertView = mInflater.inflate(R.layout.list_item_event_declined, null);
 
         // Creates a ViewHolder and store references to the two children views
         // we want to bind data to.
         holder = new ViewHolder();
-        holder.text = (TextView) convertView.findViewById(R.id.list_item_event_name);
-
+        holder.title = (TextView) convertView.findViewById(R.id.list_item_event_name);
+        holder.location = (TextView) convertView.findViewById(R.id.list_item_event_location);
+        holder.datetime = (TextView) convertView.findViewById(R.id.list_item_event_datetime);
         // Bind the data efficiently with the holder.
 
         convertView.setTag(holder);
@@ -83,13 +92,41 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
         }*/
 
         // If weren't re-ordering this you could rely on what you set last time
-        holder.text.setText((filteredData.get(position).getName()));
+        holder.title.setText((filteredData.get(position).getName()));
+        holder.location.setText((filteredData.get(position).getLocation()));
+        holder.datetime.setText((filteredData.get(position).dateToString()));
+
+        if(type <= 1)
+        {
+            holder.declineButton = (ImageButton) convertView.findViewById(R.id.list_item_reject_button);
+            holder.declineButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //TODO Add event to declined events
+                }
+            });
+        }
+
+        if(type >= 1)
+        {
+            holder.acceptButton = (ImageButton) convertView.findViewById(R.id.list_item_accept_button);
+            holder.acceptButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //TODO Add event to accepted events
+                }
+            });
+        }
 
         return convertView;
     }
 
     static class ViewHolder {
-        TextView text;
+        TextView title;
+        TextView location;
+        TextView datetime;
+        ImageButton acceptButton;
+        ImageButton declineButton;
     }
 
     public Filter getFilter() {
