@@ -25,9 +25,9 @@
     </LinearLayout>
 
     <!-- EVENT CREATION VIEW -->
-<ScrollView
+<!--<ScrollView
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"> -->
 
     <RelativeLayout
         android:id="@+id/event_create_form"
@@ -210,6 +210,6 @@
             android:layout_below="@+id/separator_3" />
 
     </RelativeLayout>
-</ScrollView>
+<!--</ScrollView>-->
 
 </merge>

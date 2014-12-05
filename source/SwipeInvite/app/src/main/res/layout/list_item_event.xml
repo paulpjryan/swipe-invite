@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="?android:attr/listPreferredItemHeight"
-    android:clickable="true">
+    android:clickable="true"
+    android:focusable="false">
 
     <TextView
         android:layout_width="fill_parent"
