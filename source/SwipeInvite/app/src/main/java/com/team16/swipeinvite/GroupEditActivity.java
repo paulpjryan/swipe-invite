@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.internal.view.menu.MenuView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -55,6 +56,10 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
     private EditText descriptionField;
     private EditText groupTypeField;
     private EditText groupOpenField;
+
+    private Menu menu;
+    private MenuItem leaveItem;
+    private boolean creator = false;
 
     private ArrayAdapter<String> ListAdapter2;
     private ProgressBar progressSpinner;
@@ -155,16 +160,19 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
 
 
     //region Implementation of observer
+    private boolean deleted = false;
     public void update(Observable ob, Object o) {
         //NEED TO RUN ON UI THREAD
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 //Update all views
-                Log.d(LOG_TAG, "Updating from notification.");
-                populateTextViews();
-                populateEventList();
-                populateMemberList();
+                if (!deleted) {
+                    Log.d(LOG_TAG, "Updating from notification.");
+                    populateTextViews();
+                    populateEventList();
+                    populateMemberList();
+                }
             }
         });
     }
@@ -300,6 +308,35 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
     //endregion
 
 
+    //region Method to populate the menu
+    private void populateMenu() {
+        Log.d(LOG_TAG, "Repopulating menu views.");
+        //Get the current group to read from
+        List<Group2> lG = model.getActiveGroups();
+        Group2 g = null;
+        synchronized (lG) {
+            for (Group2 x : lG) {
+                if (x.equals(groupToEdit)) {
+                    g = x;
+                }
+            }
+        }
+        if (g == null) {
+            Toast.makeText(this, "This group is no longer available.", Toast.LENGTH_SHORT).show();
+            returnCancelled();
+            finish();
+            return;
+        }
+
+        //Decide whether the user is the creator or not
+        if (g.getCreator().equals(BaasUser.current().getName())) {
+            creator = true;
+            leaveItem.setTitle("Delete");
+        }
+    }
+    //endregion
+
+
     //region Methods to return to the main activity
     private void returnOk() {
         Log.d(LOG_TAG, "Navigating away from profile edit, return OK.");
@@ -322,6 +359,9 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
         Log.d(LOG_TAG, "onCreateOptionsMenu called");
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.group_edit, menu);
+        this.menu = menu;
+        leaveItem = menu.findItem(R.id.group_edit_leave);
+        populateMenu();
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -344,6 +384,9 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
                 return true;
             case R.id.group_edit_submit:
                 submitListener();
+                return true;
+            case R.id.group_edit_leave:
+                submitLeave();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -394,6 +437,13 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
                 //RELOAD the Member list view
                 return;
             }
+        }
+
+        //Check to make sure the button is not spammed
+        if (saveRT != null) {
+            Log.d(LOG_TAG, "Preventing spam of submit button.");
+            Toast.makeText(this, "Please wait request to finish...", Toast.LENGTH_SHORT).show();
+            return;
         }
 
         //Start intent to add a person to a group
@@ -509,6 +559,13 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
        updateG.setDescription(description);
         Log.d(LOG_TAG, "Group in model: " + g.getName());  //Just checking to make sure the model is not changed yet
 
+        //Check to make sure the button is not spammed
+        if (saveRT != null) {
+            Log.d(LOG_TAG, "Preventing spam of submit button.");
+            Toast.makeText(this, "Already contacting server...", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
        //Save the group to the server, but do not affect the model until a response is received
        saveRT = updateG.getBaasDocument().save(SaveMode.IGNORE_VERSION, onSaveComplete);
     }
@@ -598,6 +655,105 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
     }
     //endregion
 
+    //endregion
+
+
+    //region Methods for the leave button
+    private void submitLeave() {
+        //Check to make sure no other server stuff is happening
+        if (saveRT != null) {
+            Log.d(LOG_TAG, "Preventing button spam.");
+            Toast.makeText(this, "Already contacting server...", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        progressSpinner.setVisibility(View.VISIBLE);
+
+        //Get the current group to read from
+        List<Group2> lG = model.getActiveGroups();
+        Group2 g = null;
+        synchronized (lG) {
+            for (Group2 x : lG) {
+                if (x.equals(groupToEdit)) {
+                    g = x;
+                }
+            }
+        }
+        if (g == null) {
+            Toast.makeText(this, "This group is no longer available.", Toast.LENGTH_SHORT).show();
+            returnCancelled();
+            finish();
+            return;
+        }
+
+        //Check to make sure no other server stuff is happening
+        if (saveRT != null) {
+            Log.d(LOG_TAG, "Preventing button spam.");
+            Toast.makeText(this, "Already contacting server...", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        //Send the server requests
+        if (creator) {
+            saveRT = g.getBaasDocument().delete(onDeleteComplete);
+        } else {
+            g.removeSelf();
+            saveRT = g.getBaasDocument().save(SaveMode.IGNORE_VERSION, onRemoveComplete);
+        }
+
+    }
+
+    private final BaasHandler<BaasDocument> onRemoveComplete = new BaasHandler<BaasDocument>() {
+        @Override
+        public void handle(BaasResult<BaasDocument> result) {
+            saveRT = null;
+
+        }
+    };
+    private final BaasHandler<Void> onDeleteComplete = new BaasHandler<Void>() {
+        @Override
+        public void handle(BaasResult<Void> result) {
+            saveRT = null;
+            if (result.isFailed()) {
+                Log.d(LOG_TAG, "Failed to delete: " + result.error());
+                makeToast("Unable to delete");
+                return;
+            } else if (result.isSuccess()) {
+                Log.d(LOG_TAG, "Delete success");
+                completeDelete();
+                return;
+            }
+        }
+    };
+    private void completeDelete() {
+        //Get the current group to read from
+        List<Group2> activeGroups = model.getActiveGroups();
+        synchronized (activeGroups) {
+            for (final ListIterator<Group2> i = activeGroups.listIterator(); i.hasNext(); ) {  //Setting up iterator
+                final Group2 current = i.next();    //need to get current group
+                if (current.equals(groupToEdit) || !current.isOnServer()) {
+                    Log.d(LOG_TAG, "Removing group: " + current.getName());
+                    i.remove(); //Remove the group from the active groups list
+                }
+            }
+        }
+
+        //Save the model
+        deleted = true;
+        Model.saveModel(this);
+
+        makeToast("Group deleted");
+
+        finish();
+        return;
+    }
+    //endregion
+
+
+    //region Method for easy toasts
+    private void makeToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
     //endregion
 
 

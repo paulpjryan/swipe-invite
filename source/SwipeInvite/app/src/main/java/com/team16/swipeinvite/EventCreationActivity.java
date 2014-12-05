@@ -510,21 +510,21 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
                         }
                     });
 
-            mEventStatusView.setVisibility(View.VISIBLE);
-            mEventStatusView.animate()
+            mEventCreateView.setVisibility(View.VISIBLE);
+            mEventCreateView.animate()
                     .setDuration(shortAnimTime)
                     .alpha(show ? 0 : 1)
                     .setListener(new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(Animator animation) {
-                            mEventStatusView.setVisibility(show ? View.GONE : View.VISIBLE);
+                            mEventCreateView.setVisibility(show ? View.GONE : View.VISIBLE);
                         }
                     });
         } else {
             // The ViewPropertyAnimator APIs are not available, so simply show
             // and hide the relevant UI components.
             mEventStatusView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mEventStatusView.setVisibility(show ? View.GONE : View.VISIBLE);
+            mEventCreateView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
     //endregion

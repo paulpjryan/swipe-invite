@@ -40,7 +40,7 @@ public class GroupsAdapter extends BaseAdapter implements Filterable {
         /*if (selfInstance == null) {
             return;
         } */
-        Log.d(LOG_TAG, "Received request to update list view.");
+        Log.d(LOG_TAG, "Received request to update list view, size: " + g.size());
         this.originalData = g;
         try {
             this.notifyDataSetChanged();

@@ -392,7 +392,7 @@ public class MainActivity extends ActionBarActivity implements Observer {
                 break;
         }
         Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
-        refresh();
+        //refresh();
     }
     //endregion
 
