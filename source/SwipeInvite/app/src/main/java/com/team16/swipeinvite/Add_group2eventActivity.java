@@ -43,7 +43,6 @@ public class Add_group2eventActivity extends ActionBarActivity implements View.O
     //region Local variables for views
     private  ListView ListView_search_group;
     private GroupsAdapter ListAdapter;
-    private ImageButton bt_search;
     //endregion
 
 
@@ -86,9 +85,6 @@ public class Add_group2eventActivity extends ActionBarActivity implements View.O
             groups = new ArrayList<String>();
         }
 
-        // Button bt_join = (Button) findViewById(R.id.button_searchgroup_add);
-        bt_search = (ImageButton) findViewById(R.id.add_group_searchBtn);
-        bt_search.setOnClickListener(this);
         ListView_search_group = (ListView) findViewById(R.id.add_group_listView);
         ListAdapter = new GroupsAdapter(this, model.getActiveGroups());
         ListView_search_group.setAdapter(ListAdapter);
@@ -98,6 +94,12 @@ public class Add_group2eventActivity extends ActionBarActivity implements View.O
                                     int position, long id)
             {
                 Group2 g = (Group2) ListAdapter.getItem(position);
+                if (!g.isOpen()) {
+                    if (!g.hasEventPermission()) {
+                        makeToast("Not an event admin for group");
+                        return;
+                    }
+                }
                 if (groups.contains(g.getId())) {
                     groups.remove(g.getId());
                     view.setBackgroundColor(Color.TRANSPARENT);
@@ -185,21 +187,6 @@ public class Add_group2eventActivity extends ActionBarActivity implements View.O
     public void onClick(View v) {
         switch(v.getId())
         {
-
-            case R.id.add_group_searchBtn:
-                /*
-                String[] data = {
-                        "Engl 101 + Description: Fall 2014",
-                        "Engl 101 + Description:"
-                };
-
-                ArrayList<String> GroupList = new ArrayList<String>();
-                GroupList.addAll(Arrays.asList(data));
-
-                ListAdapter = new ArrayAdapter<String>(Add_group2eventActivity.this,R.layout.list_item_add_group2event, R.id.list_add_group_tv, GroupList);
-                ListView_search_group.setAdapter(ListAdapter);
-                */
-                break;
         }
 
     }

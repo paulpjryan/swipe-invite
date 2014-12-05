@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -279,6 +280,7 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
 
         mainListView.setAdapter(ListAdapter);
     }
+    private boolean editMembers = false;
     private void populateMemberList() {
         Log.d(LOG_TAG, "Populating member list");
 
@@ -302,7 +304,11 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
         ArrayList<String> MemberList = new ArrayList<String>();
         MemberList.addAll(g.getUserList());
 
-        ListAdapter2 = new ArrayAdapter<String>(this,R.layout.list_item_group_member,R.id.list_add_person_tv,MemberList);
+        if (editMembers) {
+            ListAdapter2 = new ArrayAdapter<String>(this, R.layout.list_item_group_member_2, R.id.list_add_person_tv, MemberList);
+        } else {
+            ListAdapter2 = new ArrayAdapter<String>(this, R.layout.list_item_group_member, R.id.list_add_person_tv, MemberList);
+        }
 
         mainListView2.setAdapter(ListAdapter2);
     }
@@ -389,6 +395,14 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
             case R.id.group_edit_leave:
                 submitLeave();
                 return true;
+            case R.id.group_edit_members:
+                if (!checkForMemPerm()) {
+                    makeToast("Not enough permission");
+                    return true;
+                }
+                editMembers = !editMembers;
+                populateMemberList();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -402,6 +416,29 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
             returnOk();
         }
         super.onBackPressed();
+    }
+    //endregion
+
+
+    //region Check member permission
+    private boolean checkForMemPerm() {
+        //Pull the proper list from the model
+        List<Group2> lG = model.getActiveGroups();
+        Group2 g = null;
+        synchronized (lG) {
+            for (Group2 x : lG) {
+                if (x.equals(groupToEdit)) {
+                    g = x;
+                }
+            }
+        }
+        if (g == null) {
+            Toast.makeText(this, "This group is no longer available.", Toast.LENGTH_SHORT).show();
+            returnCancelled();
+            finish();
+            return false;
+        }
+        return g.hasMemberPermission();
     }
     //endregion
 
@@ -546,7 +583,7 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
        if (!g.isOpen()) {
            if (!g.hasDetailPermission()) {   //If the user does not have permission, don't submit
                Log.d(LOG_TAG, "User does not have permission to submit change.");
-               Toast.makeText(this, "You are not a detail admin for this group.", Toast.LENGTH_SHORT).show();
+               Toast.makeText(this, "You are not a detail admin for this group", Toast.LENGTH_SHORT).show();
                populateTextViews();
                progressSpinner.setVisibility(View.GONE);
                return;
@@ -776,6 +813,13 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
 
         finish();
         return;
+    }
+    //endregion
+
+
+    //region Method for remove member button
+    public void removeMemberResponder(View view) {
+        Log.d(LOG_TAG, "Removing member");
     }
     //endregion
 
