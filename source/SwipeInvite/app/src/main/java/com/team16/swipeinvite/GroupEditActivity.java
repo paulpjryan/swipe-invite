@@ -36,6 +36,7 @@ import com.baasbox.android.BaasDocument;
 import com.baasbox.android.BaasHandler;
 import com.baasbox.android.BaasResult;
 import com.baasbox.android.BaasUser;
+import com.baasbox.android.Grant;
 import com.baasbox.android.RequestToken;
 import com.baasbox.android.SaveMode;
 import com.baasbox.android.json.JsonObject;
@@ -697,8 +698,9 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
         if (creator) {
             saveRT = g.getBaasDocument().delete(onDeleteComplete);
         } else {
-            g.removeSelf();
-            saveRT = g.getBaasDocument().save(SaveMode.IGNORE_VERSION, onRemoveComplete);
+            Group2 updateG = new Group2(g.toJson());
+            updateG.removeSelf();
+            saveRT = updateG.getBaasDocument().save(SaveMode.IGNORE_VERSION, onRemoveComplete);
         }
 
     }
@@ -707,7 +709,31 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
         @Override
         public void handle(BaasResult<BaasDocument> result) {
             saveRT = null;
-
+            if (result.isFailed()) {
+                Log.d(LOG_TAG, "Failed to leave: " + result.error());
+                makeToast("Unable to leave");
+                return;
+            } else if (result.isSuccess()) {
+                Log.d(LOG_TAG, "Leave success");
+                //Revoke permissions for this user
+                saveRT = result.value().revoke(Grant.ALL, BaasUser.current().getName(), onGrantComplete);
+                return;
+            }
+        }
+    };
+    private final BaasHandler<Void> onGrantComplete = new BaasHandler<Void>() {
+        @Override
+        public void handle(BaasResult<Void> result) {
+            saveRT = null;
+            if (result.isFailed()) {
+                Log.d(LOG_TAG, "Could not revoke: " + result.error());
+                makeToast("Error leaving, contact server admin");
+                return;
+            } else if (result.isSuccess()) {
+                Log.d(LOG_TAG, "Revoke success.");
+                completeDelete(1);
+                return;
+            }
         }
     };
     private final BaasHandler<Void> onDeleteComplete = new BaasHandler<Void>() {
@@ -720,12 +746,12 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
                 return;
             } else if (result.isSuccess()) {
                 Log.d(LOG_TAG, "Delete success");
-                completeDelete();
+                completeDelete(0);
                 return;
             }
         }
     };
-    private void completeDelete() {
+    private void completeDelete(int type) {
         //Get the current group to read from
         List<Group2> activeGroups = model.getActiveGroups();
         synchronized (activeGroups) {
@@ -742,7 +768,11 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
         deleted = true;
         Model.saveModel(this);
 
-        makeToast("Group deleted");
+        if (type == 0) {
+            makeToast("Group deleted");
+        } else {
+            makeToast("Group left");
+        }
 
         finish();
         return;
