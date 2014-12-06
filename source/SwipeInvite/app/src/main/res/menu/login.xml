@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.team16.swipeinvite.LoginActivity" >
 
-    <item android:id="@+id/action_login"
+    <!--<item android:id="@+id/action_login"
         android:icon="@drawable/ic_action_accept"
         android:title="@string/login_sign_in"
         app:showAsAction="withText|always" />
@@ -15,6 +15,6 @@
 
     <item android:id="@+id/action_forgot_password"
         android:title="@string/action_forgot_password"
-        app:showAsAction="never" />
+        app:showAsAction="never" /> -->
 
 </menu>

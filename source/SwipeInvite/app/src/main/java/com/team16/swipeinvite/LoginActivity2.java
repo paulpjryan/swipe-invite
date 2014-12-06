@@ -203,7 +203,7 @@ public class LoginActivity2 extends ActionBarActivity {
     }
     @Override
     public void onBackPressed() {
-        return;
+        super.onBackPressed();
     }
     //endregion
 
