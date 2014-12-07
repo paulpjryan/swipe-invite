@@ -258,6 +258,13 @@ public class LoginActivity2 extends ActionBarActivity {
         startActivity(intent);
     }
 
+    public void forgotPasswordResponder(View v) {
+        //Launch intent to recover password
+        Intent intent = new Intent (this, ForgotPasswordActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        startActivity(intent);
+    }
+
     public void textFieldResponder(View v) {
         //Reset the error messages if you click the text views
         usernameField.setError(null);
