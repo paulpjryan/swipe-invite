@@ -209,6 +209,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.team16.swipeinvite.LoginActivity2" />
         </activity>
+
+        <service
+            android:name="com.team16.swipeinvite.EventMoveService"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>
