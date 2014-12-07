@@ -1,6 +1,7 @@
 package com.team16.swipeinvite;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +25,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
     protected List<Event>filteredData = null;
     private LayoutInflater mInflater;
     private ItemFilter mFilter = new ItemFilter();
-    protected int type; //0 = accepted, 1 = pending, 2 = declined
+    protected int type; //0 = accepted, 1 = pending, 2 = declined, -1 = NO BUTTONS
 
     public EventsAdapter(Context context, List<Event> data, int type) {
         this.filteredData = data ;
@@ -58,10 +59,12 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
         return position;
     }
 
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         // A ViewHolder keeps references to children views to avoid unnecessary calls
         // to findViewById() on each row.
         ViewHolder holder;
+        final View convertView2 = convertView;
+        final int position2 = position;
 
         // When convertView is not null, we can reuse it directly, there is no need
         // to reinflate it. We only inflate a new View when the convertView supplied
@@ -73,8 +76,9 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
         else if(type == 1)
             convertView = mInflater.inflate(R.layout.list_item_event, null);
 
-        else
+        else if (type == 2)
             convertView = mInflater.inflate(R.layout.list_item_event_declined, null);
+        else convertView = mInflater.inflate(R.layout.list_item_event_nobutton, null);
 
         // Creates a ViewHolder and store references to the two children views
         // we want to bind data to.
@@ -96,13 +100,17 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
         holder.location.setText((filteredData.get(position).getLocation()));
         holder.datetime.setText((filteredData.get(position).dateToString()));
 
-        if(type <= 1)
+        if(type <= 1 && type != -1)
         {
             holder.declineButton = (ImageButton) convertView.findViewById(R.id.list_item_reject_button);
             holder.declineButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     //TODO Add event to declined events
+                    Intent intent = new Intent(convertView2.getContext(), EventMoveService.class);
+                    intent.putExtra("eventID", filteredData.get(position2).getId());
+                    intent.putExtra("to", "rejected");
+                    convertView2.getContext().startService(intent);
                 }
             });
         }
@@ -114,6 +122,10 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
                 @Override
                 public void onClick(View v) {
                     //TODO Add event to accepted events
+                    Intent intent = new Intent(convertView2.getContext(), EventMoveService.class);
+                    intent.putExtra("eventID", filteredData.get(position2).getId());
+                    intent.putExtra("to", "accepted");
+                    convertView2.getContext().startService(intent);
                 }
             });
         }

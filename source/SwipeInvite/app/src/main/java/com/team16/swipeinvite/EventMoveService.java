@@ -27,6 +27,7 @@ public class EventMoveService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        Log.d(LOG_TAG, "Got intent to move event.");
         //Get the model
         Model model = Model.getInstance(this);
 

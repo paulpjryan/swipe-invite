@@ -276,7 +276,7 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
             }
         }
 
-        ListAdapter = new EventsAdapter(this, EventList, 0);
+        ListAdapter = new EventsAdapter(this, EventList, -1);
 
         mainListView.setAdapter(ListAdapter);
     }
