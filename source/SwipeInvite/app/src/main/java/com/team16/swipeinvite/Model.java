@@ -3,22 +3,16 @@ package com.team16.swipeinvite;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.baasbox.android.BaasDocument;
 import com.baasbox.android.BaasUser;
 import com.baasbox.android.json.JsonArray;
 import com.baasbox.android.json.JsonObject;
-import com.google.gson.Gson;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,7 +42,7 @@ class Model {
     private ArrayList<Event> acceptedEvents;   //List of events that the user has accepted
     private ArrayList<Event> waitingEvents;    //List of events that the user has waited for a decision on
     private ArrayList<Event> rejectedEvents;   //List of events that the user has rejected
-    private ArrayList<Acquaintence> friends;   //List of users that the user has invited or been in a group with
+    private ArrayList<Acquaintance> friends;   //List of users that the user has invited or been in a group with
     protected CurrentUser currentUser;    //The current user object
     //endregion
 
@@ -301,7 +295,7 @@ class Model {
         acceptedEvents = new ArrayList<Event>();
         waitingEvents = new ArrayList<Event>();
         rejectedEvents = new ArrayList<Event>();
-        friends = new ArrayList<Acquaintence>();
+        friends = new ArrayList<Acquaintance>();
         currentUser = new CurrentUser(BaasUser.current());
     }
     //endregion
@@ -404,10 +398,10 @@ class Model {
         return ja;
     }
 
-    private static JsonArray getJAofFriends(List<Acquaintence> a) {
+    private static JsonArray getJAofFriends(List<Acquaintance> a) {
         JsonArray ja = new JsonArray();
         synchronized (a) {
-            for (Acquaintence x : a) {
+            for (Acquaintance x : a) {
                 ja.add(x.getUsername());
             }
         }
@@ -505,7 +499,7 @@ class Model {
 
 
     //region Methods for synchronized access to the active groups list
-    protected synchronized List<Acquaintence> getFriends() {
+    protected synchronized List<Acquaintance> getFriends() {
         return Collections.synchronizedList(friends);
     }
     //endregion
