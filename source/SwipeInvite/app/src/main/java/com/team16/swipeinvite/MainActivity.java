@@ -46,12 +46,13 @@ public class MainActivity extends ActionBarActivity implements Observer {
     private ActionBarDrawerToggle mDrawerToggle;
 
     // Array of strings to initial counts
-    String[] mCount = new String[] {  "", "", "" };
+    String[] mCount = new String[] {  "", "", "", "" };
     // Array of integers points to images stored in /res/drawable-ldpi/
     int[] mIcons = new int[]{
             R.drawable.ic_action_new_event_dark,
             R.drawable.ic_action_event_dark,
-            R.drawable.ic_action_group_dark
+            R.drawable.ic_action_group_dark,
+            R.drawable.ic_delete_grey600_24dp
     };
 
     List<HashMap<String,String>> mList;
@@ -472,9 +473,6 @@ public class MainActivity extends ActionBarActivity implements Observer {
         Fragment fragment;
         Bundle args = new Bundle();
         switch (position) {
-            case 2:
-                fragment = new GroupsFragment();
-                break;
             case 0:
                 fragment = new EventsFragment();
                 args.putString("type", "waiting");
@@ -485,8 +483,16 @@ public class MainActivity extends ActionBarActivity implements Observer {
                 args.putString("type", "accepted");
                 fragment.setArguments(args);
                 break;
-            default:
+            case 2:
+                fragment = new GroupsFragment();
+                break;
+            case 3:
                 fragment = new EventsFragment();
+                args.putString("type", "rejected");
+                fragment.setArguments(args);
+                break;
+            default:
+                fragment = new GroupsFragment();
                 break;
         }
 
