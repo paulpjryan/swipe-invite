@@ -4,12 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.internal.view.menu.MenuView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -35,6 +37,7 @@ import com.baasbox.android.BaasDocument;
 import com.baasbox.android.BaasHandler;
 import com.baasbox.android.BaasResult;
 import com.baasbox.android.BaasUser;
+import com.baasbox.android.Grant;
 import com.baasbox.android.RequestToken;
 import com.baasbox.android.SaveMode;
 import com.baasbox.android.json.JsonObject;
@@ -55,6 +58,10 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
     private EditText descriptionField;
     private EditText groupTypeField;
     private EditText groupOpenField;
+
+    private Menu menu;
+    private MenuItem leaveItem;
+    private boolean creator = false;
 
     private ArrayAdapter<String> ListAdapter2;
     private ProgressBar progressSpinner;
@@ -155,16 +162,19 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
 
 
     //region Implementation of observer
+    private boolean deleted = false;
     public void update(Observable ob, Object o) {
         //NEED TO RUN ON UI THREAD
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 //Update all views
-                Log.d(LOG_TAG, "Updating from notification.");
-                populateTextViews();
-                populateEventList();
-                populateMemberList();
+                if (!deleted) {
+                    Log.d(LOG_TAG, "Updating from notification.");
+                    populateTextViews();
+                    populateEventList();
+                    populateMemberList();
+                }
             }
         });
     }
@@ -270,6 +280,7 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
 
         mainListView.setAdapter(ListAdapter);
     }
+    private boolean editMembers = false;
     private void populateMemberList() {
         Log.d(LOG_TAG, "Populating member list");
 
@@ -293,9 +304,42 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
         ArrayList<String> MemberList = new ArrayList<String>();
         MemberList.addAll(g.getUserList());
 
-        ListAdapter2 = new ArrayAdapter<String>(this,R.layout.list_item_group_member,R.id.list_add_person_tv,MemberList);
+        if (editMembers) {
+            ListAdapter2 = new ArrayAdapter<String>(this, R.layout.list_item_group_member_2, R.id.list_add_person_tv, MemberList);
+        } else {
+            ListAdapter2 = new ArrayAdapter<String>(this, R.layout.list_item_group_member, R.id.list_add_person_tv, MemberList);
+        }
 
         mainListView2.setAdapter(ListAdapter2);
+    }
+    //endregion
+
+
+    //region Method to populate the menu
+    private void populateMenu() {
+        Log.d(LOG_TAG, "Repopulating menu views.");
+        //Get the current group to read from
+        List<Group2> lG = model.getActiveGroups();
+        Group2 g = null;
+        synchronized (lG) {
+            for (Group2 x : lG) {
+                if (x.equals(groupToEdit)) {
+                    g = x;
+                }
+            }
+        }
+        if (g == null) {
+            Toast.makeText(this, "This group is no longer available.", Toast.LENGTH_SHORT).show();
+            returnCancelled();
+            finish();
+            return;
+        }
+
+        //Decide whether the user is the creator or not
+        if (g.getCreator().equals(BaasUser.current().getName())) {
+            creator = true;
+            leaveItem.setTitle("Delete");
+        }
     }
     //endregion
 
@@ -322,6 +366,9 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
         Log.d(LOG_TAG, "onCreateOptionsMenu called");
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.group_edit, menu);
+        this.menu = menu;
+        leaveItem = menu.findItem(R.id.group_edit_leave);
+        populateMenu();
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -345,6 +392,17 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
             case R.id.group_edit_submit:
                 submitListener();
                 return true;
+            case R.id.group_edit_leave:
+                submitLeave();
+                return true;
+            case R.id.group_edit_members:
+                if (!checkForMemPerm()) {
+                    makeToast("Not enough permission");
+                    return true;
+                }
+                editMembers = !editMembers;
+                populateMemberList();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -358,6 +416,29 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
             returnOk();
         }
         super.onBackPressed();
+    }
+    //endregion
+
+
+    //region Check member permission
+    private boolean checkForMemPerm() {
+        //Pull the proper list from the model
+        List<Group2> lG = model.getActiveGroups();
+        Group2 g = null;
+        synchronized (lG) {
+            for (Group2 x : lG) {
+                if (x.equals(groupToEdit)) {
+                    g = x;
+                }
+            }
+        }
+        if (g == null) {
+            Toast.makeText(this, "This group is no longer available.", Toast.LENGTH_SHORT).show();
+            returnCancelled();
+            finish();
+            return false;
+        }
+        return g.hasMemberPermission();
     }
     //endregion
 
@@ -394,6 +475,13 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
                 //RELOAD the Member list view
                 return;
             }
+        }
+
+        //Check to make sure the button is not spammed
+        if (saveRT != null) {
+            Log.d(LOG_TAG, "Preventing spam of submit button.");
+            Toast.makeText(this, "Please wait request to finish...", Toast.LENGTH_SHORT).show();
+            return;
         }
 
         //Start intent to add a person to a group
@@ -495,7 +583,7 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
        if (!g.isOpen()) {
            if (!g.hasDetailPermission()) {   //If the user does not have permission, don't submit
                Log.d(LOG_TAG, "User does not have permission to submit change.");
-               Toast.makeText(this, "You are not a detail admin for this group.", Toast.LENGTH_SHORT).show();
+               Toast.makeText(this, "You are not a detail admin for this group", Toast.LENGTH_SHORT).show();
                populateTextViews();
                progressSpinner.setVisibility(View.GONE);
                return;
@@ -508,6 +596,13 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
        updateG.setName(groupname);
        updateG.setDescription(description);
         Log.d(LOG_TAG, "Group in model: " + g.getName());  //Just checking to make sure the model is not changed yet
+
+        //Check to make sure the button is not spammed
+        if (saveRT != null) {
+            Log.d(LOG_TAG, "Preventing spam of submit button.");
+            Toast.makeText(this, "Already contacting server...", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
        //Save the group to the server, but do not affect the model until a response is received
        saveRT = updateG.getBaasDocument().save(SaveMode.IGNORE_VERSION, onSaveComplete);
@@ -598,6 +693,141 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
     }
     //endregion
 
+    //endregion
+
+
+    //region Methods for the leave button
+    private void submitLeave() {
+        //Check to make sure no other server stuff is happening
+        if (saveRT != null) {
+            Log.d(LOG_TAG, "Preventing button spam.");
+            Toast.makeText(this, "Already contacting server...", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        progressSpinner.setVisibility(View.VISIBLE);
+
+        //Get the current group to read from
+        List<Group2> lG = model.getActiveGroups();
+        Group2 g = null;
+        synchronized (lG) {
+            for (Group2 x : lG) {
+                if (x.equals(groupToEdit)) {
+                    g = x;
+                }
+            }
+        }
+        if (g == null) {
+            Toast.makeText(this, "This group is no longer available.", Toast.LENGTH_SHORT).show();
+            returnCancelled();
+            finish();
+            return;
+        }
+
+        //Check to make sure no other server stuff is happening
+        if (saveRT != null) {
+            Log.d(LOG_TAG, "Preventing button spam.");
+            Toast.makeText(this, "Already contacting server...", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        //Send the server requests
+        if (creator) {
+            saveRT = g.getBaasDocument().delete(onDeleteComplete);
+        } else {
+            Group2 updateG = new Group2(g.toJson());
+            updateG.removeSelf();
+            saveRT = updateG.getBaasDocument().save(SaveMode.IGNORE_VERSION, onRemoveComplete);
+        }
+
+    }
+
+    private final BaasHandler<BaasDocument> onRemoveComplete = new BaasHandler<BaasDocument>() {
+        @Override
+        public void handle(BaasResult<BaasDocument> result) {
+            saveRT = null;
+            if (result.isFailed()) {
+                Log.d(LOG_TAG, "Failed to leave: " + result.error());
+                makeToast("Unable to leave");
+                return;
+            } else if (result.isSuccess()) {
+                Log.d(LOG_TAG, "Leave success");
+                //Revoke permissions for this user
+                saveRT = result.value().revoke(Grant.ALL, BaasUser.current().getName(), onGrantComplete);
+                return;
+            }
+        }
+    };
+    private final BaasHandler<Void> onGrantComplete = new BaasHandler<Void>() {
+        @Override
+        public void handle(BaasResult<Void> result) {
+            saveRT = null;
+            if (result.isFailed()) {
+                Log.d(LOG_TAG, "Could not revoke: " + result.error());
+                makeToast("Error leaving, contact server admin");
+                return;
+            } else if (result.isSuccess()) {
+                Log.d(LOG_TAG, "Revoke success.");
+                completeDelete(1);
+                return;
+            }
+        }
+    };
+    private final BaasHandler<Void> onDeleteComplete = new BaasHandler<Void>() {
+        @Override
+        public void handle(BaasResult<Void> result) {
+            saveRT = null;
+            if (result.isFailed()) {
+                Log.d(LOG_TAG, "Failed to delete: " + result.error());
+                makeToast("Unable to delete");
+                return;
+            } else if (result.isSuccess()) {
+                Log.d(LOG_TAG, "Delete success");
+                completeDelete(0);
+                return;
+            }
+        }
+    };
+    private void completeDelete(int type) {
+        //Get the current group to read from
+        List<Group2> activeGroups = model.getActiveGroups();
+        synchronized (activeGroups) {
+            for (final ListIterator<Group2> i = activeGroups.listIterator(); i.hasNext(); ) {  //Setting up iterator
+                final Group2 current = i.next();    //need to get current group
+                if (current.equals(groupToEdit) || !current.isOnServer()) {
+                    Log.d(LOG_TAG, "Removing group: " + current.getName());
+                    i.remove(); //Remove the group from the active groups list
+                }
+            }
+        }
+
+        //Save the model
+        deleted = true;
+        Model.saveModel(this);
+
+        if (type == 0) {
+            makeToast("Group deleted");
+        } else {
+            makeToast("Group left");
+        }
+
+        finish();
+        return;
+    }
+    //endregion
+
+
+    //region Method for remove member button
+    public void removeMemberResponder(View view) {
+        Log.d(LOG_TAG, "Removing member");
+    }
+    //endregion
+
+
+    //region Method for easy toasts
+    private void makeToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
     //endregion
 
 

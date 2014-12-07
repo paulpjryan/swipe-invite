@@ -240,6 +240,51 @@ class Event implements Parcelable {
     }
     //endregion
 
+    //region toString for date and time
+    protected synchronized  String dateToString()
+    {
+        /*
+        String formatDate = "MM/dd/yyyy";
+        String formatTime = "hh:mma";
+        SimpleDateFormat sdfDate = new SimpleDateFormat(formatDate);
+        SimpleDateFormat sdfTime = new SimpleDateFormat(formatTime);
+
+        String beginDate = sdfDate.format(getBeginDate().getTime());
+        String endDate = sdfDate.format(getEndDate().getTime());
+        String beginTime = sdfTime.format(getBeginDate().getTime());
+        String endTime = sdfTime.format(getEndDate().getTime());
+
+        String s = "";
+
+        //Event is on the same day
+        if(beginDate.equals(endDate))
+        {
+            s += beginDate;
+            s += " ";
+            s += beginTime;
+            s += "-";
+            s += endTime;
+        }
+
+        else
+        {
+            s += beginDate;
+            s += " ";
+            s += beginTime;
+            s += "-";
+            s += endDate;
+            s += " ";
+            s += endTime;
+        }
+*/
+        String formatDate = "MM/dd/yyyy hh:mma";
+        SimpleDateFormat sdfDate = new SimpleDateFormat(formatDate);
+
+        String s = sdfDate.format(getBeginDate().getTime());
+
+        return s;
+    }
+
 
     //region Methods for setting and getting parent groups
     private synchronized void setParentGroups(List<?> groupList) throws EventException {

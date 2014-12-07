@@ -144,7 +144,7 @@ public class UpdateService extends IntentService {
         //endregion
 
 
-        //TODO Check for outdated events
+        //Check for outdated events
         eventCheck(model);
 
         //TODO Pulldown friends from groups

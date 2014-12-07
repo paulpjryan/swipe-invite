@@ -172,6 +172,12 @@
         android:smoothScrollbar="true"
         android:layout_weight="6"/>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+         >
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -180,9 +186,19 @@
         android:id="@+id/textView_groupMember"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/listView_events_group"
-        android:paddingTop="25dp"
-        android:layout_weight="0.5"/>
+        />
+
+    <!--<ImageButton
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:id="@+id/edit_group_editMemberButton"
+        android:src="@drawable/ic_action_edit"
+        android:background="@drawable/abc_item_background_holo_light"
+        android:layout_toEndOf="@+id/textView_groupMember"
+        android:layout_toRightOf="@+id/textView_groupMember"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"/> -->
+    </RelativeLayout>
 
     <ListView
         android:layout_width="match_parent"

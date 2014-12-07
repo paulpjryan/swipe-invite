@@ -46,12 +46,13 @@ public class MainActivity extends ActionBarActivity implements Observer {
     private ActionBarDrawerToggle mDrawerToggle;
 
     // Array of strings to initial counts
-    String[] mCount = new String[] {  "", "", "" };
+    String[] mCount = new String[] {  "", "", "", "" };
     // Array of integers points to images stored in /res/drawable-ldpi/
     int[] mIcons = new int[]{
             R.drawable.ic_action_new_event_dark,
             R.drawable.ic_action_event_dark,
-            R.drawable.ic_action_group_dark
+            R.drawable.ic_action_group_dark,
+            R.drawable.ic_delete_grey600_24dp
     };
 
     List<HashMap<String,String>> mList;
@@ -157,7 +158,6 @@ public class MainActivity extends ActionBarActivity implements Observer {
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,                  /* host Activity */
                 mDrawerLayout,         /* DrawerLayout object */
-                //R.drawable.ic_drawer,  /* nav drawer image to replace 'Up' caret */
                 R.string.drawer_open,  /* "open drawer" description for accessibility */
                 R.string.drawer_close  /* "close drawer" description for accessibility */
         ) {
@@ -308,11 +308,13 @@ public class MainActivity extends ActionBarActivity implements Observer {
     //endregion
 
 
+    //region Method to start event editing
     protected void startEventEdit(String id) {
         Intent intent = new Intent(this, EventEditActivity.class);
         intent.putExtra("eventID", id);
         startActivityForResult(intent, EVENT_EDIT_REQUEST_CODE);
     }
+    //endregion
 
 
     //region Method to start the profile edit activity
@@ -331,6 +333,8 @@ public class MainActivity extends ActionBarActivity implements Observer {
     }
     //endregion
 
+
+    //region Method to start event creation
     protected void startEventCreate() {
         Intent intent_sg2 = new Intent(this, EventCreationActivity.class);
         if (intent_sg2.resolveActivity(getPackageManager()) != null) {
@@ -339,6 +343,8 @@ public class MainActivity extends ActionBarActivity implements Observer {
             Toast.makeText(this, "Action unavailable", Toast.LENGTH_LONG).show();
         }
     }
+    //endregion
+
 
     //region Method to handle returning results from side activities around the main
     private static final int GROUP_CREATE_REQUEST_CODE = 1;
@@ -392,7 +398,7 @@ public class MainActivity extends ActionBarActivity implements Observer {
                 break;
         }
         Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
-        refresh();
+        //refresh();
     }
     //endregion
 
@@ -472,9 +478,6 @@ public class MainActivity extends ActionBarActivity implements Observer {
         Fragment fragment;
         Bundle args = new Bundle();
         switch (position) {
-            case 2:
-                fragment = new GroupsFragment();
-                break;
             case 0:
                 fragment = new EventsFragment();
                 args.putString("type", "waiting");
@@ -485,8 +488,16 @@ public class MainActivity extends ActionBarActivity implements Observer {
                 args.putString("type", "accepted");
                 fragment.setArguments(args);
                 break;
-            default:
+            case 2:
+                fragment = new GroupsFragment();
+                break;
+            case 3:
                 fragment = new EventsFragment();
+                args.putString("type", "rejected");
+                fragment.setArguments(args);
+                break;
+            default:
+                fragment = new GroupsFragment();
                 break;
         }
 

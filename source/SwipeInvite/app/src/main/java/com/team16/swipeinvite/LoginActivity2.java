@@ -3,7 +3,6 @@ package com.team16.swipeinvite;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,8 +28,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 
 public class LoginActivity2 extends ActionBarActivity {
@@ -203,7 +200,7 @@ public class LoginActivity2 extends ActionBarActivity {
     }
     @Override
     public void onBackPressed() {
-        return;
+        super.onBackPressed();
     }
     //endregion
 
@@ -254,6 +251,13 @@ public class LoginActivity2 extends ActionBarActivity {
     public void newUserResponder(View v) {
         //Launch a new activity to deal with a new user registration
         Intent intent = new Intent(this, NewUserLoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        startActivity(intent);
+    }
+
+    public void forgotPasswordResponder(View v) {
+        //Launch intent to recover password
+        Intent intent = new Intent (this, ForgotPasswordActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         startActivity(intent);
     }
@@ -564,7 +568,7 @@ public class LoginActivity2 extends ActionBarActivity {
     private void completeFriends(List<BaasUser> f) {
         //Convert all received user profiles to local objects and store them
         for (BaasUser u : f) {
-            Acquaintence a = new Acquaintence(u);
+            Acquaintance a = new Acquaintance(u);
             model.getFriends().add(a);
             Log.d(LOG_TAG, "Added friends to list.");
         }

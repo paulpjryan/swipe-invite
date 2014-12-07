@@ -8,7 +8,7 @@ import com.baasbox.android.BaasUser;
 /**
  * Created by kylekrynski on 10/22/14.
  */
-class Acquaintence implements Parcelable{
+class Acquaintance implements Parcelable{
     //region Constant keys for json data contained in user object
     private static final String COMMON_NAME_KEY =  "common_name";
     private static final String GENDER_KEY = "gender";
@@ -29,18 +29,18 @@ class Acquaintence implements Parcelable{
         return 0;
     }
 
-    public static final Parcelable.Creator<Acquaintence> CREATOR
-            = new Parcelable.Creator<Acquaintence>() {
-        public Acquaintence createFromParcel(Parcel in) {
-            return new Acquaintence(in);
+    public static final Parcelable.Creator<Acquaintance> CREATOR
+            = new Parcelable.Creator<Acquaintance>() {
+        public Acquaintance createFromParcel(Parcel in) {
+            return new Acquaintance(in);
         }
 
-        public Acquaintence[] newArray(int size) {
-            return new Acquaintence[size];
+        public Acquaintance[] newArray(int size) {
+            return new Acquaintance[size];
         }
     };
 
-    private Acquaintence(Parcel in) {
+    private Acquaintance(Parcel in) {
         user = in.readParcelable(BaasUser.class.getClassLoader());
     }
     //endregion
@@ -48,7 +48,7 @@ class Acquaintence implements Parcelable{
 
     //region Constructors
     //Create a user object from a server pulldown in which you dont already have an instance
-    public Acquaintence(BaasUser u) {
+    public Acquaintance(BaasUser u) {
         this.user = u;
     }
     //endregion
@@ -96,7 +96,7 @@ class Acquaintence implements Parcelable{
 
 
     //region Methods for checking equality
-    protected boolean equals(Acquaintence other) {
+    protected boolean equals(Acquaintance other) {
         return equals(other.getUsername());
     }
 
