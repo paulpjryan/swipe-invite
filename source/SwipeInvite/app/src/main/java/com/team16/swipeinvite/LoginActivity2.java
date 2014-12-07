@@ -200,7 +200,7 @@ public class LoginActivity2 extends ActionBarActivity {
     }
     @Override
     public void onBackPressed() {
-        return;
+        super.onBackPressed();
     }
     //endregion
 
@@ -251,6 +251,13 @@ public class LoginActivity2 extends ActionBarActivity {
     public void newUserResponder(View v) {
         //Launch a new activity to deal with a new user registration
         Intent intent = new Intent(this, NewUserLoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        startActivity(intent);
+    }
+
+    public void forgotPasswordResponder(View v) {
+        //Launch intent to recover password
+        Intent intent = new Intent (this, ForgotPasswordActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         startActivity(intent);
     }

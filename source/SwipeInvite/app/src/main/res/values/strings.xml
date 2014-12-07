@@ -79,7 +79,7 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
-    <string name="title_activity_group_edit">View/Edit Group</string>
+    <string name="title_activity_group_edit">Edit Group</string>
     <string name="login_remember">Remember Me</string>
 
     <!-- GROUP CREATION STUFF -->
@@ -126,7 +126,6 @@
     <string name="updated_just_now">Just updated</string>
     <string name="time_error">time error</string>
 
-
     <!-- Drawer labels -->
     <string-array name="drawer_items">
         <item>Invites</item> <!--0-->
@@ -134,9 +133,9 @@
         <item>Groups</item> <!--2-->
         <item>Declined</item> <!--3-->
     </string-array>
+
     <string name="add_group2event">Add groups</string>
     <string name="event_creation_submit">Create Event</string>
-
-
+    <string name="title_activity_forgot_password">Password Recovery</string>
 
 </resources>
