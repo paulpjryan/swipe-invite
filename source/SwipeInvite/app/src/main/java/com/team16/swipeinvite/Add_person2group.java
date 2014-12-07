@@ -148,8 +148,8 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
                 g.addUser(username);
                 saveRT = g.getBaasDocument().save(SaveMode.IGNORE_VERSION, onSaveComplete);
 
-                //Grant the permission for the user
-                grantRT = g.getBaasDocument().grant(Grant.ALL, username, onGrantComplete);
+                //Grant the permission for the user -- CAUSING ORIENT DB ISSUES
+                //grantRT = g.getBaasDocument().grant(Grant.ALL, username, onGrantComplete);
 
                 //Set the variable to remember the username
                 userToInvite = username;
@@ -429,6 +429,9 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
 
             //Save the model
             Model.saveModel(this);
+
+            //Grant the permission for the user
+            grantRT = g.getBaasDocument().grant(Grant.ALL, userToInvite, onGrantComplete);
 
         } else if (result.isCanceled()) {
             Log.d(LOG_TAG, "Save cancelled.");
