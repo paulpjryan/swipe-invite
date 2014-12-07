@@ -332,6 +332,7 @@ public class MainActivity extends ActionBarActivity implements Observer {
     }
     //endregion
 
+
     protected void startEventCreate() {
         Intent intent_sg2 = new Intent(this, EventCreationActivity.class);
         if (intent_sg2.resolveActivity(getPackageManager()) != null) {
@@ -340,6 +341,7 @@ public class MainActivity extends ActionBarActivity implements Observer {
             Toast.makeText(this, "Action unavailable", Toast.LENGTH_LONG).show();
         }
     }
+
 
     //region Method to handle returning results from side activities around the main
     private static final int GROUP_CREATE_REQUEST_CODE = 1;
