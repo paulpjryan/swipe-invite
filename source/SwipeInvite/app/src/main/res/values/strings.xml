@@ -128,9 +128,10 @@
 
     <!-- Drawer labels -->
     <string-array name="drawer_items">
-        <item>Invites</item>
-        <item>Events</item>
-        <item>Groups</item>
+        <item>Invites</item> <!--0-->
+        <item>Events</item> <!--1-->
+        <item>Groups</item> <!--2-->
+        <item>Declined</item> <!--3-->
     </string-array>
 
     <string name="add_group2event">Add groups</string>
