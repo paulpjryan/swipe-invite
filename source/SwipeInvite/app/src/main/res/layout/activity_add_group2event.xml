@@ -9,7 +9,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.team16.swipeinvite.Add_person2group" >
 
-    <LinearLayout
+    <!-- <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
@@ -27,16 +27,16 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:src="@drawable/abc_ic_search" />
-    </LinearLayout>
+    </LinearLayout> -->
 
-    <Button
+    <!--<Button
         android:id="@+id/add_group_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/add_person2group_btn"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true" /> -->
 
     <ListView
         android:layout_width="wrap_content"
@@ -44,7 +44,7 @@
         android:id="@+id/add_group_listView"
         android:layout_below="@+id/linearLayout1"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_above="@+id/add_group_button" />
+        android:layout_alignParentStart="true" />
+        <!--android:layout_above="@+id/add_group_button"-->
 
 </RelativeLayout>

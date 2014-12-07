@@ -59,7 +59,7 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
 
     //region Local variables for view elements
     private Group group;
-    private Button ivButton;
+    //private Button ivButton;
     private EditText nameText;
     private ImageButton scButton;
     private ListView ListView_add_people;
@@ -92,10 +92,10 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
             groupToEdit = getIntent().getStringExtra("id");
         }
 
-        ivButton = (Button)findViewById(R.id.add_person_button);
+        //ivButton = (Button)findViewById(R.id.add_person_button);
         nameText = (EditText)findViewById(R.id.add_person);
         scButton = (ImageButton)findViewById(R.id.add_person_searchBtn);
-        ivButton.setOnClickListener(this);
+        //ivButton.setOnClickListener(this);
         nameText.setOnClickListener(this);
         scButton.setOnClickListener(this);
         progressSpinner = (ProgressBar) findViewById(R.id.progressBar_add_member);

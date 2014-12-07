@@ -28,14 +28,14 @@
             android:src="@drawable/abc_ic_search" />
     </LinearLayout>
 
-    <Button
+    <!-- <Button
         android:id="@+id/add_person_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/add_person2group_btn"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true" /> -->
 
     <ListView
         android:layout_width="wrap_content"
