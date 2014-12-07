@@ -214,6 +214,10 @@
             android:name="com.team16.swipeinvite.EventMoveService"
             android:exported="false" >
         </service>
+        <service
+            android:name="com.team16.swipeinvite.AddPersonService"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>
