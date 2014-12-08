@@ -145,11 +145,11 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
                 }
 
                 //Add the user to the group
-                g.addUser(username);
-                saveRT = g.getBaasDocument().save(SaveMode.IGNORE_VERSION, onSaveComplete);
+                //g.addUser(username);
+                //saveRT = g.getBaasDocument().save(SaveMode.IGNORE_VERSION, onSaveComplete);
 
                 //Grant the permission for the user -- CAUSING ORIENT DB ISSUES
-                //grantRT = g.getBaasDocument().grant(Grant.ALL, username, onGrantComplete);
+                grantRT = g.getBaasDocument().grant(Grant.ALL, username, onGrantComplete);
 
                 //Set the variable to remember the username
                 userToInvite = username;
@@ -472,10 +472,17 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
             Log.d(LOG_TAG, "Grant cancelled.");
             return;
         }
+        //Send intent to start service
+        Intent intent = new Intent(this, AddPersonService.class);
+        intent.putExtra("groupID", groupToEdit);
+        intent.putExtra("username", userToInvite);
+        startService(intent);
 
         //Check to see if the push can be sent
         if (saveRT == null) {
-            sendPush();
+            //sendPush();
+            makeToast("Invite sent");
+            progressSpinner.setVisibility(View.GONE);
         }
     }
     //endregion
