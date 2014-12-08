@@ -144,13 +144,13 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
         mEndDateText = (EditText) findViewById(R.id.edit_end_date_text);
         mEndTimeText = (EditText) findViewById(R.id.edit_end_time_text);
 
-        mEventNameField = (TextView) findViewById(R.id.edit_text_event_name);
+       // mEventNameField = (TextView) findViewById(R.id.edit_text_event_name);
         mEventLocationField = (TextView) findViewById(R.id.edit_text_event_location);
         mEventDescriptionField = (TextView) findViewById(R.id.edit_text_event_description);
 
         //Lock them
-        mEventNameField.setEnabled(false);
-        mEventNameField.setFocusable(false);
+       // mEventNameField.setEnabled(false);
+       // mEventNameField.setFocusable(false);
         mEventLocationField.setEnabled(false);
         mEventLocationField.setFocusable(false);
         mEventDescriptionField.setEnabled(false);
@@ -229,7 +229,7 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
         }
 
         //Populate the views
-        mEventNameField.setText(event.getName());
+       // mEventNameField.setText(event.getName());
         setTitle(event.getName());
         mEventLocationField.setText(event.getLocation());
         mEventDescriptionField.setText(event.getDescription());
