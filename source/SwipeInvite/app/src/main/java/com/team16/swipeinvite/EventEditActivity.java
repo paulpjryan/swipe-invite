@@ -230,6 +230,7 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
 
         //Populate the views
         mEventNameField.setText(event.getName());
+        setTitle(event.getName());
         mEventLocationField.setText(event.getLocation());
         mEventDescriptionField.setText(event.getDescription());
 
