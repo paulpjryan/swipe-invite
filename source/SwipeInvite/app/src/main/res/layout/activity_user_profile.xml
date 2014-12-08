@@ -9,26 +9,6 @@
     android:orientation="vertical"
     tools:context="com.team16.swipeinvite.UserProfileActivity" >
 
-    <LinearLayout
-        android:id="@+id/linearLayout_profile_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:weightSum="10">
-
-		    <EditText
-		        android:id="@+id/editText_user_username"
-		        android:layout_weight="7"
-		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content"
-                android:autoText="true"
-                android:hint="@string/user_profile_not_editable"
-                android:background="@drawable/textinputborder"
-
-                android:singleLine="true"
-                android:maxLength="20"
-                android:enabled="false" />
-
-    </LinearLayout>
 
  	<LinearLayout
         android:id="@+id/linearLayout_profile_person_name"

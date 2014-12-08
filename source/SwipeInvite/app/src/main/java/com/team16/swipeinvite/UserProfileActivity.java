@@ -63,7 +63,7 @@ public class UserProfileActivity extends ActionBarActivity implements Observer {
         Log.d(LOG_TAG, "Model active group size: " + /*model.activeGroups.size()*/ model.getActiveGroups().size());
 
         //Setup local variables for the views
-        usernameField = (EditText) findViewById(R.id.editText_user_username);
+       // usernameField = (EditText) findViewById(R.id.editText_user_username);
         //passwordField = (EditText) findViewById(R.id.editText_user_password);
         fullnameField = (TextView) findViewById(R.id.editText_user_name);
         emailField = (TextView) findViewById(R.id.editText_user_email);
@@ -72,6 +72,8 @@ public class UserProfileActivity extends ActionBarActivity implements Observer {
         femaleButton = (RadioButton) findViewById(R.id.Radiobutton_user_female);
         progressSpinner = (ProgressBar) findViewById(R.id.progressBar_user_profile);
         progressSpinner.setVisibility(View.GONE);
+
+
     }
 
     @Override
@@ -135,7 +137,8 @@ public class UserProfileActivity extends ActionBarActivity implements Observer {
 
     //region Method to populate the views with model data
     private void populateViews() {
-        usernameField.setText(model.currentUser.getUsername());
+       // usernameField.setText(model.currentUser.getUsername());
+        setTitle(model.currentUser.getUsername());
         fullnameField.setText(model.currentUser.getCommonName());
         emailField.setText(model.currentUser.getEmail());
         if (model.currentUser.isMale()) {
