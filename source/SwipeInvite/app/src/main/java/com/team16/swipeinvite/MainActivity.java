@@ -541,6 +541,7 @@ public class MainActivity extends ActionBarActivity implements Observer {
     }
     //endregion
 
+
     //region Methods for pulldown refresh
     private RefreshableView refreshableView;
 
@@ -561,5 +562,6 @@ public class MainActivity extends ActionBarActivity implements Observer {
         }
     }
     //endregion
+
 
 }

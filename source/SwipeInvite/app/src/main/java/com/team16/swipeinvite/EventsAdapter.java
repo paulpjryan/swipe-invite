@@ -67,7 +67,6 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
         // A ViewHolder keeps references to children views to avoid unnecessary calls
         // to findViewById() on each row.
         ViewHolder holder;
-        final View convertView2 = convertView;
 
         if (convertView == null) {
             if (type == TYPE_ACCEPTED)
@@ -93,15 +92,18 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
             // and the ImageView.
             holder = (ViewHolder) convertView.getTag();
         }
+        final View convertView2 = convertView;
 
 
         // If weren't re-ordering this you could rely on what you set last time
         holder.title.setText((filteredData.get(position).getName()));
         holder.location.setText((filteredData.get(position).getLocation()));
         holder.datetime.setText((filteredData.get(position).dateToString()));
+        holder.eventID = filteredData.get(position).getId();
 
         if (type == TYPE_ACCEPTED || type == TYPE_PENDING) {
             holder.declineButton = (ImageButton) convertView.findViewById(R.id.list_item_reject_button);
+            holder.declineButton.setFocusable(false);
             holder.declineButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -115,6 +117,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
 
         if (type == TYPE_PENDING || type == TYPE_REJECTED) {
             holder.acceptButton = (ImageButton) convertView.findViewById(R.id.list_item_accept_button);
+            holder.acceptButton.setFocusable(false);
             holder.acceptButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -126,6 +129,16 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
             });
         }
 
+        //convertView.setLongClickable(false);
+        convertView.setClickable(true);
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(LOG_TAG, "Event clicked!!");
+                ((MainActivity) convertView2.getContext()).startEventEdit(filteredData.get(position).getId());
+            }
+        });
+
         return convertView;
     }
 
@@ -135,6 +148,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
         TextView datetime;
         ImageButton acceptButton;
         ImageButton declineButton;
+        String eventID;
     }
 
     public Filter getFilter() {
