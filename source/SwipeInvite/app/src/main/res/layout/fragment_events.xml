@@ -6,7 +6,9 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity$EventsFragment"
     android:paddingLeft="12dp"
+    android:paddingStart="12dp"
     android:paddingRight="16dp"
+    android:paddingEnd="16dp"
     android:paddingTop="5dp"
     android:paddingBottom="10dp"
     android:focusableInTouchMode="true">
@@ -14,20 +16,23 @@
     <EditText
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:id="@+id/et_search_group"
-        android:layout_gravity="left|top"
+        android:id="@+id/et_search_event"
+        android:layout_gravity="start|top"
+        android:inputType="text"
         android:ems="8"/>
-     <com.team16.swipeinvite.RefreshableView
-         android:id="@+id/refreshable_view"
-         android:layout_width="fill_parent"
-         android:layout_height="fill_parent"
-         android:layout_below="@+id/et_search_group">
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/listview_events"
-        android:layout_gravity="center_horizontal|bottom"
-        />
+
+    <com.team16.swipeinvite.RefreshableView
+        android:id="@+id/refreshable_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/et_search_event">
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/listview_events"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_below="@+id/et_search_event"/>
 
     </com.team16.swipeinvite.RefreshableView>
 
@@ -38,7 +43,8 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:padding="10dp"
-        android:src="@drawable/abc_ic_search_api_holo_light"/>
+        android:src="@drawable/abc_ic_search_api_holo_light"
+        android:contentDescription="@string/fragment_events_search_icon" />
 
     <com.melnykov.fab.FloatingActionButton
         android:id="@+id/eventsfab"

@@ -46,7 +46,7 @@ public class MainActivity extends ActionBarActivity implements Observer {
     private ActionBarDrawerToggle mDrawerToggle;
 
     // Array of strings to initial counts
-    String[] mCount = new String[] {  "", "", "", "" };
+    String[] mCount = new String[] {  "", "", "", "", "" };
     // Array of integers points to images stored in /res/drawable-ldpi/
     int[] mIcons = new int[]{
             R.drawable.ic_action_new_event_dark,

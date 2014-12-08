@@ -48,10 +48,9 @@ public class EventMoveService extends IntentService {
         EventLists[EVENT_PENDING] = model.getWaitingEvents();
         EventLists[EVENT_REJECTED] = model.getRejectedEvents();
 
-        // Find what list the event was in
+        // Find what list the event is in
         int from = -1;
         Event eventToMove = null;
-        //Check to see if all active events have pulldown equivalents
         outerLoop: // dirty hack
         for (int a = 0; a < 3; a++) {
             for (Event current : EventLists[a]) {

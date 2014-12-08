@@ -137,5 +137,6 @@
     <string name="add_group2event">Add groups</string>
     <string name="event_creation_submit">Create Event</string>
     <string name="title_activity_forgot_password">Password Recovery</string>
+    <string name="fragment_events_search_icon">Search Icon</string>
 
 </resources>
