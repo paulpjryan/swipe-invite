@@ -10,7 +10,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewConfiguration;
-import android.view.ViewGroup.MarginLayoutParams;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;

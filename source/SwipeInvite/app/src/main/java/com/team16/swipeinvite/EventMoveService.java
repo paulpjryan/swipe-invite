@@ -51,7 +51,8 @@ public class EventMoveService extends IntentService {
         // Find what list the event is in
         int from = -1;
         Event eventToMove = null;
-        outerLoop: // dirty hack
+        outerLoop:
+        // dirty hack
         for (int a = 0; a < 3; a++) {
             for (Event current : EventLists[a]) {
                 if (current.equals(eventID)) {

@@ -1,16 +1,17 @@
 package com.team16.swipeinvite;
 
 
+import android.util.Log;
+
 import com.baasbox.android.BaasDocument;
+import com.baasbox.android.BaasUser;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Observable;
-import android.util.Log;
-import com.baasbox.android.BaasUser;
 
 
-public class Group extends Observable{
+public class Group extends Observable {
     User creator;
     String groupname;
     String description;
@@ -159,7 +160,7 @@ public class Group extends Observable{
         if ((d.getId()).equals(groupDoc.getId())) {
             return true;
         }
-            return false;
+        return false;
     }
 
     //Method to figure out if a group equals a group
@@ -172,7 +173,7 @@ public class Group extends Observable{
     }
 
     //Static method to convert a Group object to a BaasDocument
-    public static BaasDocument getBaasGroup (Group g) {
+    public static BaasDocument getBaasGroup(Group g) {
         BaasDocument d = new BaasDocument("group");
         try {
             d.putString("name", g.groupname);

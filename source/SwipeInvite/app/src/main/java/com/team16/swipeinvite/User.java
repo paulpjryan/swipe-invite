@@ -3,19 +3,20 @@ package com.team16.swipeinvite;
 
 import android.util.Log;
 
-import java.util.*;
 import com.baasbox.android.BaasUser;
 
+import java.util.ArrayList;
+
 public class User {
-	String name;  //registered
-	String username;  //default
+    String name;  //registered
+    String username;  //default
     //private String password;  //default  //OBSOLETE WITH NEW PROTOCOL FOR USER HANDLING
-	String email;  //private
-	boolean male;  //registered
-	int frndcount = 0;  //registered
-	int grpcount = 0;  //private
-	ArrayList<User> friends = new ArrayList<User>();  //server call, friend
-	ArrayList<Group> groups = new ArrayList<Group>();  //server call, private
+    String email;  //private
+    boolean male;  //registered
+    int frndcount = 0;  //registered
+    int grpcount = 0;  //private
+    ArrayList<User> friends = new ArrayList<User>();  //server call, friend
+    ArrayList<Group> groups = new ArrayList<Group>();  //server call, private
 
     private BaasUser userObj;
 
@@ -24,7 +25,7 @@ public class User {
     }
 
     /*
-	public User(String nm, String usrnm, String pass) {
+    public User(String nm, String usrnm, String pass) {
 		this.name = nm;
 		this.username = usrnm;
         this.password = pass;
@@ -47,84 +48,84 @@ public class User {
     }
 	*/
 
-	public void setGender(boolean value) {
-		this.male = value;
-		
-	}
-	
-	public void setEmail(String addr) {
-		this.email = addr;
-		
-	}
-	
-	public String getEmail() {
-		return this.email;
-		
-	}
-	
-	public boolean isMale() {
-		return this.male;
-		
-	}
-	
-	public void addFriend(User frnd) {
-		this.friends.add(frnd);
-		this.frndcount++;
-		
-	}
-	
-	public String getFullName() {
-		return this.name;
-		
-	}
-	
-	public String getUserName() {
-		return this.username;
-		
-	}
-	
-	public void removeFriend(User frnd) {
-		this.friends.remove(frnd);
-		this.frndcount--;
-		
-	}
-	
-	public void removeFriend(int i) {
-		this.friends.remove(i);
-		this.frndcount--;
-		
-	}
-	
-	public void addGroup(Group grp) {
-		this.groups.add(grp);
-		this.grpcount++;
-		
-	}
-	
-	public void removeGroup(Group grp) {
-		this.groups.remove(grp);
-		this.grpcount--;
-		
-	}
-	
-	public void removeGroup(int i) {
-		this.groups.remove(i);
-		this.grpcount--;
-		
-	}
-	
-	public int getGroupCount() {
-		return grpcount;
-		
-	}
-	
-	public int getFriendCount() {
-		return frndcount;
-		
-	}
+    public void setGender(boolean value) {
+        this.male = value;
+
+    }
+
+    public void setEmail(String addr) {
+        this.email = addr;
+
+    }
+
+    public String getEmail() {
+        return this.email;
+
+    }
+
+    public boolean isMale() {
+        return this.male;
+
+    }
+
+    public void addFriend(User frnd) {
+        this.friends.add(frnd);
+        this.frndcount++;
+
+    }
+
+    public String getFullName() {
+        return this.name;
+
+    }
+
+    public String getUserName() {
+        return this.username;
+
+    }
+
+    public void removeFriend(User frnd) {
+        this.friends.remove(frnd);
+        this.frndcount--;
+
+    }
+
+    public void removeFriend(int i) {
+        this.friends.remove(i);
+        this.frndcount--;
+
+    }
+
+    public void addGroup(Group grp) {
+        this.groups.add(grp);
+        this.grpcount++;
+
+    }
+
+    public void removeGroup(Group grp) {
+        this.groups.remove(grp);
+        this.grpcount--;
+
+    }
+
+    public void removeGroup(int i) {
+        this.groups.remove(i);
+        this.grpcount--;
+
+    }
+
+    public int getGroupCount() {
+        return grpcount;
+
+    }
+
+    public int getFriendCount() {
+        return frndcount;
+
+    }
 
     //Method used to unwrap the contents of a BaasUser object to this user object
-    public void unWrapUser (BaasUser u) {
+    public void unWrapUser(BaasUser u) {
         if (u == null) {
             Log.d("LOG", "User null.");
             return;
@@ -188,7 +189,7 @@ public class User {
 
         //Setting REGISTERED properties
         u.getScope(BaasUser.Scope.REGISTERED).putString("name", this.name);
-        u.getScope(BaasUser.Scope.REGISTERED).putBoolean("male" , this.male);
+        u.getScope(BaasUser.Scope.REGISTERED).putBoolean("male", this.male);
         u.getScope(BaasUser.Scope.REGISTERED).putLong("frndcount", this.frndcount);
 
         //Setting PRIVATE properties
@@ -200,7 +201,7 @@ public class User {
     }
 
     //Method to get the BaasUser object stored in this
-    public BaasUser getUserObj(){
+    public BaasUser getUserObj() {
         return userObj;
     }
 

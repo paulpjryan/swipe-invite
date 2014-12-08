@@ -2,7 +2,6 @@ package com.team16.swipeinvite;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.content.Context;
 import android.util.Log;
 
 import com.baasbox.android.BaasDocument;
@@ -11,9 +10,7 @@ import com.baasbox.android.BaasResult;
 import com.baasbox.android.SaveMode;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -202,7 +199,7 @@ public class UpdateService extends IntentService {
         Log.d(LOG_TAG, "Removing event from groups.");
         //Iterate through all groups and remove the outdated event
         List<Group2> activeGroups = model.getActiveGroups();
-        synchronized(activeGroups) {
+        synchronized (activeGroups) {
             for (Group2 x : activeGroups) {
                 if (x.containsEvent(eventID)) {
                     x.removeEvent(eventID);

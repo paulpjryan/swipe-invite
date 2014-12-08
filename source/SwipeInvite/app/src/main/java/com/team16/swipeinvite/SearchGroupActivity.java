@@ -1,52 +1,37 @@
 package com.team16.swipeinvite;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baasbox.android.BaasDocument;
 import com.baasbox.android.BaasHandler;
 import com.baasbox.android.BaasQuery;
 import com.baasbox.android.BaasResult;
-import com.baasbox.android.BaasUser;
-import com.baasbox.android.Grant;
 import com.baasbox.android.RequestToken;
-import com.baasbox.android.SaveMode;
-import com.google.android.gms.games.Game;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-
-
-import static com.team16.swipeinvite.R.id.list_add_person_tv;
 
 public class SearchGroupActivity extends ActionBarActivity implements View.OnClickListener, Observer {
     private static final String LOG_TAG = "SearchGroup";
 
 
     //region Local variables for views
-    private  ListView ListView_search_group;
+    private ListView ListView_search_group;
     private GroupsAdapter ListAdapter;
     private ImageButton bt_search;
     private EditText nameText;
@@ -75,9 +60,9 @@ public class SearchGroupActivity extends ActionBarActivity implements View.OnCli
 
     //region Lifecycle methods
     @Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_search_group);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_search_group);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //Get the model instance
@@ -87,7 +72,7 @@ public class SearchGroupActivity extends ActionBarActivity implements View.OnCli
         progressSpinner = (ProgressBar) findViewById(R.id.progressBar_group_search);
         loaderSpin(false);
 
-       // Button bt_join = (Button) findViewById(R.id.button_searchgroup_add);
+        // Button bt_join = (Button) findViewById(R.id.button_searchgroup_add);
         nameText = (EditText) findViewById(R.id.editText_searchgroup);
         bt_search = (ImageButton) findViewById(R.id.button_searchgroup_search);
         bt_search.setOnClickListener(this);
@@ -95,10 +80,9 @@ public class SearchGroupActivity extends ActionBarActivity implements View.OnCli
 
         ListView_search_group.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id)
-            {
+                                    int position, long id) {
                 //Get the correct group
-               Group2 group = (Group2) ListAdapter.getItem(position);
+                Group2 group = (Group2) ListAdapter.getItem(position);
 
                 //Create the intent to start the join activity
                 Intent intent = new Intent(SearchGroupActivity.this, SearchSpeMemberActivity.class);
@@ -108,7 +92,8 @@ public class SearchGroupActivity extends ActionBarActivity implements View.OnCli
                 startActivity(intent);
             }
         });
-	}
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -121,17 +106,20 @@ public class SearchGroupActivity extends ActionBarActivity implements View.OnCli
         ListAdapter = new GroupsAdapter(this, new ArrayList<Group2>());
         ListView_search_group.setAdapter(ListAdapter);
     }
+
     @Override
     protected void onPause() {
         super.onPause();
         Log.d(LOG_TAG, "onPause");
     }
+
     @Override
     protected void onStart() {
         super.onStart();
         Log.d(LOG_TAG, "onStart");
         model.addObserver(this);
     }
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -146,30 +134,29 @@ public class SearchGroupActivity extends ActionBarActivity implements View.OnCli
 
     //region Methods for menus and options
     @Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.search_group, menu);
-		return true;
-	}
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.search_group, menu);
+        return true;
+    }
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
     //endregion
 
 
     //region Methods for the clicking of a button
     public void onClick(View v) {
-        switch(v.getId())
-        {
+        switch (v.getId()) {
 
             case R.id.button_searchgroup_search:
 
@@ -246,6 +233,7 @@ public class SearchGroupActivity extends ActionBarActivity implements View.OnCli
         ListView_search_group.setAdapter(ListAdapter);
         return;
     }
+
     private void completeSearch(List<BaasDocument> groupList) {
         loaderSpin(false);
         if (groupList == null || groupList.size() == 0) {
@@ -271,6 +259,7 @@ public class SearchGroupActivity extends ActionBarActivity implements View.OnCli
     private void makeToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
+
     private void loaderSpin(boolean visible) {
         if (visible) {
             progressSpinner.setVisibility(View.VISIBLE);

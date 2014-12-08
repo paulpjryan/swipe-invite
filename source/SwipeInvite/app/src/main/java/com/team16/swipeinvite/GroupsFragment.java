@@ -86,8 +86,7 @@ public class GroupsFragment extends Fragment {
         //This just opens group_edit on tap. We should have some sort of edit action or button.
         listView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id)
-            {
+                                    int position, long id) {
                 //Figure out which group is being referred to and pass it to the activity
                 Group2 g = (Group2) mArrayAdapter.getItem(position);
                 //Call the method in the main activity to start the group edit activity
@@ -95,13 +94,13 @@ public class GroupsFragment extends Fragment {
             }
         });
 
-        FloatingActionButton fab = (FloatingActionButton)rootView.findViewById(R.id.groupsfab);
+        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.groupsfab);
         fab.attachToListView(listView);
         fab.setShadow(true);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity)getActivity()).startGroupCreate();
+                ((MainActivity) getActivity()).startGroupCreate();
             }
         });
 

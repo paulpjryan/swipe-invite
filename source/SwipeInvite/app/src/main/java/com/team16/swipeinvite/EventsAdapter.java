@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
@@ -27,8 +26,8 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
     public static final int TYPE_REJECTED = 2;
     public static final int TYPE_NO_BUTTONS = -1;
 
-    private List<Event>originalData = null;
-    protected List<Event>filteredData = null;
+    private List<Event> originalData = null;
+    protected List<Event> filteredData = null;
     private LayoutInflater mInflater;
     private ItemFilter mFilter = new ItemFilter();
     protected int type; //0 = accepted, 1 = pending, 2 = declined, -1 = NO BUTTONS
@@ -70,10 +69,10 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
         ViewHolder holder;
         final View convertView2 = convertView;
 
-        if( convertView == null ) {
-            if(type == TYPE_ACCEPTED)
+        if (convertView == null) {
+            if (type == TYPE_ACCEPTED)
                 convertView = mInflater.inflate(R.layout.list_item_event_accepted, parent, false);
-            else if(type == TYPE_PENDING)
+            else if (type == TYPE_PENDING)
                 convertView = mInflater.inflate(R.layout.list_item_event, parent, false);
             else if (type == TYPE_REJECTED)
                 convertView = mInflater.inflate(R.layout.list_item_event_declined, parent, false);
@@ -101,8 +100,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
         holder.location.setText((filteredData.get(position).getLocation()));
         holder.datetime.setText((filteredData.get(position).dateToString()));
 
-        if( type == TYPE_ACCEPTED || type == TYPE_PENDING )
-        {
+        if (type == TYPE_ACCEPTED || type == TYPE_PENDING) {
             holder.declineButton = (ImageButton) convertView.findViewById(R.id.list_item_reject_button);
             holder.declineButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -115,8 +113,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
             });
         }
 
-        if( type == TYPE_PENDING || type == TYPE_REJECTED )
-        {
+        if (type == TYPE_PENDING || type == TYPE_REJECTED) {
             holder.acceptButton = (ImageButton) convertView.findViewById(R.id.list_item_accept_button);
             holder.acceptButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -157,7 +154,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
             int count = list.size();
             final ArrayList<Event> nlist = new ArrayList<Event>(count);
 
-            String filterableString ;
+            String filterableString;
 
             for (Event aList : list) {
                 filterableString = aList.getName();

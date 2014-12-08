@@ -9,13 +9,11 @@ import com.baasbox.android.BaasDocument;
 import com.baasbox.android.BaasUser;
 import com.baasbox.android.json.JsonArray;
 import com.baasbox.android.json.JsonObject;
-import com.google.android.gms.games.GamesMetadata;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -88,7 +86,7 @@ class Event implements Parcelable {
     }
 
     //Create a brand new group object from a Json object
-    protected Event(JsonObject j) throws EventException  {
+    protected Event(JsonObject j) throws EventException {
         setFromJson(j);
     }
     //endregion
@@ -139,7 +137,8 @@ class Event implements Parcelable {
 
     //region Getter and setter for event name
     protected synchronized void setName(String name) throws EventException {
-        if (!hasPermission()) throw new EventException("User does not have permission to edit event.");
+        if (!hasPermission())
+            throw new EventException("User does not have permission to edit event.");
         this.event.put(NAME_KEY, name);
     }
 
@@ -151,7 +150,8 @@ class Event implements Parcelable {
 
     //region Getter and setter for event description
     protected synchronized void setDescription(String description) throws EventException {
-        if (!hasPermission()) throw new EventException("User does not have permission to edit event.");
+        if (!hasPermission())
+            throw new EventException("User does not have permission to edit event.");
         this.event.put(DESCRIPTION_KEY, description);
     }
 
@@ -167,6 +167,7 @@ class Event implements Parcelable {
         count++;
         this.event.put(ATTENDEE_KEY, count);
     }
+
     protected void removeUser() {
         int count = this.event.getInt(ATTENDEE_KEY, 0);
         if (count == 0) {
@@ -180,7 +181,8 @@ class Event implements Parcelable {
 
     //region Getter and setter for location
     protected synchronized void setLocation(String location) throws EventException {
-        if (!hasPermission()) throw new EventException("User does not have permission to edit event.");
+        if (!hasPermission())
+            throw new EventException("User does not have permission to edit event.");
         this.event.put(LOCATION_KEY, location);
     }
 
@@ -192,7 +194,8 @@ class Event implements Parcelable {
 
     //region Getter and setter for begin date
     protected synchronized void setBeginDate(Calendar startDate) throws EventException {
-        if (!hasPermission()) throw new EventException("User does not have permission to edit event.");
+        if (!hasPermission())
+            throw new EventException("User does not have permission to edit event.");
         SimpleDateFormat df = new SimpleDateFormat();
         String date = df.format(startDate.getTime());
         this.event.put(BEGIN_DATE_KEY, date);
@@ -214,7 +217,8 @@ class Event implements Parcelable {
 
     //region Getter and setter for end date
     protected synchronized void setEndDate(Calendar endDate) throws EventException {
-        if (!hasPermission()) throw new EventException("User does not have permission to edit event.");
+        if (!hasPermission())
+            throw new EventException("User does not have permission to edit event.");
         SimpleDateFormat df = new SimpleDateFormat();
         String date = df.format(endDate.getTime());
         this.event.put(END_DATE_KEY, date);
@@ -241,8 +245,7 @@ class Event implements Parcelable {
     //endregion
 
     //region toString for date and time
-    protected synchronized  String dateToString()
-    {
+    protected synchronized String dateToString() {
         /*
         String formatDate = "MM/dd/yyyy";
         String formatTime = "hh:mma";
@@ -291,7 +294,7 @@ class Event implements Parcelable {
         if (groupList.size() <= 0) throw new EventException("Parentless event not accepatable.");
         //Create new json array
         JsonArray ja = new JsonArray();
-       //Convert groups to json array of id's
+        //Convert groups to json array of id's
         for (Object x : groupList) {
             if (x instanceof Group2) {
                 ja.add(((Group2) x).getId());
@@ -304,6 +307,7 @@ class Event implements Parcelable {
         //Put json array into event
         this.event.put(PARENT_GROUP_ARRAY_KEY, ja);
     }
+
     protected synchronized ArrayList<String> getParentGroups() {
         //Get json array from event doc
         JsonArray ja = this.event.getArray(PARENT_GROUP_ARRAY_KEY);
@@ -319,7 +323,8 @@ class Event implements Parcelable {
 
     //region Methods for altering the admins of the event
     protected synchronized void addAdmin(String username) throws EventException {
-        if (!hasPermission()) throw new EventException("User does not have permission to edit event.");
+        if (!hasPermission())
+            throw new EventException("User does not have permission to edit event.");
         if (containsAdmin(username)) return;
         JsonArray ja = this.event.getArray(ADMIN_ARRAY_KEY);
         ja.add(username);
@@ -327,7 +332,8 @@ class Event implements Parcelable {
     }
 
     protected synchronized void removeAdmin(String username) throws EventException {
-        if (!hasPermission()) throw new EventException("User does not have permission to edit event.");
+        if (!hasPermission())
+            throw new EventException("User does not have permission to edit event.");
         if (username.equals(getCreator())) throw new EventException("Cannot remove the creator.");
         JsonArray ja = this.event.getArray(ADMIN_ARRAY_KEY);
         if (!(ja.contains(username))) {
@@ -360,6 +366,7 @@ class Event implements Parcelable {
         }
         return false;
     }
+
     protected synchronized String getId() {
         if (isOnServer()) {
             return this.event.getId();

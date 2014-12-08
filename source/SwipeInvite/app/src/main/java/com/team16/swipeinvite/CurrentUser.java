@@ -3,7 +3,6 @@ package com.team16.swipeinvite;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.baasbox.android.BaasDocument;
 import com.baasbox.android.BaasUser;
 
 /**
@@ -11,7 +10,7 @@ import com.baasbox.android.BaasUser;
  */
 class CurrentUser implements Parcelable {
     //region Constant keys for json data contained in user object
-    private static final String COMMON_NAME_KEY =  "common_name";
+    private static final String COMMON_NAME_KEY = "common_name";
     private static final String EMAIL_KEY = "email";
     private static final String GENDER_KEY = "gender";
     //endregion
@@ -54,6 +53,7 @@ class CurrentUser implements Parcelable {
         this.user = BaasUser.withUserName(username);
         this.user.setPassword(password);
     }
+
     //Create a user object from a server pulldown in which you dont already have an instance
     public CurrentUser(BaasUser u) {
         this.user = u;
@@ -80,6 +80,7 @@ class CurrentUser implements Parcelable {
     protected void setCommonName(String name) {
         this.user.getScope(BaasUser.Scope.REGISTERED).put(COMMON_NAME_KEY, name);
     }
+
     protected String getCommonName() {
         return this.user.getScope(BaasUser.Scope.REGISTERED).getString(COMMON_NAME_KEY);
     }
@@ -91,6 +92,7 @@ class CurrentUser implements Parcelable {
     protected void setEmail(String email) {
         this.user.getScope(BaasUser.Scope.PRIVATE).put(EMAIL_KEY, email);
     }
+
     protected String getEmail() {
         return this.user.getScope(BaasUser.Scope.PRIVATE).getString(EMAIL_KEY);
     }
@@ -101,6 +103,7 @@ class CurrentUser implements Parcelable {
     protected void setMale(boolean male) {
         this.user.getScope(BaasUser.Scope.REGISTERED).put(GENDER_KEY, male);
     }
+
     protected boolean isMale() {
         return this.user.getScope(BaasUser.Scope.REGISTERED).getBoolean(GENDER_KEY);
     }

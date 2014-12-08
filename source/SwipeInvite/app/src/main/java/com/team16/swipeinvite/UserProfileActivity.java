@@ -16,12 +16,10 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.baasbox.android.BaasDocument;
 import com.baasbox.android.BaasHandler;
 import com.baasbox.android.BaasResult;
 import com.baasbox.android.BaasUser;
 import com.baasbox.android.RequestToken;
-import com.baasbox.android.SaveMode;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -51,9 +49,9 @@ public class UserProfileActivity extends ActionBarActivity implements Observer {
 
     //region Lifecycle methods
     @Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_user_profile);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_user_profile);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //Retrieve model from somewhere
@@ -67,14 +65,14 @@ public class UserProfileActivity extends ActionBarActivity implements Observer {
         //Setup local variables for the views
         usernameField = (EditText) findViewById(R.id.editText_user_username);
         //passwordField = (EditText) findViewById(R.id.editText_user_password);
-		fullnameField = (TextView) findViewById(R.id.editText_user_name);
+        fullnameField = (TextView) findViewById(R.id.editText_user_name);
         emailField = (TextView) findViewById(R.id.editText_user_email);
         genderGroup = (RadioGroup) findViewById(R.id.RadioGroup_gender);
         maleButton = (RadioButton) findViewById(R.id.Radiobutton_user_male);
         femaleButton = (RadioButton) findViewById(R.id.Radiobutton_user_female);
         progressSpinner = (ProgressBar) findViewById(R.id.progressBar_user_profile);
         progressSpinner.setVisibility(View.GONE);
-	}
+    }
 
     @Override
     protected void onPause() {
@@ -86,7 +84,7 @@ public class UserProfileActivity extends ActionBarActivity implements Observer {
     }
 
     @Override
-    protected  void onResume() {
+    protected void onResume() {
         super.onResume();
         if (saveRT != null) {
             progressSpinner.setVisibility(View.VISIBLE);
@@ -160,9 +158,9 @@ public class UserProfileActivity extends ActionBarActivity implements Observer {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case android.R.id.home:
                 navigateToMain();
@@ -176,7 +174,7 @@ public class UserProfileActivity extends ActionBarActivity implements Observer {
             default:
                 return super.onOptionsItemSelected(item);
         }
-	}
+    }
 
     @Override
     public void onBackPressed() {
@@ -204,8 +202,7 @@ public class UserProfileActivity extends ActionBarActivity implements Observer {
 
 
     //region Method for clicking the submit button
-    public void submitListener()
-    {
+    public void submitListener() {
         //Make sure to avoid the spamming of the submit button
         if (saveRT != null) {
             Log.d(LOG_TAG, "Preventing spam of submit button.");
@@ -255,12 +252,11 @@ public class UserProfileActivity extends ActionBarActivity implements Observer {
             return;
         }
 
-        if((gender).equals("Male"))
-            ismale=true;
-        else if((gender).equals("Female"))
+        if ((gender).equals("Male"))
+            ismale = true;
+        else if ((gender).equals("Female"))
             ismale = false;
-        else
-        {
+        else {
             Log.d(LOG_TAG, "Gender cannot be empty");
             progressSpinner.setVisibility(View.GONE);
             genderGroup.requestFocus();

@@ -17,18 +17,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Button;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.ListIterator;
@@ -73,8 +69,10 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
             this.minute = minute;
         }
     }
+
     private TimePickerFragment mStartTimePicker;
     private TimePickerFragment mEndTimePicker;
+
     public static class DatePickerFragment extends DialogFragment
             implements DatePickerDialog.OnDateSetListener {
 
@@ -92,6 +90,7 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
             this.year = year;
         }
     }
+
     private DatePickerFragment mStartDatePicker;
     private DatePickerFragment mEndDatePicker;
     //endregion
@@ -161,6 +160,7 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
         populateViews();
 
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -171,18 +171,21 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
         model.addObserver(this);
 
     }
+
     @Override
     protected void onPause() {
         super.onPause();
         Log.d(LOG_TAG, "onPause");
 
     }
+
     @Override
     protected void onStop() {
         super.onStop();
         Log.d(LOG_TAG, "onStop");
         model.deleteObserver(this);
     }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -287,12 +290,15 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
     public void showStartDatePickerDialog(View v) {
         mStartDatePicker.show(getFragmentManager(), "startDatePicker");
     }
+
     public void showStartTimePickerDialog(View v) {
         mStartTimePicker.show(getFragmentManager(), "startTimePicker");
     }
+
     public void showEndDatePickerDialog(View v) {
         mEndDatePicker.show(getFragmentManager(), "endDatePicker");
     }
+
     public void showEndTimePickerDialog(View v) {
         mEndTimePicker.show(getFragmentManager(), "endTimePicker");
     }
@@ -346,7 +352,7 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
             //descriptionField.requestFocus();
             description = "TBD";
             return;
-        } else if (name.length() > 30 ) {
+        } else if (name.length() > 30) {
             Log.d(LOG_TAG, "Name field cannot be longer than 20 characters.");
             //showProgress(false);
             mEventNameField.setError("Cannot be longer than 20 characters");
@@ -358,14 +364,14 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
             mEventDescriptionField.setError("Must be between 4 and 100 characters");
             mEventDescriptionField.requestFocus();
             return;
-        } else if(endDate.before(startDate)) {
+        } else if (endDate.before(startDate)) {
             Log.d(LOG_TAG, "End date must be after start date");
             //showProgress(false);
             Toast bread = Toast.makeText(EventEditActivity.this, "End date must be after start date", Toast.LENGTH_LONG);
             bread.show();
             mEndDateText.requestFocus();
             return;
-        } else if(startDate.before(currentDate)) {
+        } else if (startDate.before(currentDate)) {
             Log.d(LOG_TAG, "start date must be after current date");
             //showProgress(false);
             Toast bread = Toast.makeText(EventEditActivity.this, "Start date must be after current date", Toast.LENGTH_LONG);

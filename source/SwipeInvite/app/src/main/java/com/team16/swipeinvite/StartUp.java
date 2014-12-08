@@ -1,12 +1,9 @@
 package com.team16.swipeinvite;
 
 import android.app.Application;
-import android.content.Context;
 import android.util.Log;
-import com.baasbox.android.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.baasbox.android.BaasBox;
 
 /* The purpose of this class is to handle any global variables that the application must manage
 * while it is active. The BaasBox static object is managed by the application. Also, probably the
@@ -38,13 +35,12 @@ public class StartUp extends Application {
     /* ------------------------------ END OVERRIDE METHODS ---------------------------- */
 
 
-
     /* ----------------------- BAASBOX SETUP STUFF ---------------------------- */
     //This holds the BaasBox android object with the connection settings.
     private BaasBox box;
 
     //A method to return the BaasBox object
-    public BaasBox getBaasBox(){
+    public BaasBox getBaasBox() {
         return box;
     }
     /* ----------------------- END BAASBOX SETUP ------------------------------ */
@@ -52,12 +48,15 @@ public class StartUp extends Application {
     //region Methods to protect restricted substrings from appearing in documents
     private static final String delim1 = ">><---*---><<";
     private static final String delim2 = "<<>-*-<>>";
+
     protected String getDelim1() {
         return delim1;
     }
+
     protected String getDelim2() {
         return delim2;
     }
+
     protected boolean checkStringGlobal(String s) {
         if (s.contains(delim1) || s.contains(delim2)) {
             return true;

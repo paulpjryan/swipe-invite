@@ -98,8 +98,7 @@ public class EventsFragment extends Fragment {
         //This just opens event_edit on tap. We should have some sort of edit action or button.
         listView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id)
-            {
+                                    int position, long id) {
                 //Figure out which group is being referred to and pass it to the activity
                 Event g = (Event) mEventsAdapter.getItem(position);
                 //Call the method in the main activity to start the group edit activity
@@ -108,13 +107,13 @@ public class EventsFragment extends Fragment {
         });
 
 
-        FloatingActionButton fab = (FloatingActionButton)rootView.findViewById(R.id.eventsfab);
+        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.eventsfab);
         fab.attachToListView(listView);
         fab.setShadow(true);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity)getActivity()).startEventCreate();
+                ((MainActivity) getActivity()).startEventCreate();
             }
         });
 

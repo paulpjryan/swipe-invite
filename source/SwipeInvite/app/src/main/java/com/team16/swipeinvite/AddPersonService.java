@@ -3,7 +3,6 @@ package com.team16.swipeinvite;
 import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.baasbox.android.BaasDocument;
 import com.baasbox.android.BaasResult;

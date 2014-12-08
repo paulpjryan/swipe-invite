@@ -48,7 +48,7 @@ public class LoginActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        if (savedInstanceState!=null){
+        if (savedInstanceState != null) {
             mSignupOrLogin = savedInstanceState.getParcelable(SIGNUP_TOKEN_KEY);
         }
 
@@ -57,7 +57,7 @@ public class LoginActivity extends ActionBarActivity {
         mUserView.setText(mUsername);
         mLoginStatusView = findViewById(R.id.login_status);
         mLoginFormView = findViewById(R.id.login_form);
-        mLoginStatusMessageView = (TextView)findViewById(R.id.login_status_message);
+        mLoginStatusMessageView = (TextView) findViewById(R.id.login_status_message);
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -77,7 +77,7 @@ public class LoginActivity extends ActionBarActivity {
             }
         });
 
-        findViewById(R.id.sign_in_button).setOnClickListener(new View.OnClickListener(){
+        findViewById(R.id.sign_in_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 attemptLogin(false);
@@ -88,7 +88,7 @@ public class LoginActivity extends ActionBarActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if (mSignupOrLogin!=null){
+        if (mSignupOrLogin != null) {
             showProgress(false);
             mSignupOrLogin.suspend();
         }
@@ -97,7 +97,7 @@ public class LoginActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (mSignupOrLogin!=null){
+        if (mSignupOrLogin != null) {
             showProgress(true);
             mSignupOrLogin.resume(onComplete);
         }
@@ -106,12 +106,12 @@ public class LoginActivity extends ActionBarActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (mSignupOrLogin!=null){
-            outState.putParcelable(SIGNUP_TOKEN_KEY,mSignupOrLogin);
+        if (mSignupOrLogin != null) {
+            outState.putParcelable(SIGNUP_TOKEN_KEY, mSignupOrLogin);
         }
     }
 
-    private void completeLogin(boolean success){
+    private void completeLogin(boolean success) {
         //Standard completion stuff
         showProgress(false);
         mSignupOrLogin = null;
@@ -119,7 +119,7 @@ public class LoginActivity extends ActionBarActivity {
             //Set the current user to our active user model
             /* ((StartUp) this.getApplication()).setActiveUser(BaasUser.current()); */
             //Go to main activity
-            Intent intent = new Intent(this,MainActivity.class);
+            Intent intent = new Intent(this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();
@@ -179,14 +179,14 @@ public class LoginActivity extends ActionBarActivity {
         }
     }
 
-    private void signupWithBaasBox(boolean newUser){
+    private void signupWithBaasBox(boolean newUser) {
         //todo 3.1
         BaasUser user = BaasUser.withUserName(mUsername);
         user.setPassword(mPassword);
         if (newUser) {
-            mSignupOrLogin=user.signup(onComplete);
+            mSignupOrLogin = user.signup(onComplete);
         } else {
-            mSignupOrLogin=user.login(onComplete);
+            mSignupOrLogin = user.login(onComplete);
         }
     }
 
@@ -197,8 +197,8 @@ public class LoginActivity extends ActionBarActivity {
                 public void handle(BaasResult<BaasUser> result) {
 
                     mSignupOrLogin = null;
-                    if (result.isFailed()){
-                        Log.d("ERROR","ERROR",result.error());
+                    if (result.isFailed()) {
+                        Log.d("ERROR", "ERROR", result.error());
                     }
                     completeLogin(result.isSuccess());
                 }
@@ -247,12 +247,11 @@ public class LoginActivity extends ActionBarActivity {
         boolean checked = ((CheckBox) view).isChecked();
 
         // Check which checkbox was clicked
-        switch(view.getId()) {
+        switch (view.getId()) {
             case R.id.checkbox_login_remember:
                 if (checked) {
                     /* ((StartUp) this.getApplication()).setRemember(true); */
-                }
-                else {
+                } else {
                     /* ((StartUp) this.getApplication()).setRemember(false); */
                 }
                 break;

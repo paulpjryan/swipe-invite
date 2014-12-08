@@ -22,12 +22,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Button;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -39,7 +37,6 @@ import com.baasbox.android.SaveMode;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Observable;
 import java.util.Observer;
@@ -84,8 +81,10 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
             setTextFromPickers();
         }
     }
+
     private TimePickerFragment mStartTimePicker;
     private TimePickerFragment mEndTimePicker;
+
     public class DatePickerFragment extends DialogFragment
             implements DatePickerDialog.OnDateSetListener {
 
@@ -104,6 +103,7 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
             setTextFromPickers();
         }
     }
+
     private DatePickerFragment mStartDatePicker;
     private DatePickerFragment mEndDatePicker;
     //endregion
@@ -202,8 +202,9 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
                 //intent.putStringArrayListExtra(GROUPS_KEY, groups);
                 startActivityForResult(intent, GROUP_ADD_REQUEST_CODE);
             }
-        } );
+        });
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -216,6 +217,7 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
             saveRT.resume(onSaveComplete);
         }
     }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -224,12 +226,14 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
             saveRT.suspend();
         }
     }
+
     @Override
     protected void onStop() {
         super.onStop();
         Log.d(LOG_TAG, "onStop");
         model.deleteObserver(this);
     }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -243,8 +247,7 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
     }
     //endregion
 
-    private void setTextFromPickers()
-    {
+    private void setTextFromPickers() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(mStartDatePicker.year, mStartDatePicker.month, mStartDatePicker.day, mStartTimePicker.hour, mStartTimePicker.minute);
         mStartDateText.setText(new SimpleDateFormat("MM/dd/yyyy").format(calendar.getTime()));
@@ -257,6 +260,7 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
 
     //region Method called when the add group returns
     private static final int GROUP_ADD_REQUEST_CODE = 1;
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case GROUP_ADD_REQUEST_CODE:
@@ -287,8 +291,7 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        switch (id)
-        {
+        switch (id) {
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
@@ -306,12 +309,15 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
     public void showStartDatePickerDialog(View v) {
         mStartDatePicker.show(getFragmentManager(), "startDatePicker");
     }
+
     public void showStartTimePickerDialog(View v) {
         mStartTimePicker.show(getFragmentManager(), "startTimePicker");
     }
+
     public void showEndDatePickerDialog(View v) {
         mEndDatePicker.show(getFragmentManager(), "endDatePicker");
     }
+
     public void showEndTimePickerDialog(View v) {
         mEndTimePicker.show(getFragmentManager(), "endTimePicker");
     }
@@ -319,8 +325,7 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
 
 
     //region Method for submit button
-    public void onEventSubmit(View v)
-    {
+    public void onEventSubmit(View v) {
         //Prevent button spam
         if (saveRT != null) {
             Log.d(LOG_TAG, "Preventing button spam.");
@@ -372,7 +377,7 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
             mEventLocationField.setError("Cannot be left blank");
             mEventLocationField.requestFocus();
             return;
-        } else if (name.length() > 30 ) {
+        } else if (name.length() > 30) {
             Log.d(LOG_TAG, "Name field cannot be longer than 20 characters.");
             showProgress(false);
             mEventNameField.setError("Cannot be longer than 20 characters");
@@ -384,14 +389,14 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
             mEventDescriptionField.setError("Must be between 4 and 100 characters");
             mEventDescriptionField.requestFocus();
             return;
-        } else if(endDate.before(startDate)) {
+        } else if (endDate.before(startDate)) {
             Log.d(LOG_TAG, "End date must be after start date");
             showProgress(false);
             Toast bread = Toast.makeText(EventCreationActivity.this, "End date must be after start date", Toast.LENGTH_LONG);
             bread.show();
             mEndDateText.requestFocus();
             return;
-        } else if(startDate.before(currentDate)) {
+        } else if (startDate.before(currentDate)) {
             Log.d(LOG_TAG, "start date must be after current date");
             showProgress(false);
             Toast bread = Toast.makeText(EventCreationActivity.this, "Start date must be after current date", Toast.LENGTH_LONG);

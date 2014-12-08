@@ -59,8 +59,8 @@ public class GroupCreationActivity extends ActionBarActivity {
     //region Lifecycle methods
     @Override
     //onCreate is called when the activity is first started
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         Log.d(LOG_TAG, "onCreate called");
 
         //DO NOT ADD ANY VIEW ACTIVITY CODE ABOVE HERE
@@ -84,31 +84,31 @@ public class GroupCreationActivity extends ActionBarActivity {
         //Form view creation to local variables
         this.groupCreateView = (View) findViewById(R.id.group_create_form);
         this.nameview = (EditText) findViewById(R.id.textView_group_name);
-		this.descview = (EditText) findViewById(R.id.textView_group_description);
+        this.descview = (EditText) findViewById(R.id.textView_group_description);
         this.radgroup = (RadioGroup) findViewById(R.id.radioGroup);
 
         //Status View creation to local variables
         this.groupStatusView = (View) findViewById(R.id.group_create_status);
         this.statusMessage = (TextView) findViewById(R.id.group_create_status_message);
-	}
+    }
 
 
-	@Override
+    @Override
     //Method to add options to the options menu for the activity
-	public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu) {
         Log.d(LOG_TAG, "onCreateOptionsMenu called");
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.group_creation, menu);
-		return super.onCreateOptionsMenu(menu);
-	}
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.group_creation, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 
-	@Override
+    @Override
     //Method to determine which option menu item was selected
-	public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {
         Log.d(LOG_TAG, "onOptionsItemSelected called");
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case android.R.id.home:
                 Log.d(LOG_TAG, "Navigating away from group creation, return CANCEL.");
@@ -122,7 +122,7 @@ public class GroupCreationActivity extends ActionBarActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-	}
+    }
 
     @Override
     //onPause is called when the activity leaves the user's view
@@ -180,6 +180,7 @@ public class GroupCreationActivity extends ActionBarActivity {
             outState.putParcelable(GROUP_KEY, newGroup);
         }
     }
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -192,12 +193,13 @@ public class GroupCreationActivity extends ActionBarActivity {
     //Method to respond to the radio button clicked
     //Listener set in the xml
     private boolean isPrivate = true;  // default is checked
+
     public void onRadioButtonClicked(View v) {
         // Is the button now checked?
         boolean checked = ((RadioButton) v).isChecked();
 
         // Check which radio button was clicked
-        switch(v.getId()) {
+        switch (v.getId()) {
             case R.id.text_private:
                 if (checked)
                     isPrivate = true;
@@ -215,12 +217,13 @@ public class GroupCreationActivity extends ActionBarActivity {
     //Method to respond to the radio button clicked
     //Listener set in the xml
     private boolean isOpen = true;  // default is checked
+
     public void onRadioButtonClickedOpen(View v) {
         // Is the button now checked?
         boolean checked = ((RadioButton) v).isChecked();
 
         // Check which radio button was clicked
-        switch(v.getId()) {
+        switch (v.getId()) {
             case R.id.text_open:
                 if (checked)
                     isOpen = true;
@@ -243,7 +246,7 @@ public class GroupCreationActivity extends ActionBarActivity {
 
         //Getting user inputs from views
         String name = nameview.getText().toString();
-        String description  = descview.getText().toString();
+        String description = descview.getText().toString();
 
         //Check for null entries
         if (TextUtils.isEmpty(name)) {
@@ -258,7 +261,7 @@ public class GroupCreationActivity extends ActionBarActivity {
             descview.setError("Cannot be left blank");
             descview.requestFocus();
             return;
-        } else if (name.length() > 20 ) {
+        } else if (name.length() > 20) {
             Log.d(LOG_TAG, "Name field cannot be longer than 20 characters.");
             showProgress(false);
             nameview.setError("Cannot be longer than 20 characters");
@@ -334,6 +337,7 @@ public class GroupCreationActivity extends ActionBarActivity {
         readRT = newGroup.getBaasDocument().grantAll(Grant.READ, Role.REGISTERED, onReadComplete);
         updateRT = newGroup.getBaasDocument().grantAll(Grant.UPDATE, Role.REGISTERED, onUpdateComplete);
     }
+
     private void failedSave() {
         showProgress(false);
         //Notify user of error
