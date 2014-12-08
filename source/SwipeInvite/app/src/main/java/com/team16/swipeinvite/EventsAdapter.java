@@ -72,13 +72,12 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
         //if (convertView == null) {
         if(type == 0)
             convertView = mInflater.inflate(R.layout.list_item_event_accepted, null);
-
         else if(type == 1)
             convertView = mInflater.inflate(R.layout.list_item_event, null);
-
         else if (type == 2)
             convertView = mInflater.inflate(R.layout.list_item_event_declined, null);
-        else convertView = mInflater.inflate(R.layout.list_item_event_nobutton, null);
+        else
+            convertView = mInflater.inflate(R.layout.list_item_event_nobutton, null);
 
         // Creates a ViewHolder and store references to the two children views
         // we want to bind data to.
@@ -108,8 +107,8 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
                 public void onClick(View v) {
                     //TODO Add event to declined events
                     Intent intent = new Intent(convertView2.getContext(), EventMoveService.class);
-                    intent.putExtra("eventID", filteredData.get(position2).getId());
-                    intent.putExtra("to", "rejected");
+                    intent.putExtra(EventMoveService.EVENT_ID, filteredData.get(position2).getId());
+                    intent.putExtra(EventMoveService.EVENT_DESTINATION, EventMoveService.EVENT_REJECTED);
                     convertView2.getContext().startService(intent);
                 }
             });
@@ -123,8 +122,8 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
                 public void onClick(View v) {
                     //TODO Add event to accepted events
                     Intent intent = new Intent(convertView2.getContext(), EventMoveService.class);
-                    intent.putExtra("eventID", filteredData.get(position2).getId());
-                    intent.putExtra("to", "accepted");
+                    intent.putExtra(EventMoveService.EVENT_ID, filteredData.get(position2).getId());
+                    intent.putExtra(EventMoveService.EVENT_DESTINATION, EventMoveService.EVENT_ACCEPTED);
                     convertView2.getContext().startService(intent);
                 }
             });

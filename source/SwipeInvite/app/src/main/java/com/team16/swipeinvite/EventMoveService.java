@@ -9,17 +9,20 @@ import com.baasbox.android.BaasResult;
 import com.baasbox.android.SaveMode;
 
 import java.util.List;
-import java.util.ListIterator;
 
 
 /**
- * An {@link IntentService} subclass for handling asynchronous task requests in
- * a service on a separate handler thread.
- * <p/>
  * TODO: Customize class - update intent actions and extra parameters.
  */
 public class EventMoveService extends IntentService {
     private static final String LOG_TAG = "EventMoveService";
+
+    public static final String EVENT_ID = "EVENT_ID";
+    public static final String EVENT_DESTINATION = "EVENT_DESTINATION";
+
+    public static final int EVENT_ACCEPTED = 0;
+    public static final int EVENT_PENDING = 1;
+    public static final int EVENT_REJECTED = 2;
 
     public EventMoveService() {
         super("EventMoveService");
@@ -32,96 +35,57 @@ public class EventMoveService extends IntentService {
         Model model = Model.getInstance(this);
 
         //Get info from intent
-        String eventID = intent.getStringExtra("eventID");
-        String movePlace = intent.getStringExtra("to");
-        if (eventID == null || movePlace == null) {
+        String eventID = intent.getStringExtra(EVENT_ID);
+        int destination = intent.getIntExtra(EVENT_DESTINATION, -1);
+        if (eventID == null || destination == -1) {
             Log.d(LOG_TAG, "Incorrect intent format");
             return;
         }
 
-        //Convert the move type for easy use
-        int moveType = 0;
-        if (movePlace.equals("waiting")) {
-            moveType = 1;
-        } else if (movePlace.equals("rejected")) {
-            moveType = 2;
-        }
+        // Find the event to move
+        List<Event>[] EventLists = new List[3];
+        EventLists[EVENT_ACCEPTED] = model.getAcceptedEvents();
+        EventLists[EVENT_PENDING] = model.getWaitingEvents();
+        EventLists[EVENT_REJECTED] = model.getRejectedEvents();
 
-        //Find the event to move
-        List<Event> acceptedEvents = model.getAcceptedEvents();
-        List<Event> waitingEvents = model.getWaitingEvents();
-        List<Event> rejectedEvents = model.getRejectedEvents();
-        int fromType = -1;
-        Event e = null;
+        // Find what list the event was in
+        int from = -1;
+        Event eventToMove = null;
         //Check to see if all active events have pulldown equivalents
+        outerLoop: // dirty hack
         for (int a = 0; a < 3; a++) {
-            List<Event> currentList = acceptedEvents;
-            switch (a) {
-                case 1:
-                    currentList = waitingEvents;
-                    break;
-                case 2:
-                    currentList = rejectedEvents;
-                    break;
-            }
-            synchronized (currentList) {
-                for (final ListIterator<Event> i = currentList.listIterator(); i.hasNext(); ) {
-                    Event current = i.next();
-                    if (current.equals(eventID)) {
-                        Log.d(LOG_TAG, "Found event: " + current.getName());
-                        fromType = a;
-                        //Decide what to do
-                        if (fromType == moveType) {    //Places are the same
-                            Log.d(LOG_TAG, "No move to be made.");
-                            break;
-                        } else if (fromType == 0 && moveType == 2) {    //From accepted to rejected
-                            //Decrement counter and save
-                            Event updateEvent = new Event(current.toJson());
-                            updateEvent.removeUser();
-                            BaasDocument d = saveToServer(updateEvent.getBaasDocument());
-                            if (d == null) {
-                                current.setBaasDocument(updateEvent.getBaasDocument());
-                            } else {
-                                current.setBaasDocument(d);
-                                //Move the event
-                                i.remove();
-                                rejectedEvents.add(current);
-                            }
-                            break;
-                        } else if ((fromType == 2 || fromType == 1) && (moveType == 0)) {    //From rejected or waiting to accepted
-                            //Increment counter and save
-                            Event updateEvent = new Event(current.toJson());
-                            updateEvent.addUser();
-                            BaasDocument d = saveToServer(updateEvent.getBaasDocument());
-                            if (d == null) {
-                                current.setBaasDocument(updateEvent.getBaasDocument());
-                            } else {
-                                current.setBaasDocument(d);
-                                //Move the event
-                                i.remove();
-                                acceptedEvents.add(current);
-                            }
-                            break;
-                        } else if (fromType == 1 && moveType == 2) {    //From waiting to rejected
-                            //Move the event
-                            i.remove();
-                            rejectedEvents.add(current);
-                            break;
-                        } else {
-                            Log.d(LOG_TAG, "Unknown case - FT: " + fromType + " ,MT: " + moveType);
-                            return;
-                        }
-                    }
+            for (Event current : EventLists[a]) {
+                if (current.equals(eventID)) {
+                    from = a;
+                    eventToMove = current;
+                    break outerLoop;
                 }
             }
         }
 
-        if (fromType != -1) {
+        // Decide what to do
+        if (from == destination) //Places are the same
+            Log.d(LOG_TAG, "No move to be made.");
+        else if (destination == EVENT_PENDING)
+            Log.d(LOG_TAG, "Cannot move event back to pending");
+        else {
+            //Decrement counter and save
+            Event updateEvent = new Event(eventToMove.toJson());
+            updateEvent.removeUser();
+            BaasDocument d = saveToServer(updateEvent.getBaasDocument());
+            if (d == null) {
+                eventToMove.setBaasDocument(updateEvent.getBaasDocument());
+            } else {
+                eventToMove.setBaasDocument(d);
+                //Move the event
+                EventLists[from].remove(eventToMove);
+                EventLists[destination].add(eventToMove);
+            }
             Log.d(LOG_TAG, "Moved event and saved.");
             Model.saveModel(this);
         }
-
     }
+
     private BaasDocument saveToServer(BaasDocument d) {
         BaasResult<BaasDocument> result = d.saveSync(SaveMode.IGNORE_VERSION);
         if (result.isFailed()) {
@@ -130,6 +94,4 @@ public class EventMoveService extends IntentService {
         }
         return result.value();
     }
-
-
 }
