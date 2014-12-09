@@ -51,13 +51,22 @@
                 android:maxLength="20" />
 
     	</LinearLayout>
+
+     <LinearLayout
+        android:id="@+id/edit_separator_1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="15dp"
+        android:layout_below="@id/linearLayout_profile_email"
+        android:background="#37000000"
+        android:orientation="horizontal" ></LinearLayout>
     	
  	 	<LinearLayout
 		        android:id="@+id/linearLayout_profile_gender"
 		        android:layout_width="match_parent"
 		        android:layout_height="80dp"
 		        android:orientation="horizontal"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="15dp">
 
  	 		
 		    
