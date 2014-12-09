@@ -168,21 +168,23 @@
             android:id="@+id/edit_number_of_guests"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Count: "
+            android:text="Attendees: "
             android:textAppearance="?android:attr/textAppearanceMedium"
             />
 
-            <EditText
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="textPersonName"
                 android:ems="8"
-                android:id="@+id/textView_new_group_typeOpen"
+                android:id="@+id/event_edit_count"
                 android:layout_weight="6"
                 android:maxLength="35"
                 android:background="#37eeeeee"
                 android:maxLines="2"
-                android:enabled="false"/>
+                android:enabled="false"
+                android:layout_marginLeft="10dp"
+                android:hint="0"
+                android:textSize="20sp" />
 
         </LinearLayout>
     </RelativeLayout>

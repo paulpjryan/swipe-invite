@@ -47,6 +47,7 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
     private EditText mStartTimeText;
     private EditText mEndDateText;
     private EditText mEndTimeText;
+    private TextView mCountText;
     //endregion
 
 
@@ -145,6 +146,7 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
         mStartTimeText = (EditText) findViewById(R.id.edit_start_time_text);
         mEndDateText = (EditText) findViewById(R.id.edit_end_date_text);
         mEndTimeText = (EditText) findViewById(R.id.edit_end_time_text);
+        mCountText = (TextView) findViewById(R.id.event_edit_count);
 
        // mEventNameField = (TextView) findViewById(R.id.edit_text_event_name);
         mEventLocationField = (TextView) findViewById(R.id.edit_text_event_location);
@@ -157,6 +159,8 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
         mEventLocationField.setFocusable(false);
         mEventDescriptionField.setEnabled(false);
         mEventDescriptionField.setFocusable(false);
+        mCountText.setEnabled(false);
+        mCountText.setFocusable(false);
 
         //Populate views
         populateViews();
@@ -236,6 +240,7 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
         setTitle(event.getName());
         mEventLocationField.setText(event.getLocation());
         mEventDescriptionField.setText(event.getDescription());
+        mCountText.setText(Integer.toString(event.getCount()));
 
         //Populate the date and time
         Calendar startDate = event.getBeginDate();

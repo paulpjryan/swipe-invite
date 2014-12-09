@@ -176,6 +176,9 @@ class Event implements Parcelable {
         count--;
         this.event.put(ATTENDEE_KEY, count);
     }
+    protected int getCount() {
+        return this.event.getInt(ATTENDEE_KEY);
+    }
     //endregion
 
 
