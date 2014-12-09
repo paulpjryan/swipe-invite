@@ -10,6 +10,7 @@ import com.baasbox.android.Grant;
 import com.baasbox.android.SaveMode;
 import com.baasbox.android.json.JsonObject;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -78,11 +79,23 @@ public class AddPersonService extends IntentService {
         String notificationMessage = username + " joined the group.";
 
         //Start the intent service to send the push
+        ArrayList<String> userList = g.getUserList();
+        userList.remove(username);
         Intent intent2 = new Intent(this, PushSender.class);
-        intent2.putStringArrayListExtra("users", g.getUserList());
+        intent2.putStringArrayListExtra("users", userList);
         intent2.putExtra("message", message);
         intent2.putExtra("notification", notificationMessage);
         startService(intent2);
+
+        //Send separate push to user that was added
+        ArrayList<String> userList2 = new ArrayList<String>();
+        userList2.add(username);
+        notificationMessage = "You have been added to a group.";
+        Intent intent3 = new Intent(this, PushSender.class);
+        intent3.putStringArrayListExtra("users", userList2);
+        intent3.putExtra("message", message);
+        intent3.putExtra("notification", notificationMessage);
+        startService(intent3);
 
         //Grant permissions to all existing events
         List<Event> acceptedEvents = model.getAcceptedEvents();
