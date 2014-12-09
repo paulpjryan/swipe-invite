@@ -130,14 +130,16 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
         }
 
         //convertView.setLongClickable(false);
-        convertView.setClickable(true);
-        convertView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(LOG_TAG, "Event clicked!!");
-                ((MainActivity) convertView2.getContext()).startEventEdit(filteredData.get(position).getId());
-            }
-        });
+        if (type != -1) {
+            convertView.setClickable(true);
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.d(LOG_TAG, "Event clicked!!");
+                    ((MainActivity) convertView2.getContext()).startEventEdit(filteredData.get(position).getId());
+                }
+            });
+        }
 
         return convertView;
     }
