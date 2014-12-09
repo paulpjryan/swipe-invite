@@ -186,10 +186,11 @@ public class MainActivity extends ActionBarActivity implements Observer {
 
     public void updateDrawerCounts()
     {
-        mList.get(0).put(DCOUNT, Integer.toString(model.getAcceptedEvents().size()));
-        mList.get(1).put(DCOUNT, Integer.toString(model.getWaitingEvents().size()));
+        mList.get(0).put(DCOUNT, Integer.toString(model.getWaitingEvents().size()));
+        mList.get(1).put(DCOUNT, Integer.toString(model.getAcceptedEvents().size()));
         mList.get(2).put(DCOUNT, Integer.toString(model.getActiveGroups().size()));
         mList.get(3).put(DCOUNT, Integer.toString(model.getRejectedEvents().size()));
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
