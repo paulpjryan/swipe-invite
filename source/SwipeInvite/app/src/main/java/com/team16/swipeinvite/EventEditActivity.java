@@ -87,7 +87,7 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
         public void onDateSet(DatePicker view, int year, int month, int day) {
             this.year = year;
             this.month = month;
-            this.year = year;
+            this.day = day;
         }
     }
 

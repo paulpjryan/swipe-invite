@@ -99,7 +99,7 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
         public void onDateSet(DatePicker view, int year, int month, int day) {
             this.year = year;
             this.month = month;
-            this.year = year;
+            this.day = day;
             setTextFromPickers();
         }
     }
@@ -149,7 +149,7 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
         mCurrentCalendar = Calendar.getInstance();
         int currentYear = mCurrentCalendar.get(Calendar.YEAR);
         int currentMonth = mCurrentCalendar.get(Calendar.MONTH);
-        int currentDay = mCurrentCalendar.get(Calendar.DATE);
+        int currentDay = mCurrentCalendar.get(Calendar.DAY_OF_MONTH);
         int currentHour = mCurrentCalendar.get(Calendar.HOUR_OF_DAY);
         int currentMinute = mCurrentCalendar.get(Calendar.MINUTE);
 
