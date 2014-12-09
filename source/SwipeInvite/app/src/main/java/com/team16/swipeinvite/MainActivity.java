@@ -46,7 +46,7 @@ public class MainActivity extends ActionBarActivity implements Observer {
     private ActionBarDrawerToggle mDrawerToggle;
 
     // Array of strings to initial counts
-    String[] mCount = new String[]{"", "", "", "", ""};
+    String[] mCount = new String[]{"", "", "", ""};
     // Array of integers points to images stored in /res/drawable-ldpi/
     int[] mIcons = new int[]{
             R.drawable.ic_action_new_event_dark,
@@ -184,6 +184,14 @@ public class MainActivity extends ActionBarActivity implements Observer {
 
     }
 
+    public void updateDrawerCounts()
+    {
+        mList.get(0).put(DCOUNT, Integer.toString(model.getAcceptedEvents().size()));
+        mList.get(1).put(DCOUNT, Integer.toString(model.getWaitingEvents().size()));
+        mList.get(2).put(DCOUNT, Integer.toString(model.getActiveGroups().size()));
+        mList.get(3).put(DCOUNT, Integer.toString(model.getRejectedEvents().size()));
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -270,6 +278,7 @@ public class MainActivity extends ActionBarActivity implements Observer {
                     break;
             }
         }
+        updateDrawerCounts();
     }
     //endregion
 
