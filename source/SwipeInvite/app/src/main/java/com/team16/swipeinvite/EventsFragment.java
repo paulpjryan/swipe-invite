@@ -59,6 +59,7 @@ public class EventsFragment extends Fragment {
 
         refreshableView = (RefreshableView) rootView.findViewById(R.id.refreshable_view);
         ListView listView = (ListView) rootView.findViewById(R.id.listview_events);
+        //listView.setItemsCanFocus(false);
         listView.setAdapter(mEventsAdapter);
 
         refreshableView.setOnRefreshListener(new RefreshableView.PullToRefreshListener() {

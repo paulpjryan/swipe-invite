@@ -11,8 +11,7 @@
     android:paddingEnd="16dp"
     android:paddingTop="5dp"
     android:paddingBottom="10dp"
-    android:focusableInTouchMode="true">
-
+    >
     <EditText
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
@@ -20,6 +19,7 @@
         android:layout_gravity="start|top"
         android:inputType="text"
         android:ems="8"/>
+
 
     <com.team16.swipeinvite.RefreshableView
         android:id="@+id/refreshable_view"
