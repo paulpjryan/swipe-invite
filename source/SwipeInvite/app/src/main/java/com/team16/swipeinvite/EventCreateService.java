@@ -2,6 +2,7 @@ package com.team16.swipeinvite;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.provider.CalendarContract;
 import android.util.Log;
 
 import com.baasbox.android.BaasDocument;
@@ -97,6 +98,20 @@ public class EventCreateService extends IntentService {
         intent2.putExtra("message", message);
         intent2.putExtra("notification", notificationMessage);
         startService(intent2);
+
+
+        //Create calendar entry
+        Intent intent3 = new Intent(Intent.ACTION_EDIT);
+        intent3.setType("vnd.android.cursor.item/event");
+        intent3.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent3.putExtra(CalendarContract.Events.DTSTART, e.getBeginDate().getTimeInMillis());
+        intent3.putExtra(CalendarContract.Events.ALL_DAY, false);
+        intent3.putExtra(CalendarContract.Events.DTEND, e.getEndDate().getTimeInMillis());
+        intent3.putExtra(CalendarContract.Events.TITLE, e.getName());
+        intent3.putExtra(CalendarContract.Events.DESCRIPTION, e.getDescription());
+        intent3.putExtra(CalendarContract.Events.EVENT_LOCATION, e.getLocation());
+        startActivity(intent3);
+
 
     }
 
