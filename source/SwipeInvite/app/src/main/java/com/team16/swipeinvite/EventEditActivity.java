@@ -51,7 +51,7 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
 
 
     //region Picker setup
-    public static class TimePickerFragment extends DialogFragment
+    public class TimePickerFragment extends DialogFragment
             implements TimePickerDialog.OnTimeSetListener {
 
         public int hour, minute;
@@ -66,13 +66,14 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
         public void onTimeSet(TimePicker view, int hour, int minute) {
             this.hour = hour;
             this.minute = minute;
+            setTextFromPickers();
         }
     }
 
     private TimePickerFragment mStartTimePicker;
     private TimePickerFragment mEndTimePicker;
 
-    public static class DatePickerFragment extends DialogFragment
+    public class DatePickerFragment extends DialogFragment
             implements DatePickerDialog.OnDateSetListener {
 
         public int year, month, day;
@@ -87,6 +88,7 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
             this.year = year;
             this.month = month;
             this.day = day;
+            setTextFromPickers();
         }
     }
 
@@ -350,6 +352,16 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
     }
     //endregion
 
+    private void setTextFromPickers() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(mStartDatePicker.year, mStartDatePicker.month, mStartDatePicker.day, mStartTimePicker.hour, mStartTimePicker.minute);
+        mStartDateText.setText(new SimpleDateFormat("MM/dd/yyyy").format(calendar.getTime()));
+        mStartTimeText.setText(new SimpleDateFormat("hh:mm").format(calendar.getTime()));
+
+        calendar.set(mEndDatePicker.year, mEndDatePicker.month, mEndDatePicker.day, mEndTimePicker.hour, mEndTimePicker.minute);
+        mEndDateText.setText(new SimpleDateFormat("MM/dd/yyyy").format(calendar.getTime()));
+        mEndTimeText.setText(new SimpleDateFormat("hh:mm").format(calendar.getTime()));
+    }
 
     //region Method for submitting changes to event
     private void onEventEdit() {
