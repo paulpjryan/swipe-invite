@@ -43,7 +43,6 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
     private TextView mEventNameField;
     private TextView mEventLocationField;
     private TextView mEventDescriptionField;
-    private Button submitButton;
     private EditText mStartDateText;
     private EditText mStartTimeText;
     private EditText mEndDateText;
@@ -100,6 +99,7 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
     private Model model;
     private String eventID;
     private static final String EVENT_KEY = "eventID";
+    private boolean permission = false;
     //endregion
 
 
@@ -109,7 +109,7 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                //Refresh anything
+                populateViews();
             }
         });
     }
@@ -195,6 +195,7 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
     //endregion
 
 
+    //region Method to populate the views
     private void populateViews() {
         //Need to get the event instance
         List<Event> acceptedEvents = model.getAcceptedEvents();
@@ -261,7 +262,24 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
         mEndTimePicker = new TimePickerFragment();
         mEndTimePicker.hour = endDate.get(Calendar.HOUR);
         mEndTimePicker.minute = endDate.get(Calendar.MINUTE);
+
+
+        //Check permissions
+        //Decide whether or not the user has access to edit
+        boolean perm = false;
+        if (event.hasPermission()) {
+            Log.d(LOG_TAG, "The user has detail permission on group or it is open group.");
+            perm = true;
+        }
+        mEventLocationField.setEnabled(perm);
+        mEventLocationField.setFocusable(perm);
+        mEventDescriptionField.setEnabled(perm);
+        mEventDescriptionField.setFocusable(perm);
+
+        permission = perm;
+
     }
+    //endregion
 
 
     //region Methods for menus and options
@@ -270,10 +288,14 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
-            case R.id.action_settings:
-                return true;
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
+                return true;
+            case R.id.event_edit_submit_d:
+                onEventEdit();
+                return true;
+            case R.id.event_edit_submit_nod:
+                onEventEdit();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -283,30 +305,56 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         //getMenuInflater().inflate(R.menu.event_edit, menu);
+        if (permission) {
+            getMenuInflater().inflate(R.menu.event_edit_delete, menu);
+        } else {
+            getMenuInflater().inflate(R.menu.event_edit_nodelete, menu);
+        }
+
         return true;
     }
     //endregion
 
+
     //region Methods for Date and Time showing
     public void showStartDatePickerDialog(View v) {
+        if (!permission) {
+            makeToast("You cannot edit this event");
+            return;
+        }
         mStartDatePicker.show(getFragmentManager(), "startDatePicker");
     }
 
     public void showStartTimePickerDialog(View v) {
+        if (!permission) {
+            makeToast("You cannot edit this event");
+            return;
+        }
         mStartTimePicker.show(getFragmentManager(), "startTimePicker");
     }
 
     public void showEndDatePickerDialog(View v) {
+        if (!permission) {
+            makeToast("You cannot edit this event");
+            return;
+        }
         mEndDatePicker.show(getFragmentManager(), "endDatePicker");
     }
 
     public void showEndTimePickerDialog(View v) {
+        if (!permission) {
+            makeToast("You cannot edit this event");
+            return;
+        }
         mEndTimePicker.show(getFragmentManager(), "endTimePicker");
     }
     //endregion
 
+
     //region Method for submitting changes to event
-    public void onEventEdit(View v) {
+    private void onEventEdit() {
+
+
 
         //showprogress(true)
 

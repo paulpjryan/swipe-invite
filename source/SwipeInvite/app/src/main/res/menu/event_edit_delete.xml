@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.team16.swipeinvite.EventEditActivity">
+
+    <item android:id="@+id/event_edit_submit_d"
+        android:icon="@drawable/ic_action_accept"
+        android:title="Submit"
+        app:showAsAction="ifRoom"  />
+
+    <item android:id="@+id/event_edit_delete"
+        android:title="Delete"
+        app:showAsAction="never"  />
+
+</menu>

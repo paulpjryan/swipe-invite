@@ -1,36 +1,7 @@
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.team16.swipeinvite.EventEditActivity" >
-
-    <!-- SENDING PROGRESS -->
-    <LinearLayout android:id="@+id/event_edit_status"
-        android:visibility="gone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center_horizontal"
-        android:orientation="vertical">
-        <ProgressBar style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"/>
-        <TextView
-            android:id="@+id/event_edit_status_message"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:fontFamily="sans-serif-light"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:text="Editing Event…" />
-    </LinearLayout>
-
-    <!-- EVENT CREATION VIEW -->
-
-<ScrollView
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-
     <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:context="com.team16.swipeinvite.EventEditActivity"
         android:id="@+id/event_edit_form"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -187,17 +158,4 @@
             android:orientation="horizontal" >
         </LinearLayout>
 
-        <Button
-            android:id="@+id/submit_edit_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Submit"
-            android:layout_marginTop="10dp"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_below="@+id/edit_separator_3" />
-
     </RelativeLayout>
-</ScrollView>
-
-</merge>
