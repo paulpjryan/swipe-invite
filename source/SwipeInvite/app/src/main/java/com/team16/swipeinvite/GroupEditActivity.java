@@ -657,7 +657,7 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
         JsonObject message = new JsonObject();
         message.put("type", "group");
         message.put("id", groupToEdit);
-        String notificationMessage = g.getName() + " has been updated.";
+        String notificationMessage = BaasUser.current().getName() + " made an update.";
 
         //Start the intent service to send the push
         Intent intent = new Intent(this, PushSender.class);
@@ -781,11 +781,13 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
     private void completeDelete(int type) {
         //Get the current group to read from
         List<Group2> activeGroups = model.getActiveGroups();
+        ArrayList<String> userList = null;
         synchronized (activeGroups) {
             for (final ListIterator<Group2> i = activeGroups.listIterator(); i.hasNext(); ) {  //Setting up iterator
                 final Group2 current = i.next();    //need to get current group
                 if (current.equals(groupToEdit) || !current.isOnServer()) {
                     Log.d(LOG_TAG, "Removing group: " + current.getName());
+                    userList= current.getUserList();
                     i.remove(); //Remove the group from the active groups list
                 }
             }
@@ -798,6 +800,20 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
         if (type == 0) {
             makeToast("Group deleted");
         } else {
+            //Send the push notifications to members
+            Log.d(LOG_TAG, "Sending push.");
+            //Create the json object
+            JsonObject message = new JsonObject();
+            message.put("type", "group");
+            message.put("id", groupToEdit);
+            String notificationMessage = BaasUser.current().getName() + " has left the group.";
+
+            //Start the intent service to send the push
+            Intent intent = new Intent(this, PushSender.class);
+            intent.putStringArrayListExtra("users", userList);
+            intent.putExtra("message", message);
+            intent.putExtra("notification", notificationMessage);
+            startService(intent);
             makeToast("Group left");
         }
 
