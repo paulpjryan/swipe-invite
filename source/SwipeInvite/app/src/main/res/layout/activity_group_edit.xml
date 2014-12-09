@@ -85,12 +85,21 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/edit_separator_1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="15dp"
+        android:layout_below="@+id/linearLayout_profile_group_description"
+        android:background="#37000000"
+        android:orientation="horizontal" ></LinearLayout>
+
+    <LinearLayout
         android:id="@+id/linearLayout_profile_group_nameType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@id/linearLayout_profile_group_description"
-        android:layout_marginTop="10dp"
+        android:layout_below="@id/edit_separator_1"
+        android:layout_marginTop="15dp"
         android:layout_weight="1.5"
         android:weightSum="8">
 
@@ -116,14 +125,22 @@
             android:hint="public/private"/>
     </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/edit_separator_2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"
+            android:layout_below="@+id/linearLayout_profile_group_nameType"
+            android:background="#37000000"
+            android:orientation="horizontal" ></LinearLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout_profile_group_permType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@id/linearLayout_profile_group_nameType"
-        android:layout_marginTop="10dp"
+        android:layout_below="@id/edit_separator_2"
+        android:layout_marginTop="15dp"
         android:layout_weight="1.5"
         android:weightSum="8">
 
@@ -149,6 +166,15 @@
             android:hint="open/closed"/>
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/edit_separator_3"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="15dp"
+        android:layout_below="@+id/linearLayout_profile_group_permType"
+        android:background="#37000000"
+        android:orientation="horizontal" ></LinearLayout>
+
 
     <TextView
         android:layout_width="wrap_content"
@@ -156,7 +182,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Events:"
         android:id="@+id/textView2"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
         android:layout_weight="0.5"/>
 
     <ListView
