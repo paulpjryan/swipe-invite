@@ -5,22 +5,17 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.media.RingtoneManager;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.baasbox.android.BaasBox;
 import com.baasbox.android.BaasDocument;
-import com.baasbox.android.BaasHandler;
 import com.baasbox.android.BaasResult;
 import com.baasbox.android.BaasUser;
 import com.baasbox.android.json.JsonObject;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -61,7 +56,7 @@ public class GcmIntentService extends IntentService {
             } else if (GoogleCloudMessaging.
                     MESSAGE_TYPE_DELETED.equals(messageType)) {
                 //sendNotification("Deleted messages on server: " +
-                       // extras.toString());
+                // extras.toString());
                 Log.d(LOG_TAG, "Deleted messages on server: " + extras.toString());
                 // If it's a regular GCM message, do some work.
             } else if (GoogleCloudMessaging.
@@ -124,7 +119,7 @@ public class GcmIntentService extends IntentService {
         Log.d(LOG_TAG, "Iterating through group array to find and replace");
         List<Group2> activeGroups = model.getActiveGroups();
         synchronized (activeGroups) {    //Need to synchronize any iteration
-            for (final ListIterator<Group2> i = activeGroups.listIterator(); i.hasNext();) {    //Setting up the iterator for each loop
+            for (final ListIterator<Group2> i = activeGroups.listIterator(); i.hasNext(); ) {    //Setting up the iterator for each loop
                 final Group2 current = i.next();    //need to get current group
                 if (current.equals(g)) {
                     Log.d(LOG_TAG, "Found group to replace: " + g.getName() + ",  " + g.getId());
@@ -225,6 +220,7 @@ public class GcmIntentService extends IntentService {
         sendNotification(message, title);
 
     }
+
     private void updateGroups(ArrayList<String> groups) {
         Model model = Model.getInstance(this);
 
@@ -256,6 +252,7 @@ public class GcmIntentService extends IntentService {
     // a GCM message.
     public static final int NOTIFICATION_ID = 1;
     private NotificationManager mNotificationManager;
+
     private void sendNotification(String msg, String title) {
         Log.d(LOG_TAG, "Sending notification.");
         mNotificationManager = (NotificationManager)

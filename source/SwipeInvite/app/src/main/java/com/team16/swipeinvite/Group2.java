@@ -77,12 +77,14 @@ class Group2 implements Parcelable {
         setPrivate(privacy);
         setOpen(open);
     }
+
     //Create a brand new group object from an existing BaasDocument
     protected Group2(BaasDocument d) throws GroupException {
         setBaasDocument(d);
     }
+
     //Create a brand new group object from a Json object
-    protected Group2(JsonObject j) throws GroupException  {
+    protected Group2(JsonObject j) throws GroupException {
         setFromJson(j);
     }
     //endregion
@@ -94,20 +96,24 @@ class Group2 implements Parcelable {
         j.add(BaasUser.current().getName());
         this.group.put(MEMBER_ARRAY_KEY, j);
     }
+
     private void initializeEventArray() {
         JsonArray j = new JsonArray();
         this.group.put(EVENT_ARRAY_KEY, j);
     }
+
     private void initializeDetailAdminArray() {
         JsonArray j = new JsonArray();
         j.add(BaasUser.current().getName());
         this.group.put(DETAIL_ADMIN_ARRAY_KEY, j);
     }
+
     private void initializeEventAdminArray() {
         JsonArray j = new JsonArray();
         j.add(BaasUser.current().getName());
         this.group.put(EVENT_ADMIN_ARRAY_KEY, j);
     }
+
     private void initializeMemberAdminArray() {
         JsonArray j = new JsonArray();
         j.add(BaasUser.current().getName());
@@ -182,11 +188,12 @@ class Group2 implements Parcelable {
 
     //region Getters and setters for privacy
     protected synchronized void setPrivate(boolean privacy) throws GroupException {
-        if (!hasDetailPermission()) throw new GroupException("User does not have detail permission.");
+        if (!hasDetailPermission())
+            throw new GroupException("User does not have detail permission.");
         group.put(PRIVACY_KEY, privacy);
     }
 
-    protected synchronized boolean isPrivate () {
+    protected synchronized boolean isPrivate() {
         return group.getBoolean(PRIVACY_KEY);
     }
     //endregion
@@ -196,8 +203,10 @@ class Group2 implements Parcelable {
     protected synchronized boolean isOpen() {
         return group.getBoolean(OPEN_KEY, false);
     }
+
     protected synchronized void setOpen(boolean isopen) throws GroupException {
-        if (!hasDetailPermission()) throw new GroupException("User does not have detail permission.");
+        if (!hasDetailPermission())
+            throw new GroupException("User does not have detail permission.");
         group.put(OPEN_KEY, isopen);
     }
     //endregion
@@ -218,6 +227,7 @@ class Group2 implements Parcelable {
         }
         return false;
     }
+
     protected synchronized String getId() {
         if (isOnServer()) {
             return this.group.getId();
@@ -264,8 +274,9 @@ class Group2 implements Parcelable {
         this.group.put(MEMBER_ARRAY_KEY, ja);
     }
 
-    protected synchronized void removeSelf() throws GroupException{
-        if (BaasUser.current().getName().equals(getCreator())) throw new GroupException("Creator cannot remove themself.");
+    protected synchronized void removeSelf() throws GroupException {
+        if (BaasUser.current().getName().equals(getCreator()))
+            throw new GroupException("Creator cannot remove themself.");
         if (!containsUser(BaasUser.current().getName())) return;
         //Demote from admin spots
         demoteSelf();
@@ -285,7 +296,8 @@ class Group2 implements Parcelable {
     }
 
     private void demoteSelf() {
-        if (BaasUser.current().getName().equals(getCreator())) throw new GroupException("Cannot demote the creator.");
+        if (BaasUser.current().getName().equals(getCreator()))
+            throw new GroupException("Cannot demote the creator.");
         if (containsDetailAdmin(BaasUser.current().getName())) {   //Removing from detail admins
             JsonArray ja = this.group.getArray(DETAIL_ADMIN_ARRAY_KEY);
             int size = ja.size();
@@ -526,12 +538,15 @@ class Group2 implements Parcelable {
     protected synchronized boolean hasDetailPermission() {
         return containsDetailAdmin(BaasUser.current().getName());
     }
+
     protected synchronized boolean hasMemberPermission() {
         return containsMemberAdmin(BaasUser.current().getName());
     }
+
     protected synchronized boolean hasEventPermission() {
         return containsEventAdmin(BaasUser.current().getName());
     }
+
     protected synchronized boolean hasTotalPermission() {
         return (hasDetailPermission() && hasMemberPermission() && hasEventPermission());
     }

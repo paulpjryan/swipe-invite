@@ -8,9 +8,9 @@ import com.baasbox.android.BaasUser;
 /**
  * Created by kylekrynski on 10/22/14.
  */
-class Acquaintance implements Parcelable{
+class Acquaintance implements Parcelable {
     //region Constant keys for json data contained in user object
-    private static final String COMMON_NAME_KEY =  "common_name";
+    private static final String COMMON_NAME_KEY = "common_name";
     private static final String GENDER_KEY = "gender";
     //endregion
 

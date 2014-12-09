@@ -17,18 +17,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Button;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.ListIterator;
@@ -47,7 +43,6 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
     private TextView mEventNameField;
     private TextView mEventLocationField;
     private TextView mEventDescriptionField;
-    private Button submitButton;
     private EditText mStartDateText;
     private EditText mStartTimeText;
     private EditText mEndDateText;
@@ -73,8 +68,10 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
             this.minute = minute;
         }
     }
+
     private TimePickerFragment mStartTimePicker;
     private TimePickerFragment mEndTimePicker;
+
     public static class DatePickerFragment extends DialogFragment
             implements DatePickerDialog.OnDateSetListener {
 
@@ -89,9 +86,10 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
         public void onDateSet(DatePicker view, int year, int month, int day) {
             this.year = year;
             this.month = month;
-            this.year = year;
+            this.day = day;
         }
     }
+
     private DatePickerFragment mStartDatePicker;
     private DatePickerFragment mEndDatePicker;
     //endregion
@@ -101,6 +99,7 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
     private Model model;
     private String eventID;
     private static final String EVENT_KEY = "eventID";
+    private boolean permission = false;
     //endregion
 
 
@@ -110,7 +109,7 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                //Refresh anything
+                populateViews();
             }
         });
     }
@@ -145,13 +144,13 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
         mEndDateText = (EditText) findViewById(R.id.edit_end_date_text);
         mEndTimeText = (EditText) findViewById(R.id.edit_end_time_text);
 
-        mEventNameField = (TextView) findViewById(R.id.edit_text_event_name);
+       // mEventNameField = (TextView) findViewById(R.id.edit_text_event_name);
         mEventLocationField = (TextView) findViewById(R.id.edit_text_event_location);
         mEventDescriptionField = (TextView) findViewById(R.id.edit_text_event_description);
 
         //Lock them
-        mEventNameField.setEnabled(false);
-        mEventNameField.setFocusable(false);
+       // mEventNameField.setEnabled(false);
+       // mEventNameField.setFocusable(false);
         mEventLocationField.setEnabled(false);
         mEventLocationField.setFocusable(false);
         mEventDescriptionField.setEnabled(false);
@@ -161,6 +160,7 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
         populateViews();
 
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -171,18 +171,21 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
         model.addObserver(this);
 
     }
+
     @Override
     protected void onPause() {
         super.onPause();
         Log.d(LOG_TAG, "onPause");
 
     }
+
     @Override
     protected void onStop() {
         super.onStop();
         Log.d(LOG_TAG, "onStop");
         model.deleteObserver(this);
     }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -192,6 +195,7 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
     //endregion
 
 
+    //region Method to populate the views
     private void populateViews() {
         //Need to get the event instance
         List<Event> acceptedEvents = model.getAcceptedEvents();
@@ -226,7 +230,8 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
         }
 
         //Populate the views
-        mEventNameField.setText(event.getName());
+       // mEventNameField.setText(event.getName());
+        setTitle(event.getName());
         mEventLocationField.setText(event.getLocation());
         mEventDescriptionField.setText(event.getDescription());
 
@@ -257,7 +262,24 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
         mEndTimePicker = new TimePickerFragment();
         mEndTimePicker.hour = endDate.get(Calendar.HOUR);
         mEndTimePicker.minute = endDate.get(Calendar.MINUTE);
+
+
+        //Check permissions
+        //Decide whether or not the user has access to edit
+        boolean perm = false;
+        if (event.hasPermission()) {
+            Log.d(LOG_TAG, "The user has detail permission on group or it is open group.");
+            perm = true;
+        }
+        mEventLocationField.setEnabled(perm);
+        mEventLocationField.setFocusable(perm);
+        mEventDescriptionField.setEnabled(perm);
+        mEventDescriptionField.setFocusable(perm);
+
+        permission = perm;
+
     }
+    //endregion
 
 
     //region Methods for menus and options
@@ -283,20 +305,41 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
     }
     //endregion
 
+
     //region Methods for Date and Time showing
     public void showStartDatePickerDialog(View v) {
+        if (!permission) {
+            makeToast("You cannot edit this event");
+            return;
+        }
         mStartDatePicker.show(getFragmentManager(), "startDatePicker");
     }
+
     public void showStartTimePickerDialog(View v) {
+        if (!permission) {
+            makeToast("You cannot edit this event");
+            return;
+        }
         mStartTimePicker.show(getFragmentManager(), "startTimePicker");
     }
+
     public void showEndDatePickerDialog(View v) {
+        if (!permission) {
+            makeToast("You cannot edit this event");
+            return;
+        }
         mEndDatePicker.show(getFragmentManager(), "endDatePicker");
     }
+
     public void showEndTimePickerDialog(View v) {
+        if (!permission) {
+            makeToast("You cannot edit this event");
+            return;
+        }
         mEndTimePicker.show(getFragmentManager(), "endTimePicker");
     }
     //endregion
+
 
     //region Method for submitting changes to event
     public void onEventEdit(View v) {
@@ -346,7 +389,7 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
             //descriptionField.requestFocus();
             description = "TBD";
             return;
-        } else if (name.length() > 30 ) {
+        } else if (name.length() > 30) {
             Log.d(LOG_TAG, "Name field cannot be longer than 20 characters.");
             //showProgress(false);
             mEventNameField.setError("Cannot be longer than 20 characters");
@@ -358,14 +401,14 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
             mEventDescriptionField.setError("Must be between 4 and 100 characters");
             mEventDescriptionField.requestFocus();
             return;
-        } else if(endDate.before(startDate)) {
+        } else if (endDate.before(startDate)) {
             Log.d(LOG_TAG, "End date must be after start date");
             //showProgress(false);
             Toast bread = Toast.makeText(EventEditActivity.this, "End date must be after start date", Toast.LENGTH_LONG);
             bread.show();
             mEndDateText.requestFocus();
             return;
-        } else if(startDate.before(currentDate)) {
+        } else if (startDate.before(currentDate)) {
             Log.d(LOG_TAG, "start date must be after current date");
             //showProgress(false);
             Toast bread = Toast.makeText(EventEditActivity.this, "Start date must be after current date", Toast.LENGTH_LONG);

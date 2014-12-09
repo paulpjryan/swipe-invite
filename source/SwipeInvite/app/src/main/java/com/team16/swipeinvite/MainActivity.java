@@ -46,7 +46,7 @@ public class MainActivity extends ActionBarActivity implements Observer {
     private ActionBarDrawerToggle mDrawerToggle;
 
     // Array of strings to initial counts
-    String[] mCount = new String[] {  "", "", "", "" };
+    String[] mCount = new String[]{"", "", "", "", ""};
     // Array of integers points to images stored in /res/drawable-ldpi/
     int[] mIcons = new int[]{
             R.drawable.ic_action_new_event_dark,
@@ -55,7 +55,7 @@ public class MainActivity extends ActionBarActivity implements Observer {
             R.drawable.ic_delete_grey600_24dp
     };
 
-    List<HashMap<String,String>> mList;
+    List<HashMap<String, String>> mList;
 
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
@@ -123,20 +123,20 @@ public class MainActivity extends ActionBarActivity implements Observer {
         mDrawer = (LinearLayout) findViewById(R.id.drawer);
 
         // Each row in the list stores the icon, text and count
-        mList = new ArrayList<HashMap<String,String>>();
-        for(int i = 0; i < drawerTitleList.length; i++){
-            HashMap<String, String> hm = new HashMap<String,String>();
-            hm.put(DICON, Integer.toString(mIcons[i]) );
+        mList = new ArrayList<HashMap<String, String>>();
+        for (int i = 0; i < drawerTitleList.length; i++) {
+            HashMap<String, String> hm = new HashMap<String, String>();
+            hm.put(DICON, Integer.toString(mIcons[i]));
             hm.put(DTEXT, drawerTitleList[i]);
             hm.put(DCOUNT, mCount[i]);
             mList.add(hm);
         }
 
         // Keys used in Hashmap
-        String[] from = { DICON, DTEXT, DCOUNT };
+        String[] from = {DICON, DTEXT, DCOUNT};
 
         // Ids of views in listview_layout
-        int[] to = { R.id.drawer_icon , R.id.drawer_text , R.id.drawer_count};
+        int[] to = {R.id.drawer_icon, R.id.drawer_text, R.id.drawer_count};
 
         // Instantiating an adapter to store each items
         // R.layout.drawer_layout defines the layout of each item
@@ -168,7 +168,7 @@ public class MainActivity extends ActionBarActivity implements Observer {
 
             public void onDrawerOpened(View drawerView) {
                 //Code to hide soft keyboard
-                InputMethodManager imm = (InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+                InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 
                 getSupportActionBar().setTitle(mDrawerTitle);
@@ -541,8 +541,10 @@ public class MainActivity extends ActionBarActivity implements Observer {
     }
     //endregion
 
+
     //region Methods for pulldown refresh
     private RefreshableView refreshableView;
+
     protected void setRefreshableView(RefreshableView rf) {
         refreshableView = rf;
     }
@@ -560,5 +562,6 @@ public class MainActivity extends ActionBarActivity implements Observer {
         }
     }
     //endregion
+
 
 }

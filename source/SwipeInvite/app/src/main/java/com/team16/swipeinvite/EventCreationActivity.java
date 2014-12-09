@@ -22,12 +22,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Button;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -39,7 +37,6 @@ import com.baasbox.android.SaveMode;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Observable;
 import java.util.Observer;
@@ -66,11 +63,10 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
 
 
     //region Picker setup
-    public static class TimePickerFragment extends DialogFragment
+    public class TimePickerFragment extends DialogFragment
             implements TimePickerDialog.OnTimeSetListener {
 
         public int hour, minute;
-        protected int type = 0;
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -82,16 +78,17 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
         public void onTimeSet(TimePicker view, int hour, int minute) {
             this.hour = hour;
             this.minute = minute;
-            ((EventCreationActivity) getActivity()).populateTimeView(hour, minute, type);
+            setTextFromPickers();
         }
     }
+
     private TimePickerFragment mStartTimePicker;
     private TimePickerFragment mEndTimePicker;
-    public static class DatePickerFragment extends DialogFragment
+
+    public class DatePickerFragment extends DialogFragment
             implements DatePickerDialog.OnDateSetListener {
 
         public int year, month, day;
-        protected int type = 0;
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -102,11 +99,11 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
         public void onDateSet(DatePicker view, int year, int month, int day) {
             this.year = year;
             this.month = month;
-            this.year = year;
-            ((EventCreationActivity) getActivity()).populateDateView(year, month, day, type);
-
+            this.day = day;
+            setTextFromPickers();
         }
     }
+
     private DatePickerFragment mStartDatePicker;
     private DatePickerFragment mEndDatePicker;
     //endregion
@@ -152,7 +149,7 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
         mCurrentCalendar = Calendar.getInstance();
         int currentYear = mCurrentCalendar.get(Calendar.YEAR);
         int currentMonth = mCurrentCalendar.get(Calendar.MONTH);
-        int currentDay = mCurrentCalendar.get(Calendar.DATE);
+        int currentDay = mCurrentCalendar.get(Calendar.DAY_OF_MONTH);
         int currentHour = mCurrentCalendar.get(Calendar.HOUR_OF_DAY);
         int currentMinute = mCurrentCalendar.get(Calendar.MINUTE);
 
@@ -172,31 +169,24 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
 
         // Setup pickers
         mStartDatePicker = new DatePickerFragment();
-        mStartDatePicker.type = 0;
         mStartDatePicker.year = currentYear;
         mStartDatePicker.month = currentMonth;
         mStartDatePicker.day = currentDay;
 
         mStartTimePicker = new TimePickerFragment();
-        mStartTimePicker.type = 0;
         mStartTimePicker.hour = currentHour;
         mStartTimePicker.minute = currentMinute;
 
         mEndDatePicker = new DatePickerFragment();
-        mEndDatePicker.type = 1;
         mEndDatePicker.year = currentYear;
         mEndDatePicker.month = currentMonth;
         mEndDatePicker.day = currentDay; // FIXME
 
         mEndTimePicker = new TimePickerFragment();
-        mEndTimePicker.type = 1;
         mEndTimePicker.hour = currentHour;
         mEndTimePicker.minute = currentMinute;
 
-        mStartDateText.setText(new SimpleDateFormat("MM/dd/yyyy").format(mCurrentCalendar.getTime()));
-        mEndDateText.setText(new SimpleDateFormat("MM/dd/yyyy").format(mCurrentCalendar.getTime()));
-        mStartTimeText.setText(new SimpleDateFormat("hh:mm").format(mCurrentCalendar.getTime()));
-        mEndTimeText.setText(new SimpleDateFormat("hh:mm").format(mCurrentCalendar.getTime()));
+        setTextFromPickers();
 
         //Listener for the add group button
         mAddGroupButton.setOnClickListener(new View.OnClickListener() {
@@ -212,8 +202,9 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
                 //intent.putStringArrayListExtra(GROUPS_KEY, groups);
                 startActivityForResult(intent, GROUP_ADD_REQUEST_CODE);
             }
-        } );
+        });
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -226,6 +217,7 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
             saveRT.resume(onSaveComplete);
         }
     }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -234,12 +226,14 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
             saveRT.suspend();
         }
     }
+
     @Override
     protected void onStop() {
         super.onStop();
         Log.d(LOG_TAG, "onStop");
         model.deleteObserver(this);
     }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -253,33 +247,20 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
     }
     //endregion
 
+    private void setTextFromPickers() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(mStartDatePicker.year, mStartDatePicker.month, mStartDatePicker.day, mStartTimePicker.hour, mStartTimePicker.minute);
+        mStartDateText.setText(new SimpleDateFormat("MM/dd/yyyy").format(calendar.getTime()));
+        mStartTimeText.setText(new SimpleDateFormat("hh:mm").format(calendar.getTime()));
 
-    protected void populateDateView(int year, int month, int day, int type) {
-        Calendar cal = Calendar.getInstance();
-        cal.set(year, month, day);
-        if (type == 0) {   //Start date
-
-            mStartDateText.setText(new SimpleDateFormat("MM/dd/yyyy").format(cal.getTime()));
-        } else {    //End date
-
-            mEndDateText.setText(new SimpleDateFormat("MM/dd/yyyy").format(cal.getTime()));
-        }
+        calendar.set(mEndDatePicker.year, mEndDatePicker.month, mEndDatePicker.day, mEndTimePicker.hour, mEndTimePicker.minute);
+        mEndDateText.setText(new SimpleDateFormat("MM/dd/yyyy").format(calendar.getTime()));
+        mEndTimeText.setText(new SimpleDateFormat("hh:mm").format(calendar.getTime()));
     }
-
-    protected void populateTimeView(int hour, int minute, int type) {
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.HOUR, hour);
-        cal.set(Calendar.MINUTE, minute);
-        if (type == 0) {
-            mStartTimeText.setText(new SimpleDateFormat("hh:mm").format(cal.getTime()));
-        } else {
-            mEndTimeText.setText(new SimpleDateFormat("hh:mm").format(cal.getTime()));
-        }
-    }
-
 
     //region Method called when the add group returns
     private static final int GROUP_ADD_REQUEST_CODE = 1;
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case GROUP_ADD_REQUEST_CODE:
@@ -310,8 +291,7 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        switch (id)
-        {
+        switch (id) {
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
@@ -329,12 +309,15 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
     public void showStartDatePickerDialog(View v) {
         mStartDatePicker.show(getFragmentManager(), "startDatePicker");
     }
+
     public void showStartTimePickerDialog(View v) {
         mStartTimePicker.show(getFragmentManager(), "startTimePicker");
     }
+
     public void showEndDatePickerDialog(View v) {
         mEndDatePicker.show(getFragmentManager(), "endDatePicker");
     }
+
     public void showEndTimePickerDialog(View v) {
         mEndTimePicker.show(getFragmentManager(), "endTimePicker");
     }
@@ -342,8 +325,7 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
 
 
     //region Method for submit button
-    public void onEventSubmit(View v)
-    {
+    public void onEventSubmit(View v) {
         //Prevent button spam
         if (saveRT != null) {
             Log.d(LOG_TAG, "Preventing button spam.");
@@ -395,7 +377,7 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
             mEventLocationField.setError("Cannot be left blank");
             mEventLocationField.requestFocus();
             return;
-        } else if (name.length() > 30 ) {
+        } else if (name.length() > 30) {
             Log.d(LOG_TAG, "Name field cannot be longer than 20 characters.");
             showProgress(false);
             mEventNameField.setError("Cannot be longer than 20 characters");
@@ -407,14 +389,14 @@ public class EventCreationActivity extends ActionBarActivity implements Observer
             mEventDescriptionField.setError("Must be between 4 and 100 characters");
             mEventDescriptionField.requestFocus();
             return;
-        } else if(endDate.before(startDate)) {
+        } else if (endDate.before(startDate)) {
             Log.d(LOG_TAG, "End date must be after start date");
             showProgress(false);
             Toast bread = Toast.makeText(EventCreationActivity.this, "End date must be after start date", Toast.LENGTH_LONG);
             bread.show();
             mEndDateText.requestFocus();
             return;
-        } else if(startDate.before(currentDate)) {
+        } else if (startDate.before(currentDate)) {
             Log.d(LOG_TAG, "start date must be after current date");
             showProgress(false);
             Toast bread = Toast.makeText(EventCreationActivity.this, "Start date must be after current date", Toast.LENGTH_LONG);

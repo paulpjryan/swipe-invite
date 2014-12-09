@@ -3,9 +3,7 @@ package com.team16.swipeinvite;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -22,9 +20,6 @@ import com.baasbox.android.RequestToken;
 import com.baasbox.android.SaveMode;
 import com.baasbox.android.json.JsonObject;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -41,7 +36,7 @@ public class SearchSpeMemberActivity extends Activity implements Observer {
     public ListView ListView_search_group;
     private ProgressBar progressSpinner;
     private TextView nameField;
-   // private TextView typeField;
+    // private TextView typeField;
     private TextView descField;
     //endregion
 
@@ -103,6 +98,7 @@ public class SearchSpeMemberActivity extends Activity implements Observer {
         //Populate views
         populateViews();
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -113,17 +109,20 @@ public class SearchSpeMemberActivity extends Activity implements Observer {
         }
         model.addObserver(this);
     }
+
     @Override
     protected void onPause() {
         super.onPause();
         Log.d(LOG_TAG, "onPause");
     }
+
     @Override
     protected void onStop() {
         super.onStop();
         Log.d(LOG_TAG, "onStop");
         model.deleteObserver(this);
     }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -138,11 +137,11 @@ public class SearchSpeMemberActivity extends Activity implements Observer {
         nameField.setText(group.getName());
         descField.setText(group.getDescription());
         if (group.isPrivate()) {
-           // typeField.setText("private");
+            // typeField.setText("private");
         } else {
             //typeField.setText("public");
         }
-        ListAdapter = new ArrayAdapter<String>(SearchSpeMemberActivity.this,R.layout.list_item_search_spec,group.getUserList());
+        ListAdapter = new ArrayAdapter<String>(SearchSpeMemberActivity.this, R.layout.list_item_search_spec, group.getUserList());
         ListView_search_group.setAdapter(ListAdapter);
     }
     //endregion
@@ -224,6 +223,7 @@ public class SearchSpeMemberActivity extends Activity implements Observer {
         finish();
         return;
     }
+
     private void completeSave(BaasDocument d) {
         loaderSpin(false);
         //Save the group locally
@@ -260,6 +260,7 @@ public class SearchSpeMemberActivity extends Activity implements Observer {
     private void makeToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
+
     private void loaderSpin(boolean visible) {
         if (visible) {
             progressSpinner.setVisibility(View.VISIBLE);

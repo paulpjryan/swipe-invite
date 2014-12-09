@@ -1,6 +1,7 @@
 package com.team16.swipeinvite;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,15 +21,20 @@ import java.util.List;
 public class EventsAdapter extends BaseAdapter implements Filterable {
     private static final String LOG_TAG = "EventsAdapter";
 
-    private List<Event>originalData = null;
-    protected List<Event>filteredData = null;
+    public static final int TYPE_ACCEPTED = 0;
+    public static final int TYPE_PENDING = 1;
+    public static final int TYPE_REJECTED = 2;
+    public static final int TYPE_NO_BUTTONS = -1;
+
+    private List<Event> originalData = null;
+    protected List<Event> filteredData = null;
     private LayoutInflater mInflater;
     private ItemFilter mFilter = new ItemFilter();
-    protected int type; //0 = accepted, 1 = pending, 2 = declined
+    protected int type; //0 = accepted, 1 = pending, 2 = declined, -1 = NO BUTTONS
 
     public EventsAdapter(Context context, List<Event> data, int type) {
-        this.filteredData = data ;
-        this.originalData = data ;
+        this.filteredData = data;
+        this.originalData = data;
         mInflater = LayoutInflater.from(context);
         this.type = type;
     }
@@ -41,7 +47,6 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
             this.notifyDataSetChanged();
         } catch (Exception e) {
             Log.d(LOG_TAG, "Caught exception: " + e.toString());
-            return;
         }
     }
     //endregion
@@ -58,62 +63,80 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
         return position;
     }
 
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         // A ViewHolder keeps references to children views to avoid unnecessary calls
         // to findViewById() on each row.
         ViewHolder holder;
 
-        // When convertView is not null, we can reuse it directly, there is no need
-        // to reinflate it. We only inflate a new View when the convertView supplied
-        // by ListView is null.
-        //if (convertView == null) {
-        if(type == 0)
-            convertView = mInflater.inflate(R.layout.list_item_event_accepted, null);
+        if (convertView == null) {
+            if (type == TYPE_ACCEPTED)
+                convertView = mInflater.inflate(R.layout.list_item_event_accepted, parent, false);
+            else if (type == TYPE_PENDING)
+                convertView = mInflater.inflate(R.layout.list_item_event, parent, false);
+            else if (type == TYPE_REJECTED)
+                convertView = mInflater.inflate(R.layout.list_item_event_declined, parent, false);
+            else
+                convertView = mInflater.inflate(R.layout.list_item_event_nobutton, parent, false);
 
-        else if(type == 1)
-            convertView = mInflater.inflate(R.layout.list_item_event, null);
+            // Creates a ViewHolder and store references to the two children views
+            // we want to bind data to.
+            holder = new ViewHolder();
+            holder.title = (TextView) convertView.findViewById(R.id.list_item_event_name);
+            holder.location = (TextView) convertView.findViewById(R.id.list_item_event_location);
+            holder.datetime = (TextView) convertView.findViewById(R.id.list_item_event_datetime);
+            // Bind the data efficiently with the holder.
 
-        else
-            convertView = mInflater.inflate(R.layout.list_item_event_declined, null);
-
-        // Creates a ViewHolder and store references to the two children views
-        // we want to bind data to.
-        holder = new ViewHolder();
-        holder.title = (TextView) convertView.findViewById(R.id.list_item_event_name);
-        holder.location = (TextView) convertView.findViewById(R.id.list_item_event_location);
-        holder.datetime = (TextView) convertView.findViewById(R.id.list_item_event_datetime);
-        // Bind the data efficiently with the holder.
-
-        convertView.setTag(holder);
-       /* } else {
+            convertView.setTag(holder);
+        } else {
             // Get the ViewHolder back to get fast access to the TextView
             // and the ImageView.
             holder = (ViewHolder) convertView.getTag();
-        }*/
+        }
+        final View convertView2 = convertView;
+
 
         // If weren't re-ordering this you could rely on what you set last time
         holder.title.setText((filteredData.get(position).getName()));
         holder.location.setText((filteredData.get(position).getLocation()));
         holder.datetime.setText((filteredData.get(position).dateToString()));
+        holder.eventID = filteredData.get(position).getId();
 
-        if(type <= 1)
-        {
+        if (type == TYPE_ACCEPTED || type == TYPE_PENDING) {
             holder.declineButton = (ImageButton) convertView.findViewById(R.id.list_item_reject_button);
+            holder.declineButton.setFocusable(false);
             holder.declineButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //TODO Add event to declined events
+                    Intent intent = new Intent(convertView2.getContext(), EventMoveService.class);
+                    intent.putExtra(EventMoveService.EVENT_ID, filteredData.get(position).getId());
+                    intent.putExtra(EventMoveService.EVENT_DESTINATION, EventMoveService.EVENT_REJECTED);
+                    convertView2.getContext().startService(intent);
                 }
             });
         }
 
-        if(type >= 1)
-        {
+        if (type == TYPE_PENDING || type == TYPE_REJECTED) {
             holder.acceptButton = (ImageButton) convertView.findViewById(R.id.list_item_accept_button);
+            holder.acceptButton.setFocusable(false);
             holder.acceptButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //TODO Add event to accepted events
+                    Intent intent = new Intent(convertView2.getContext(), EventMoveService.class);
+                    intent.putExtra(EventMoveService.EVENT_ID, filteredData.get(position).getId());
+                    intent.putExtra(EventMoveService.EVENT_DESTINATION, EventMoveService.EVENT_ACCEPTED);
+                    convertView2.getContext().startService(intent);
+                }
+            });
+        }
+
+        //convertView.setLongClickable(false);
+        if (type != -1) {
+            convertView.setClickable(true);
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.d(LOG_TAG, "Event clicked!!");
+                    ((MainActivity) convertView2.getContext()).startEventEdit(filteredData.get(position).getId());
                 }
             });
         }
@@ -127,6 +150,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
         TextView datetime;
         ImageButton acceptButton;
         ImageButton declineButton;
+        String eventID;
     }
 
     public Filter getFilter() {
@@ -146,12 +170,12 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
             int count = list.size();
             final ArrayList<Event> nlist = new ArrayList<Event>(count);
 
-            String filterableString ;
+            String filterableString;
 
-            for (int i = 0; i < count; i++) {
-                filterableString = list.get(i).getName();
+            for (Event aList : list) {
+                filterableString = aList.getName();
                 if (filterableString.toLowerCase().contains(filterString)) {
-                    nlist.add(list.get(i));
+                    nlist.add(aList);
                 }
             }
 

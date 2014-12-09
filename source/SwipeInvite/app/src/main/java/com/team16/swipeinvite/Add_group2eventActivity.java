@@ -1,36 +1,19 @@
 package com.team16.swipeinvite;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Message;
-import android.provider.Settings;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
-import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.baasbox.android.BaasQuery;
-import com.baasbox.android.BaasUser;
-import com.baasbox.android.Grant;
-import com.baasbox.android.SaveMode;
-import com.google.android.gms.games.Game;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -41,7 +24,7 @@ public class Add_group2eventActivity extends ActionBarActivity implements View.O
     private static final String LOG_TAG = "ADD_G2E";
 
     //region Local variables for views
-    private  ListView ListView_search_group;
+    private ListView ListView_search_group;
     private GroupsAdapter ListAdapter;
     //endregion
 
@@ -91,8 +74,7 @@ public class Add_group2eventActivity extends ActionBarActivity implements View.O
 
         ListView_search_group.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id)
-            {
+                                    int position, long id) {
                 Group2 g = (Group2) ListAdapter.getItem(position);
                 if (!g.isOpen()) {
                     if (!g.hasEventPermission()) {
@@ -104,8 +86,7 @@ public class Add_group2eventActivity extends ActionBarActivity implements View.O
                     groups.remove(g.getId());
                     view.setBackgroundColor(Color.TRANSPARENT);
                     makeToast("Group removed");
-                }
-                else {
+                } else {
                     groups.add(g.getId());
                     view.setBackgroundColor(Color.LTGRAY);
                     makeToast("Group added");
@@ -114,6 +95,7 @@ public class Add_group2eventActivity extends ActionBarActivity implements View.O
         });
 
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -123,17 +105,20 @@ public class Add_group2eventActivity extends ActionBarActivity implements View.O
         }
         model.addObserver(this);
     }
+
     @Override
     protected void onPause() {
         super.onPause();
         Log.d(LOG_TAG, "onPause");
     }
+
     @Override
     protected void onStop() {
         super.onStop();
         Log.d(LOG_TAG, "onStop");
         model.deleteObserver(this);
     }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -166,6 +151,7 @@ public class Add_group2eventActivity extends ActionBarActivity implements View.O
         }
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     public void onBackPressed() {
         returnToEventCreate();
@@ -185,8 +171,7 @@ public class Add_group2eventActivity extends ActionBarActivity implements View.O
 
     //region Method for search button click
     public void onClick(View v) {
-        switch(v.getId())
-        {
+        switch (v.getId()) {
         }
 
     }

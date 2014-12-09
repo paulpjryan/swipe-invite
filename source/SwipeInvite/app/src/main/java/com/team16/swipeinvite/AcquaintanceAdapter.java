@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -20,15 +19,15 @@ import java.util.List;
 public class AcquaintanceAdapter extends BaseAdapter implements Filterable {
     private static final String LOG_TAG = "AcquantanceAdapter";
 
-    private List<Acquaintance>originalData = null;
-    protected List<Acquaintance>filteredData = null;
+    private List<Acquaintance> originalData = null;
+    protected List<Acquaintance> filteredData = null;
     private LayoutInflater mInflater;
     private ItemFilter mFilter = new ItemFilter();
     protected int type; //0 = accepted, 1 = pending, 2 = declined
 
     public AcquaintanceAdapter(Context context, List<Acquaintance> data, int type) {
-        this.filteredData = data ;
-        this.originalData = data ;
+        this.filteredData = data;
+        this.originalData = data;
         mInflater = LayoutInflater.from(context);
         this.type = type;
     }
@@ -71,8 +70,8 @@ public class AcquaintanceAdapter extends BaseAdapter implements Filterable {
 
         // Creates a ViewHolder and store references to the two children views
         // we want to bind data to.
-        //TODO: Get proper view fields for view
         holder = new ViewHolder();
+        //TODO: Get proper view fields for view
         holder.title = (TextView) convertView.findViewById(R.id.list_item_event_name);
         // Bind the data efficiently with the holder.
 
@@ -112,7 +111,7 @@ public class AcquaintanceAdapter extends BaseAdapter implements Filterable {
             int count = list.size();
             final ArrayList<Acquaintance> nlist = new ArrayList<Acquaintance>(count);
 
-            String filterableString ;
+            String filterableString;
 
             for (int i = 0; i < count; i++) {
                 filterableString = list.get(i).getCommonName();

@@ -75,6 +75,7 @@ public class LogoutActivity extends ActionBarActivity implements Observer {
         statusLogout = findViewById(R.id.status_logout);
         statusMessage = (TextView) findViewById(R.id.status_message_logout);
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -94,6 +95,7 @@ public class LogoutActivity extends ActionBarActivity implements Observer {
         }
         model.addObserver(this);
     }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -108,6 +110,7 @@ public class LogoutActivity extends ActionBarActivity implements Observer {
             logoutRT.suspend();
         }
     }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -120,6 +123,7 @@ public class LogoutActivity extends ActionBarActivity implements Observer {
             outState.putParcelable(LOGOUT_TOKEN_KEY, logoutRT);
         }
     }
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -140,7 +144,6 @@ public class LogoutActivity extends ActionBarActivity implements Observer {
         return;
     }
     //endregion
-
 
 
     //region Method to respond to logout button

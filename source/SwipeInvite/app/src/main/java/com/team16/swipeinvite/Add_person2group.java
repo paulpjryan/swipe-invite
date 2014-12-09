@@ -1,7 +1,6 @@
 package com.team16.swipeinvite;
 
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -14,15 +13,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.baasbox.android.BaasBox;
 import com.baasbox.android.BaasDocument;
 import com.baasbox.android.BaasHandler;
 import com.baasbox.android.BaasQuery;
@@ -30,21 +26,16 @@ import com.baasbox.android.BaasResult;
 import com.baasbox.android.BaasUser;
 import com.baasbox.android.Grant;
 import com.baasbox.android.RequestToken;
-import com.baasbox.android.SaveMode;
 import com.baasbox.android.json.JsonObject;
-import com.google.android.gms.plus.model.people.Person;
 
 import java.security.acl.Group;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
 
-
-
-public class Add_person2group extends ActionBarActivity implements Observer, OnClickListener{
+public class Add_person2group extends ActionBarActivity implements Observer, OnClickListener {
     private static final String LOG_TAG = "ADD_P2G";
 
 
@@ -93,22 +84,21 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
         }
 
         //ivButton = (Button)findViewById(R.id.add_person_button);
-        nameText = (EditText)findViewById(R.id.add_person);
-        scButton = (ImageButton)findViewById(R.id.add_person_searchBtn);
+        nameText = (EditText) findViewById(R.id.add_person);
+        scButton = (ImageButton) findViewById(R.id.add_person_searchBtn);
         //ivButton.setOnClickListener(this);
         nameText.setOnClickListener(this);
         scButton.setOnClickListener(this);
         progressSpinner = (ProgressBar) findViewById(R.id.progressBar_add_member);
         progressSpinner.setVisibility(View.GONE);
         ListView_add_people = (ListView) findViewById(R.id.add_person_listView);
-        ListAdapter = new ArrayAdapter<String>(Add_person2group.this,R.layout.list_add_person2group_withouticon, new ArrayList<String>());
+        ListAdapter = new ArrayAdapter<String>(Add_person2group.this, R.layout.list_add_person2group_withouticon, new ArrayList<String>());
         ListView_add_people.setAdapter(ListAdapter);
 
         //region Method for the clicking of a name in the list view
         ListView_add_people.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id)
-            {
+                                    int position, long id) {
                 //Make sure to avoid spamming the search button
                 if (saveRT != null || grantRT != null || searchRT != null) {
                     Log.d(LOG_TAG, "Preventing list change while adding member.");
@@ -145,10 +135,10 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
                 }
 
                 //Add the user to the group
-                g.addUser(username);
-                saveRT = g.getBaasDocument().save(SaveMode.IGNORE_VERSION, onSaveComplete);
+                //g.addUser(username);
+                //saveRT = g.getBaasDocument().save(SaveMode.IGNORE_VERSION, onSaveComplete);
 
-                //Grant the permission for the user
+                //Grant the permission for the user -- CAUSING ORIENT DB ISSUES
                 grantRT = g.getBaasDocument().grant(Grant.ALL, username, onGrantComplete);
 
                 //Set the variable to remember the username
@@ -159,6 +149,7 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
         //endregion
 
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -181,6 +172,7 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
         model.addObserver(this);
         checkForGone();
     }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -202,6 +194,7 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
             pushRT.suspend();
         }
     }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -220,6 +213,7 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
             outState.putString(USER_KEY, userToInvite);
         }
     }
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -236,6 +230,7 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
         Intent returnIntent = new Intent();
         setResult(RESULT_OK, returnIntent);
     }
+
     private void returnCancelled() {
         Log.d(LOG_TAG, "Navigating away from profile edit, return CANCEL.");
         progressSpinner.setVisibility(View.GONE);
@@ -261,9 +256,7 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             return true;
-        }
-        else if(id == android.R.id.home)
-        {
+        } else if (id == android.R.id.home) {
             if (grantRT != null || saveRT != null || pushRT != null) {
                 returnCancelled();
             } else {
@@ -274,6 +267,7 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
         }
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     public void onBackPressed() {
         if (saveRT != null || grantRT != null || pushRT != null) {
@@ -289,8 +283,7 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
     //region Method to respond to a click of a button
     @Override
     public void onClick(View v) {
-        switch(v.getId())
-        {
+        switch (v.getId()) {
             case R.id.add_person_button:
                 //to do
 
@@ -364,6 +357,7 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
         ListView_add_people.setAdapter(ListAdapter);
         return;
     }
+
     private void completeSearch(List<BaasUser> userList) {
         progressSpinner.setVisibility(View.GONE);
         if (userList == null || userList.size() == 0) {
@@ -378,7 +372,7 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
             Log.d(LOG_TAG, "Person retrieved: " + x.getName());
             uList.add(x.getName());
         }
-        ListAdapter = new ArrayAdapter<String>(Add_person2group.this,R.layout.list_add_person2group_withouticon, uList);
+        ListAdapter = new ArrayAdapter<String>(Add_person2group.this, R.layout.list_add_person2group_withouticon, uList);
         ListView_add_people.setAdapter(ListAdapter);
         return;
     }
@@ -430,6 +424,9 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
             //Save the model
             Model.saveModel(this);
 
+            //Grant the permission for the user
+            grantRT = g.getBaasDocument().grant(Grant.ALL, userToInvite, onGrantComplete);
+
         } else if (result.isCanceled()) {
             Log.d(LOG_TAG, "Save cancelled.");
             return;
@@ -469,10 +466,17 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
             Log.d(LOG_TAG, "Grant cancelled.");
             return;
         }
+        //Send intent to start service
+        Intent intent = new Intent(this, AddPersonService.class);
+        intent.putExtra("groupID", groupToEdit);
+        intent.putExtra("username", userToInvite);
+        startService(intent);
 
         //Check to see if the push can be sent
         if (saveRT == null) {
-            sendPush();
+            //sendPush();
+            makeToast("Invite sent");
+            progressSpinner.setVisibility(View.GONE);
         }
     }
     //endregion
@@ -516,7 +520,7 @@ public class Add_person2group extends ActionBarActivity implements Observer, OnC
 
         //Send the push notification
         //pushRT = BaasBox.messagingService().newMessage().extra(message).to(userToInvite)
-                //.text(notificationMessage).send(onPushComplete);
+        //.text(notificationMessage).send(onPushComplete);
         makeToast("Invite sent");
         progressSpinner.setVisibility(View.GONE);
     }

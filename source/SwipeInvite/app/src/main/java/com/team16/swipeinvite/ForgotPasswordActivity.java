@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.os.Build;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -15,12 +14,10 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.baasbox.android.BaasDocument;
 import com.baasbox.android.BaasHandler;
 import com.baasbox.android.BaasResult;
 import com.baasbox.android.BaasUser;
 import com.baasbox.android.RequestToken;
-import com.google.android.gms.maps.model.TileOverlay;
 
 
 public class ForgotPasswordActivity extends Activity {
@@ -48,6 +45,7 @@ public class ForgotPasswordActivity extends Activity {
         statusView = findViewById(R.id.status_recovery);
 
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -56,6 +54,7 @@ public class ForgotPasswordActivity extends Activity {
             recoverRT.resume(onRecoverComplete);
         }
     }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -64,6 +63,7 @@ public class ForgotPasswordActivity extends Activity {
             recoverRT.suspend();
         }
     }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);

@@ -182,6 +182,7 @@ public class LoginActivity2 extends ActionBarActivity {
             outState.putParcelable(CLOUD_TOKEN_KEY, cloudRT);
         }
     }
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -198,6 +199,7 @@ public class LoginActivity2 extends ActionBarActivity {
         getMenuInflater().inflate(R.menu.login, menu);    //adds a menu layout to the menu bar
         return true;
     }
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -257,7 +259,7 @@ public class LoginActivity2 extends ActionBarActivity {
 
     public void forgotPasswordResponder(View v) {
         //Launch intent to recover password
-        Intent intent = new Intent (this, ForgotPasswordActivity.class);
+        Intent intent = new Intent(this, ForgotPasswordActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         startActivity(intent);
     }
@@ -389,7 +391,7 @@ public class LoginActivity2 extends ActionBarActivity {
         //Check if the event arrays are empty
         if (model.getIdList().get(1).size() != 0 || model.getIdList().get(2).size() != 0 || model.getIdList().get(3).size() != 0) {
             BaasQuery queryE = BaasQuery.builder().build();
-            for (int i = 1; i < (model.getIdList().size()-1); i++) {
+            for (int i = 1; i < (model.getIdList().size() - 1); i++) {
                 for (String y : model.getIdList().get(i)) {
                     Log.d(LOG_TAG, "Event added to query params: " + y);
                     queryE = queryE.buildUpon().or("id=" + "'" + y + "'").build();
@@ -506,7 +508,7 @@ public class LoginActivity2 extends ActionBarActivity {
                 Log.d(LOG_TAG, "Added group to active group list.");
             } else if (d.getCollection().equals("event")) {
                 Event e = new Event(d);     //Create event instance with BaasDocument
-                for (int i = 1; i < (model.getIdList().size()-1); i++) {     //Iterate through all event lists
+                for (int i = 1; i < (model.getIdList().size() - 1); i++) {     //Iterate through all event lists
                     if (model.getIdList().get(i).contains(e.getId())) {      //If it contains the current event ID, add event
                         switch (i) {
                             case 1:
@@ -595,6 +597,7 @@ public class LoginActivity2 extends ActionBarActivity {
 
     //region Method and variables to check if a valid Google play services is found
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+
     private boolean checkPlayServices() {
         int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
         if (resultCode != ConnectionResult.SUCCESS) {

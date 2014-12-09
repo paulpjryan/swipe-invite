@@ -6,12 +6,10 @@ import android.util.Log;
 
 import com.baasbox.android.BaasDocument;
 import com.baasbox.android.BaasResult;
-import com.baasbox.android.BaasUser;
 import com.baasbox.android.Grant;
 import com.baasbox.android.SaveMode;
 import com.baasbox.android.json.JsonObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 

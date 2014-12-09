@@ -4,35 +4,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.internal.view.menu.MenuView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Observable;
-import java.util.Observer;
-
-import android.widget.EditText;
-
-
-import android.widget.Button;
-
-import com.baasbox.android.BaasBox;
 import com.baasbox.android.BaasDocument;
 import com.baasbox.android.BaasHandler;
 import com.baasbox.android.BaasResult;
@@ -42,8 +24,11 @@ import com.baasbox.android.RequestToken;
 import com.baasbox.android.SaveMode;
 import com.baasbox.android.json.JsonObject;
 
-import org.apache.http.HttpRequest;
-import org.apache.http.protocol.HTTP;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Observable;
+import java.util.Observer;
 
 
 public class GroupEditActivity extends ActionBarActivity implements Observer {
@@ -163,6 +148,7 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
 
     //region Implementation of observer
     private boolean deleted = false;
+
     public void update(Observable ob, Object o) {
         //NEED TO RUN ON UI THREAD
         runOnUiThread(new Runnable() {
@@ -276,11 +262,13 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
             }
         }
 
-        ListAdapter = new EventsAdapter(this, EventList, 0);
+        ListAdapter = new EventsAdapter(this, EventList, -1);
 
         mainListView.setAdapter(ListAdapter);
     }
+
     private boolean editMembers = false;
+
     private void populateMemberList() {
         Log.d(LOG_TAG, "Populating member list");
 
@@ -351,6 +339,7 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
         Intent returnIntent = new Intent();
         setResult(RESULT_OK, returnIntent);
     }
+
     private void returnCancelled() {
         Log.d(LOG_TAG, "Navigating away from profile edit, return CANCEL.");
         progressSpinner.setVisibility(View.GONE);
@@ -492,12 +481,13 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
 
     //Method to handle the returning new member activity
     private static final int ADD_MEMBER_REQUEST_CODE = 1;
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //Figure out which activity is returning a result
         switch (requestCode) {
             case ADD_MEMBER_REQUEST_CODE:    //Group Create activity result
                 Log.d(LOG_TAG, "Got activity return.");
-                if(resultCode == RESULT_OK) {
+                if (resultCode == RESULT_OK) {
                     Log.d(LOG_TAG, "Got ok result from add memeber.");
                     //RELOAD the list views
                 } else if (resultCode == RESULT_CANCELED) {
@@ -515,8 +505,7 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
 
 
     //region Methods for the submit button
-    public void submitListener()
-    {
+    public void submitListener() {
         //Check to make sure the button is not spammed
         if (saveRT != null) {
             Log.d(LOG_TAG, "Preventing spam of submit button.");
@@ -530,71 +519,71 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
         String groupname = groupnameField.getText().toString();
         String description = descriptionField.getText().toString();
 
-       if (TextUtils.isEmpty(groupname)) {
-           //NOTIFY USER OF EMPTY FIELD
-           Log.d(LOG_TAG, "Username cannot be empty");
-           //showProgress(false); *******************************
-           progressSpinner.setVisibility(View.GONE);
-           groupnameField.setError("Cannot be left blank");
-           groupnameField.requestFocus();
-           return;
-       } else if (TextUtils.isEmpty(description)) {
-           //NOTIFY USER OF EMPTY FIELD
-           Log.d(LOG_TAG, "Password cannot be empty");
-           //showProgress(false); *******************************
-           progressSpinner.setVisibility(View.GONE);
-           descriptionField.setError("Cannot be left blank");
-           descriptionField.requestFocus();
-           return;
-       } else if (groupname.length() > 20) {
-           //NOTIFY USER OF EMPTY FIELD
-           Log.d(LOG_TAG, "Username must be between 4 and 30 characters.");
-           //showProgress(false); *******************************
-           progressSpinner.setVisibility(View.GONE);
-           groupnameField.setError("Must be between 4 and 30 characters");
-           groupnameField.requestFocus();
-           return;
-       } else if (description.length() > 100 || description.length() <= 3) {
-           //NOTIFY USER OF EMPTY FIELD
-           Log.d(LOG_TAG, "Password must be more than 6 characters.");
-           //showProgress(false); *******************************
-           progressSpinner.setVisibility(View.GONE);
-           descriptionField.setError("Must be greater than 6 characters");
-           descriptionField.requestFocus();
-           return;
-       }
+        if (TextUtils.isEmpty(groupname)) {
+            //NOTIFY USER OF EMPTY FIELD
+            Log.d(LOG_TAG, "Username cannot be empty");
+            //showProgress(false); *******************************
+            progressSpinner.setVisibility(View.GONE);
+            groupnameField.setError("Cannot be left blank");
+            groupnameField.requestFocus();
+            return;
+        } else if (TextUtils.isEmpty(description)) {
+            //NOTIFY USER OF EMPTY FIELD
+            Log.d(LOG_TAG, "Password cannot be empty");
+            //showProgress(false); *******************************
+            progressSpinner.setVisibility(View.GONE);
+            descriptionField.setError("Cannot be left blank");
+            descriptionField.requestFocus();
+            return;
+        } else if (groupname.length() > 20) {
+            //NOTIFY USER OF EMPTY FIELD
+            Log.d(LOG_TAG, "Username must be between 4 and 30 characters.");
+            //showProgress(false); *******************************
+            progressSpinner.setVisibility(View.GONE);
+            groupnameField.setError("Must be between 4 and 30 characters");
+            groupnameField.requestFocus();
+            return;
+        } else if (description.length() > 100 || description.length() <= 3) {
+            //NOTIFY USER OF EMPTY FIELD
+            Log.d(LOG_TAG, "Password must be more than 6 characters.");
+            //showProgress(false); *******************************
+            progressSpinner.setVisibility(View.GONE);
+            descriptionField.setError("Must be greater than 6 characters");
+            descriptionField.requestFocus();
+            return;
+        }
 
-       //Get the current group from the model
-       List<Group2> lG = model.getActiveGroups();
-       Group2 g = null;
-       synchronized (lG) {
-           for (Group2 x : lG) {
-               if (x.equals(groupToEdit)) {
-                   g = x;
-               }
-           }
-       }
-       if (g == null) {
-           Toast.makeText(this, "This group is no longer available.", Toast.LENGTH_SHORT).show();
-           returnCancelled();
-           finish();
-           return;
-       }
-       if (!g.isOpen()) {
-           if (!g.hasDetailPermission()) {   //If the user does not have permission, don't submit
-               Log.d(LOG_TAG, "User does not have permission to submit change.");
-               Toast.makeText(this, "You are not a detail admin for this group", Toast.LENGTH_SHORT).show();
-               populateTextViews();
-               progressSpinner.setVisibility(View.GONE);
-               return;
-           }
-       }
+        //Get the current group from the model
+        List<Group2> lG = model.getActiveGroups();
+        Group2 g = null;
+        synchronized (lG) {
+            for (Group2 x : lG) {
+                if (x.equals(groupToEdit)) {
+                    g = x;
+                }
+            }
+        }
+        if (g == null) {
+            Toast.makeText(this, "This group is no longer available.", Toast.LENGTH_SHORT).show();
+            returnCancelled();
+            finish();
+            return;
+        }
+        if (!g.isOpen()) {
+            if (!g.hasDetailPermission()) {   //If the user does not have permission, don't submit
+                Log.d(LOG_TAG, "User does not have permission to submit change.");
+                Toast.makeText(this, "You are not a detail admin for this group", Toast.LENGTH_SHORT).show();
+                populateTextViews();
+                progressSpinner.setVisibility(View.GONE);
+                return;
+            }
+        }
 
-       //THIS WILL NEED TO BE CHANGED ONCE THE BAASBOX API INCLUDES UPDATE METHOD
-       //Make changes by using a new group object
-       Group2 updateG = new Group2(g.getBaasDocument().toJson());    //this will not alter the model object itself
-       updateG.setName(groupname);
-       updateG.setDescription(description);
+        //THIS WILL NEED TO BE CHANGED ONCE THE BAASBOX API INCLUDES UPDATE METHOD
+        //Make changes by using a new group object
+        Group2 updateG = new Group2(g.getBaasDocument().toJson());    //this will not alter the model object itself
+        updateG.setName(groupname);
+        updateG.setDescription(description);
         Log.d(LOG_TAG, "Group in model: " + g.getName());  //Just checking to make sure the model is not changed yet
 
         //Check to make sure the button is not spammed
@@ -604,8 +593,8 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
             return;
         }
 
-       //Save the group to the server, but do not affect the model until a response is received
-       saveRT = updateG.getBaasDocument().save(SaveMode.IGNORE_VERSION, onSaveComplete);
+        //Save the group to the server, but do not affect the model until a response is received
+        saveRT = updateG.getBaasDocument().save(SaveMode.IGNORE_VERSION, onSaveComplete);
     }
 
     //region Variables and methods to deal with ansync save request
@@ -668,7 +657,7 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
         JsonObject message = new JsonObject();
         message.put("type", "group");
         message.put("id", groupToEdit);
-        String notificationMessage = g.getName() + " has been updated.";
+        String notificationMessage = BaasUser.current().getName() + " made an update.";
 
         //Start the intent service to send the push
         Intent intent = new Intent(this, PushSender.class);
@@ -788,14 +777,17 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
             }
         }
     };
+
     private void completeDelete(int type) {
         //Get the current group to read from
         List<Group2> activeGroups = model.getActiveGroups();
+        ArrayList<String> userList = null;
         synchronized (activeGroups) {
             for (final ListIterator<Group2> i = activeGroups.listIterator(); i.hasNext(); ) {  //Setting up iterator
                 final Group2 current = i.next();    //need to get current group
                 if (current.equals(groupToEdit) || !current.isOnServer()) {
                     Log.d(LOG_TAG, "Removing group: " + current.getName());
+                    userList= current.getUserList();
                     i.remove(); //Remove the group from the active groups list
                 }
             }
@@ -808,6 +800,20 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
         if (type == 0) {
             makeToast("Group deleted");
         } else {
+            //Send the push notifications to members
+            Log.d(LOG_TAG, "Sending push.");
+            //Create the json object
+            JsonObject message = new JsonObject();
+            message.put("type", "group");
+            message.put("id", groupToEdit);
+            String notificationMessage = BaasUser.current().getName() + " has left the group.";
+
+            //Start the intent service to send the push
+            Intent intent = new Intent(this, PushSender.class);
+            intent.putStringArrayListExtra("users", userList);
+            intent.putExtra("message", message);
+            intent.putExtra("notification", notificationMessage);
+            startService(intent);
             makeToast("Group left");
         }
 

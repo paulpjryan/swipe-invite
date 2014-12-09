@@ -53,8 +53,7 @@ class Model {
 
 
     //region Load/Save Model functions
-    protected static synchronized void saveModel(Context context)
-    {
+    protected static synchronized void saveModel(Context context) {
         if (BaasUser.current() == null) {    //Need to make sure there is a valid user
             Log.d(LOG_TAG, "No current user, cannot save model.");
             return;
@@ -71,8 +70,7 @@ class Model {
         theModel.notifyObservers();
     }
 
-    private static void loadModel(Context context)
-    {
+    private static void loadModel(Context context) {
         //Check for current user
         if (BaasUser.current() == null) {    //Need to make sure there is a valid user
             Log.d(LOG_TAG, "No current user, cannot load model.");
@@ -303,6 +301,7 @@ class Model {
 
     //region Singleton methods and motifs
     private static Model theModel;
+
     protected static synchronized Model getInstance(Context context) {
         //Check to make sure not handing off null model
         if (theModel == null) {
@@ -324,9 +323,11 @@ class Model {
         Log.d(LOG_TAG, "Model given.");
         return theModel;
     }
+
     protected static void dumpInstance() {
         theModel = null;
     }
+
     protected static Model resetInstance() {
         theModel = new Model();
         return theModel;
@@ -336,14 +337,17 @@ class Model {
 
     //region Methods to deal with observers
     private ArrayList<Observer> observers = new ArrayList<Observer>();
+
     protected synchronized void addObserver(Observer o) {
         Log.d(LOG_TAG, "Added observer to model.");
         this.observers.add(o);
     }
+
     protected synchronized void deleteObserver(Observer o) {
         Log.d(LOG_TAG, "Removed observer from model.");
         this.observers.remove(o);
     }
+
     private synchronized void notifyObservers() {
         for (Observer x : observers) {
             try {
@@ -353,12 +357,15 @@ class Model {
             }
         }
     }
+
     private static ArrayList<Observer> getObservers() {
         return theModel.observers;
     }
+
     private void deleteObservers() {
         this.observers = null;
     }
+
     private void setObservers(ArrayList<Observer> o) {
         this.observers = o;
     }
@@ -413,16 +420,19 @@ class Model {
     //region Methods for setting and getting the raw server model object  -- LOGIN ONLY
     //ONLY USE THESE METHODS AT LOGIN
     protected synchronized void setServerVersion(BaasDocument d) {
-        if(!d.getCollection().equals(COLLECTION_NAME)) throw new ModelException("Document is not a model: " + d.toString());
+        if (!d.getCollection().equals(COLLECTION_NAME))
+            throw new ModelException("Document is not a model: " + d.toString());
         model = d;
         extractIDs();
     }
 
     //region Method and instance variable used to hold a list of IDS for retrieval  -- LOGIN ONLY
     private ArrayList<ArrayList<String>> idList;
+
     protected synchronized ArrayList<ArrayList<String>> getIdList() {
         return idList;
     }
+
     protected synchronized boolean idListEmpty() {
         if (idList == null) return true;
         for (int i = 0; i < (idList.size()); i++) {
@@ -432,15 +442,17 @@ class Model {
         }
         return true;
     }
+
     protected synchronized boolean dataIsEmpty() {
         if (idList == null) return true;
-        for (int i = 0; i < (idList.size()-1); i++) {     //account for only document id's
+        for (int i = 0; i < (idList.size() - 1); i++) {     //account for only document id's
             if (!idList.get(i).isEmpty()) {
                 return false;
             }
         }
         return true;
     }
+
     //should only be used upon login and setting of a server version
     private void extractIDs() {
         idList = new ArrayList<ArrayList<String>>(5);
@@ -489,9 +501,11 @@ class Model {
     protected synchronized List<Event> getAcceptedEvents() {
         return Collections.synchronizedList(acceptedEvents);
     }
+
     protected synchronized List<Event> getWaitingEvents() {
         return Collections.synchronizedList(waitingEvents);
     }
+
     protected synchronized List<Event> getRejectedEvents() {
         return Collections.synchronizedList(rejectedEvents);
     }

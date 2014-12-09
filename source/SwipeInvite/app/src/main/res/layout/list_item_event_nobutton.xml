@@ -3,12 +3,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-
-    android:minHeight="?android:attr/listPreferredItemHeight">
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:clickable="true"
+    android:focusable="false">
 
     <TextView
         android:layout_width="fill_parent"
-        android:layout_height="25dp"
+        android:layout_height="20dp"
         android:id="@+id/list_item_event_name"
         android:gravity="center_vertical"
         android:text="This is a test event name"
@@ -18,8 +19,7 @@
         android:layout_marginStart="16dp"
         android:textStyle="bold"
         android:textSize="18dp"
-
-    />
+        />
 
     <TextView
         android:layout_width="fill_parent"
@@ -31,7 +31,6 @@
         android:layout_marginStart="16dp"
         android:layout_below="@+id/list_item_event_name"
         android:textSize="12dp"
-
         />
 
     <TextView
@@ -47,35 +46,5 @@
         android:layout_marginBottom="8dp"
         android:textSize="12dp"
         />
-
-    <ImageButton
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:id="@+id/list_item_accept_button"
-        android:src="@drawable/ic_check_grey600_24dp"
-        android:layout_toLeftOf="@+id/list_item_reject_button"
-        android:layout_toStartOf="@+id/list_item_reject_button"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="4dp"
-        android:layout_marginEnd="4dp"
-        android:background="@drawable/abc_item_background_holo_light"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-    />
-
-    <ImageButton
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:id="@+id/list_item_reject_button"
-        android:src="@drawable/ic_close_grey600_24dp"
-        android:layout_centerVertical="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="16dp"
-        android:layout_marginEnd="16dp"
-        android:background="@drawable/abc_item_background_holo_light"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-    />
 
 </RelativeLayout>
