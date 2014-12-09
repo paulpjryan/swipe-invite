@@ -288,10 +288,14 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
-            case R.id.action_settings:
-                return true;
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
+                return true;
+            case R.id.event_edit_submit_d:
+                onEventEdit();
+                return true;
+            case R.id.event_edit_submit_nod:
+                onEventEdit();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -301,6 +305,12 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         //getMenuInflater().inflate(R.menu.event_edit, menu);
+        if (permission) {
+            getMenuInflater().inflate(R.menu.event_edit_delete, menu);
+        } else {
+            getMenuInflater().inflate(R.menu.event_edit_nodelete, menu);
+        }
+
         return true;
     }
     //endregion
@@ -342,7 +352,9 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
 
 
     //region Method for submitting changes to event
-    public void onEventEdit(View v) {
+    private void onEventEdit() {
+
+
 
         //showprogress(true)
 

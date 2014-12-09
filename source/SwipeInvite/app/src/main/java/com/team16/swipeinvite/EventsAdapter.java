@@ -94,7 +94,6 @@ public class EventsAdapter extends BaseAdapter implements Filterable {
         }
         final View convertView2 = convertView;
 
-
         // If weren't re-ordering this you could rely on what you set last time
         holder.title.setText((filteredData.get(position).getName()));
         holder.location.setText((filteredData.get(position).getLocation()));
