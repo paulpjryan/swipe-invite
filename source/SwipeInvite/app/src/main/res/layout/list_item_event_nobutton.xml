@@ -9,7 +9,7 @@
 
     <TextView
         android:layout_width="fill_parent"
-        android:layout_height="20dp"
+        android:layout_height="25dp"
         android:id="@+id/list_item_event_name"
         android:gravity="center_vertical"
         android:text="This is a test event name"
@@ -17,7 +17,6 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginStart="16dp"
-        android:textStyle="bold"
         android:textSize="18dp"
         />
 
@@ -45,6 +44,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginBottom="8dp"
         android:textSize="12dp"
+        android:visibility="invisible"
         />
 
 </RelativeLayout>
