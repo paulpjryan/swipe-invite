@@ -111,6 +111,7 @@
             android:layout_weight="6"
             android:maxLength="35"
             android:maxLines="2"
+            android:background="#37eeeeee"
             android:enabled="false"
             android:hint="public/private"/>
     </LinearLayout>
@@ -142,6 +143,7 @@
             android:id="@+id/textView_new_group_typeOpen"
             android:layout_weight="6"
             android:maxLength="35"
+            android:background="#37eeeeee"
             android:maxLines="2"
             android:enabled="false"
             android:hint="open/closed"/>
