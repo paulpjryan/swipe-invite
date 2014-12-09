@@ -89,6 +89,15 @@
     </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/edit_separator_1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"
+            android:layout_below="@id/group_create_group_des"
+            android:background="#37000000"
+            android:orientation="horizontal" ></LinearLayout>
+
+        <LinearLayout
             android:id="@+id/group_create_group_type"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -138,10 +147,20 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/edit_separator_2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"
+            android:layout_below="@id/group_create_group_type"
+            android:background="#37000000"
+            android:orientation="horizontal" ></LinearLayout>
+
+        <LinearLayout
             android:id="@+id/group_create_group_open"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/group_create_group_type">
+            android:layout_below="@id/edit_separator_2"
+            >
 
             <TextView
                 android:layout_width="wrap_content"
