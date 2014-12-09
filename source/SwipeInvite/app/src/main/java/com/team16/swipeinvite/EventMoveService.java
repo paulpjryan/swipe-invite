@@ -2,6 +2,7 @@ package com.team16.swipeinvite;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.provider.CalendarContract;
 import android.util.Log;
 
 import com.baasbox.android.BaasDocument;
@@ -54,11 +55,13 @@ public class EventMoveService extends IntentService {
         outerLoop:
         // dirty hack
         for (int a = 0; a < 3; a++) {
-            for (Event current : EventLists[a]) {
-                if (current.equals(eventID)) {
-                    from = a;
-                    eventToMove = current;
-                    break outerLoop;
+            synchronized (EventLists[a]) {
+                for (Event current : EventLists[a]) {
+                    if (current.equals(eventID)) {
+                        from = a;
+                        eventToMove = current;
+                        break outerLoop;
+                    }
                 }
             }
         }
@@ -69,13 +72,18 @@ public class EventMoveService extends IntentService {
         else if (destination == EVENT_PENDING)
             Log.d(LOG_TAG, "Cannot move event back to pending");
         else {
+            boolean addToCal = false;
             //Decrement counter and save
             Event updateEvent = new Event(eventToMove.toJson());
-            updateEvent.removeUser();
+            if (destination == EVENT_ACCEPTED) {
+                updateEvent.addUser();
+                addToCal = true;
+            } else if (destination == EVENT_REJECTED && from == EVENT_ACCEPTED) {
+                updateEvent.removeUser();
+            }
+
             BaasDocument d = saveToServer(updateEvent.getBaasDocument());
-            if (d == null) {
-                eventToMove.setBaasDocument(updateEvent.getBaasDocument());
-            } else {
+            if (d != null) {
                 eventToMove.setBaasDocument(d);
                 //Move the event
                 EventLists[from].remove(eventToMove);
@@ -83,6 +91,21 @@ public class EventMoveService extends IntentService {
             }
             Log.d(LOG_TAG, "Moved event and saved.");
             Model.saveModel(this);
+
+            if (addToCal) {
+                //Create calendar entry
+                Intent intent3 = new Intent(Intent.ACTION_EDIT);
+                intent3.setType("vnd.android.cursor.item/event");
+                intent3.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent3.putExtra(CalendarContract.Events.DTSTART, eventToMove.getBeginDate().getTimeInMillis());
+                intent3.putExtra(CalendarContract.Events.ALL_DAY, false);
+                intent3.putExtra(CalendarContract.Events.DTEND, eventToMove.getEndDate().getTimeInMillis());
+                intent3.putExtra(CalendarContract.Events.TITLE, eventToMove.getName());
+                intent3.putExtra(CalendarContract.Events.DESCRIPTION, eventToMove.getDescription());
+                intent3.putExtra(CalendarContract.Events.EVENT_LOCATION, eventToMove.getLocation());
+                startActivity(intent3);
+            }
+
         }
     }
 
