@@ -57,6 +57,7 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
     private Model model;
     private String groupToEdit;
     private static final String ID_KEY = "id";
+    private int typeOfToken;
     //endregion
 
 
@@ -72,6 +73,7 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
             Log.d(LOG_TAG, "Loading bundle.");
             groupToEdit = savedInstanceState.getString(ID_KEY);
             saveRT = savedInstanceState.getParcelable(SAVE_TOKEN_KEY);
+            typeOfToken = savedInstanceState.getInt("typeOfTok");
         } else {
             Log.d(LOG_TAG, "Getting group id from intent.");
             groupToEdit = getIntent().getStringExtra("id");
@@ -102,7 +104,20 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
         Log.d(LOG_TAG, "onResume");
         if (saveRT != null) {
             progressSpinner.setVisibility(View.VISIBLE);
-            saveRT.resume(onSaveComplete);
+            switch (typeOfToken) {
+                case 1:
+                    saveRT.resume(onSaveComplete);
+                    break;
+                case 2:
+                    saveRT.resume(onRemoveComplete);
+                    break;
+                case 3:
+                    saveRT.resume(onGrantComplete);
+                    break;
+                case 4:
+                    saveRT.resume(onDeleteComplete);
+                    break;
+            }
         }
         if (model == null) {
             model = Model.getInstance(this);
@@ -134,6 +149,7 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
         outState.putString(ID_KEY, groupToEdit);     //cannot lose the id that we were passed
         if (saveRT != null) {
             outState.putParcelable(SAVE_TOKEN_KEY, saveRT);
+            outState.putInt("typeOfTok", typeOfToken);
         }
     }
 
@@ -595,6 +611,7 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
 
         //Save the group to the server, but do not affect the model until a response is received
         saveRT = updateG.getBaasDocument().save(SaveMode.IGNORE_VERSION, onSaveComplete);
+        typeOfToken = 1;
     }
 
     //region Variables and methods to deal with ansync save request
@@ -723,10 +740,12 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
         //Send the server requests
         if (creator) {
             saveRT = g.getBaasDocument().delete(onDeleteComplete);
+            typeOfToken = 4;
         } else {
             Group2 updateG = new Group2(g.toJson());
             updateG.removeSelf();
             saveRT = updateG.getBaasDocument().save(SaveMode.IGNORE_VERSION, onRemoveComplete);
+            typeOfToken = 2;
         }
 
     }
@@ -743,6 +762,7 @@ public class GroupEditActivity extends ActionBarActivity implements Observer {
                 Log.d(LOG_TAG, "Leave success");
                 //Revoke permissions for this user
                 saveRT = result.value().revoke(Grant.ALL, BaasUser.current().getName(), onGrantComplete);
+                typeOfToken = 3;
                 return;
             }
         }

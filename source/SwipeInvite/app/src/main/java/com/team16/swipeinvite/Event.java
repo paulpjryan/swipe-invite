@@ -201,18 +201,23 @@ class Event implements Parcelable {
             throw new EventException("User does not have permission to edit event.");
         SimpleDateFormat df = new SimpleDateFormat();
         String date = df.format(startDate.getTime());
-        this.event.put(BEGIN_DATE_KEY, date);
+        this.event.put(BEGIN_DATE_KEY, startDate.getTimeInMillis());
     }
 
     protected synchronized Calendar getBeginDate() {
-        String date = this.event.getString(BEGIN_DATE_KEY);
+        long date = this.event.getLong(BEGIN_DATE_KEY);
+        /*
         SimpleDateFormat df = new SimpleDateFormat();
         Calendar c = Calendar.getInstance();
         try {
             c.setTime(df.parse(date));
         } catch (ParseException p) {
             Log.d("EVENT", "****DATE PARSE FAIL: " + p.getMessage());
-        }
+        } */
+
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(date);
+
         return c;
     }
     //endregion
@@ -224,18 +229,21 @@ class Event implements Parcelable {
             throw new EventException("User does not have permission to edit event.");
         SimpleDateFormat df = new SimpleDateFormat();
         String date = df.format(endDate.getTime());
-        this.event.put(END_DATE_KEY, date);
+        this.event.put(END_DATE_KEY, endDate.getTimeInMillis());
     }
 
     protected synchronized Calendar getEndDate() {
-        String date = this.event.getString(END_DATE_KEY);
+        long date = this.event.getLong(END_DATE_KEY);
+        /*
         SimpleDateFormat df = new SimpleDateFormat();
         Calendar c = Calendar.getInstance();
         try {
             c.setTime(df.parse(date));
         } catch (ParseException p) {
             Log.d("EVENT", "****DATE PARSE FAIL: " + p.getMessage());
-        }
+        } */
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(date);
         return c;
     }
     //endregion
@@ -247,7 +255,7 @@ class Event implements Parcelable {
     }
     //endregion
 
-    //region toString for date and time
+    //region Method for date to string
     protected synchronized String dateToString() {
         /*
         String formatDate = "MM/dd/yyyy";
@@ -290,6 +298,7 @@ class Event implements Parcelable {
 
         return s;
     }
+    //endregion
 
 
     //region Methods for setting and getting parent groups

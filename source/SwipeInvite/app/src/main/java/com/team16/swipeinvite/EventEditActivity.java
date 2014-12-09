@@ -20,9 +20,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import com.baasbox.android.BaasDocument;
+import com.baasbox.android.BaasHandler;
+import com.baasbox.android.BaasResult;
+import com.baasbox.android.RequestToken;
+import com.baasbox.android.SaveMode;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -48,6 +55,7 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
     private EditText mEndDateText;
     private EditText mEndTimeText;
     private TextView mCountText;
+    private ProgressBar progressSpinner;
     //endregion
 
 
@@ -103,6 +111,8 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
     private String eventID;
     private static final String EVENT_KEY = "eventID";
     private boolean permission = false;
+    private boolean deleted = false;
+    private int typeOfToken;
     //endregion
 
 
@@ -112,7 +122,9 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                populateViews();
+                if (!deleted) {
+                    populateViews();
+                }
             }
         });
     }
@@ -128,6 +140,8 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
         //Get the event ID
         if (savedInstanceState != null) {
             eventID = savedInstanceState.getString(EVENT_KEY);
+            saveRT = savedInstanceState.getParcelable(SAVE_TOKEN_KEY);
+            typeOfToken = savedInstanceState.getInt("typeOfTok");
         } else {
             eventID = getIntent().getStringExtra(EVENT_KEY);
         }
@@ -147,6 +161,8 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
         mEndDateText = (EditText) findViewById(R.id.edit_end_date_text);
         mEndTimeText = (EditText) findViewById(R.id.edit_end_time_text);
         mCountText = (TextView) findViewById(R.id.event_edit_count);
+        progressSpinner = (ProgressBar) findViewById(R.id.progressBar_event_edit);
+        showProgress(false);
 
        // mEventNameField = (TextView) findViewById(R.id.edit_text_event_name);
         mEventLocationField = (TextView) findViewById(R.id.edit_text_event_location);
@@ -175,14 +191,27 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
             model = Model.getInstance(this);
         }
         model.addObserver(this);
-
+        if (saveRT != null) {
+            showProgress(true);
+            switch (typeOfToken) {
+                case 1:
+                    saveRT.resume(onSaveComplete);
+                    break;
+                case 2:
+                    saveRT.resume(onDeleteComplete);
+                    break;
+            }
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         Log.d(LOG_TAG, "onPause");
-
+        if (saveRT != null) {
+            showProgress(false);
+            saveRT.suspend();
+        }
     }
 
     @Override
@@ -197,6 +226,10 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
         super.onSaveInstanceState(outState);
         Log.d(LOG_TAG, "onSaveInstanceState");
         outState.putString(EVENT_KEY, eventID);
+        if (saveRT != null) {
+            outState.putParcelable(SAVE_TOKEN_KEY, saveRT);
+            outState.putInt("typeOfTok", typeOfToken);
+        }
     }
     //endregion
 
@@ -258,8 +291,8 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
         mStartDatePicker.day = startDate.get(Calendar.DAY_OF_MONTH);
 
         mStartTimePicker = new TimePickerFragment();
-        mStartTimePicker.hour = startDate.get(Calendar.HOUR);
-        mStartTimePicker.minute = startDate.get(Calendar.MONTH);
+        mStartTimePicker.hour = startDate.get(Calendar.HOUR_OF_DAY);
+        mStartTimePicker.minute = startDate.get(Calendar.MINUTE);
 
         mEndDatePicker = new DatePickerFragment();
         mEndDatePicker.year = endDate.get(Calendar.YEAR);
@@ -267,7 +300,7 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
         mEndDatePicker.day = endDate.get(Calendar.DAY_OF_MONTH);
 
         mEndTimePicker = new TimePickerFragment();
-        mEndTimePicker.hour = endDate.get(Calendar.HOUR);
+        mEndTimePicker.hour = endDate.get(Calendar.HOUR_OF_DAY);
         mEndTimePicker.minute = endDate.get(Calendar.MINUTE);
 
 
@@ -303,6 +336,9 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
                 return true;
             case R.id.event_edit_submit_nod:
                 onEventEdit();
+                return true;
+            case R.id.event_edit_delete:
+                deleteEvent();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -371,11 +407,15 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
     //region Method for submitting changes to event
     private void onEventEdit() {
 
+        if (saveRT != null) {
+            Log.d(LOG_TAG, "Preventing spam of button.");
+            makeToast("Server busy...");
+            return;
+        }
 
+        showProgress(true);
 
-        //showprogress(true)
-
-        String name = mEventNameField.getText().toString();
+        //String name = mEventNameField.getText().toString();
         String location = mEventLocationField.getText().toString();
         String description = mEventDescriptionField.getText().toString();
         int startYear = mStartDatePicker.year;
@@ -399,63 +439,293 @@ public class EventEditActivity extends ActionBarActivity implements Observer {
         startDate.set(startYear, startMonth, startDay, startHour, startMinute);
         endDate.set(endYear, endMonth, endDay, endHour, endMinute);
 
-        if (TextUtils.isEmpty(name)) {
-            Log.d(LOG_TAG, "Name field cannot be blank.");
-            //showProgress(false);
-            mEventNameField.setError("Cannot be left blank");
-            mEventNameField.requestFocus();
-            return;
-        } else if (TextUtils.isEmpty(description)) {
+        if (TextUtils.isEmpty(description)) {
             Log.d(LOG_TAG, "Description field cannot be blank.");
-            //showProgress(false);
+            showProgress(false);
             mEventDescriptionField.setError("Cannot be left blank");
             mEventDescriptionField.requestFocus();
             return;
         } else if (TextUtils.isEmpty(location)) {
-            // Log.d(LOG_TAG, "location field cannot be blank.");
-            //showProgress(false);
-            //descriptionField.setError("Cannot be left blank");
-            //descriptionField.requestFocus();
-            description = "TBD";
-            return;
-        } else if (name.length() > 30) {
-            Log.d(LOG_TAG, "Name field cannot be longer than 20 characters.");
-            //showProgress(false);
-            mEventNameField.setError("Cannot be longer than 20 characters");
-            mEventNameField.requestFocus();
+            Log.d(LOG_TAG, "location field cannot be blank.");
+            showProgress(false);
+            mEventLocationField.setError("Cannot be left blank");
+            mEventLocationField.requestFocus();
             return;
         } else if (description.length() > 100 || description.length() <= 3) {
             Log.d(LOG_TAG, "Description field not within range.");
-            //showProgress(false);
+            showProgress(false);
             mEventDescriptionField.setError("Must be between 4 and 100 characters");
             mEventDescriptionField.requestFocus();
             return;
         } else if (endDate.before(startDate)) {
             Log.d(LOG_TAG, "End date must be after start date");
-            //showProgress(false);
+            showProgress(false);
             Toast bread = Toast.makeText(EventEditActivity.this, "End date must be after start date", Toast.LENGTH_LONG);
             bread.show();
             mEndDateText.requestFocus();
             return;
         } else if (startDate.before(currentDate)) {
             Log.d(LOG_TAG, "start date must be after current date");
-            //showProgress(false);
+            showProgress(false);
             Toast bread = Toast.makeText(EventEditActivity.this, "Start date must be after current date", Toast.LENGTH_LONG);
             bread.show();
             mStartDateText.requestFocus();
             return;
         }
 
-        Toast bread = Toast.makeText(EventEditActivity.this, "Submitted", Toast.LENGTH_LONG);
-        bread.show();
+        //Need to get the event instance
+        List<Event> acceptedEvents = model.getAcceptedEvents();
+        List<Event> waitingEvents = model.getWaitingEvents();
+        List<Event> rejectedEvents = model.getRejectedEvents();
+        Event event = null;
+        //Iterate through all possible event lists
+        for (int a = 0; a < 3; a++) {
+            List<Event> currentList = acceptedEvents;
+            switch (a) {
+                case 1:
+                    currentList = waitingEvents;
+                    break;
+                case 2:
+                    currentList = rejectedEvents;
+                    break;
+            }
+            synchronized (currentList) {
+                for (final ListIterator<Event> i = currentList.listIterator(); i.hasNext(); ) {
+                    Event current = i.next();
+                    if (current.equals(eventID)) {
+                        event = current;
+                    }
+                }
+            }
+        }
+        if (event == null) {
+            Log.d(LOG_TAG, "Event disappeared.");
+            showProgress(false);
+            makeToast("Event no longer available");
+            finish();
+            return;
+        }
 
+        //Check permissions
+        if (!event.hasPermission()) {
+            showProgress(false);
+            makeToast("You cannot edit this event");
+            return;
+        }
+
+        //Update the event
+        Event updateEvent = new Event(event.toJson());
+        updateEvent.setDescription(description);
+        updateEvent.setLocation(location);
+        updateEvent.setBeginDate(startDate);
+        updateEvent.setEndDate(endDate);
+
+        if (saveRT != null) {
+            Log.d(LOG_TAG, "Preventing spam of button.");
+            showProgress(false);
+            makeToast("Server busy...");
+            return;
+        }
+
+        //Save event to server
+        saveRT = updateEvent.getBaasDocument().save(SaveMode.IGNORE_VERSION, onSaveComplete);
+        typeOfToken = 1;
     }
     //endregion
 
 
-    //region Helper method to make toast
+    //region Methods to handle updating the event async
+    private static final String SAVE_TOKEN_KEY = "saveRT";
+    private RequestToken saveRT;
+    private final BaasHandler<BaasDocument> onSaveComplete = new BaasHandler<BaasDocument>() {
+        @Override
+        public void handle(BaasResult<BaasDocument> result) {
+            saveRT = null;
+            if (result.isFailed()) {
+                Log.d(LOG_TAG, "Save failed: " + result.error());
+                showProgress(false);
+                populateViews();
+                return;
+            } else if (result.isSuccess()) {
+                Log.d(LOG_TAG, "Save success.");
+                completeSave(result.value());
+                return;
+            }
+            Log.d(LOG_TAG, "Server save weird.");
+        }
+    };
+
+
+    private void completeSave(BaasDocument d) {
+        //Need to get the event instance
+        List<Event> acceptedEvents = model.getAcceptedEvents();
+        List<Event> waitingEvents = model.getWaitingEvents();
+        List<Event> rejectedEvents = model.getRejectedEvents();
+        Event event = null;
+        //Iterate through all possible event lists
+        for (int a = 0; a < 3; a++) {
+            List<Event> currentList = acceptedEvents;
+            switch (a) {
+                case 1:
+                    currentList = waitingEvents;
+                    break;
+                case 2:
+                    currentList = rejectedEvents;
+                    break;
+            }
+            synchronized (currentList) {
+                for (final ListIterator<Event> i = currentList.listIterator(); i.hasNext(); ) {
+                    Event current = i.next();
+                    if (current.equals(eventID)) {
+                        event = current;
+                    }
+                }
+            }
+        }
+        if (event == null) {
+            Log.d(LOG_TAG, "Event disappeared.");
+            showProgress(false);
+            makeToast("Event no longer available");
+            finish();
+            return;
+        }
+
+        event.setBaasDocument(d);
+
+        Model.saveModel(this);
+        showProgress(false);
+        makeToast("Event updated");
+    }
+    //endregion
+
+
+    //region Methods to delete an event
+    private void deleteEvent() {
+        if (saveRT != null) {
+            Log.d(LOG_TAG, "Preventing spam of button.");
+            makeToast("Server busy...");
+            return;
+        }
+
+        showProgress(true);
+
+        //Need to get the event instance
+        List<Event> acceptedEvents = model.getAcceptedEvents();
+        List<Event> waitingEvents = model.getWaitingEvents();
+        List<Event> rejectedEvents = model.getRejectedEvents();
+        Event event = null;
+        //Iterate through all possible event lists
+        for (int a = 0; a < 3; a++) {
+            List<Event> currentList = acceptedEvents;
+            switch (a) {
+                case 1:
+                    currentList = waitingEvents;
+                    break;
+                case 2:
+                    currentList = rejectedEvents;
+                    break;
+            }
+            synchronized (currentList) {
+                for (final ListIterator<Event> i = currentList.listIterator(); i.hasNext(); ) {
+                    Event current = i.next();
+                    if (current.equals(eventID)) {
+                        event = current;
+                    }
+                }
+            }
+        }
+        if (event == null) {
+            Log.d(LOG_TAG, "Event disappeared.");
+            makeToast("Event no longer available");
+            finish();
+            return;
+        }
+
+        //Check permissions
+        if (!event.hasPermission()) {
+            showProgress(false);
+            makeToast("You cannot delete this event");
+            return;
+        }
+
+        if (saveRT != null) {
+            Log.d(LOG_TAG, "Preventing spam of button.");
+            showProgress(false);
+            makeToast("Server busy...");
+            return;
+        }
+
+        saveRT = event.getBaasDocument().delete(onDeleteComplete);
+        typeOfToken = 2;
+
+    }
+
+
+    private final BaasHandler<Void> onDeleteComplete = new BaasHandler<Void>() {
+        @Override
+        public void handle(BaasResult<Void> result) {
+            saveRT = null;
+            if (result.isFailed()) {
+                Log.d(LOG_TAG, "Delete failed.");
+                makeToast("Unable to delete event");
+                return;
+            } else if (result.isSuccess()) {
+                Log.d(LOG_TAG, "Delete success.");
+                completeDelete();
+                return;
+            }
+            Log.d(LOG_TAG, "Delete weird.");
+        }
+    };
+
+    private void completeDelete() {
+        //Need to get the event instance
+        List<Event> acceptedEvents = model.getAcceptedEvents();
+        List<Event> waitingEvents = model.getWaitingEvents();
+        List<Event> rejectedEvents = model.getRejectedEvents();
+        //Iterate through all possible event lists
+        for (int a = 0; a < 3; a++) {
+            List<Event> currentList = acceptedEvents;
+            switch (a) {
+                case 1:
+                    currentList = waitingEvents;
+                    break;
+                case 2:
+                    currentList = rejectedEvents;
+                    break;
+            }
+            synchronized (currentList) {
+                for (final ListIterator<Event> i = currentList.listIterator(); i.hasNext(); ) {
+                    Event current = i.next();
+                    if (current.equals(eventID) || !current.isOnServer()) {
+                        Log.d(LOG_TAG, "Event deleted: " + current.getName());
+                        i.remove();
+                    }
+                }
+            }
+        }
+
+        deleted = true;
+
+        Model.saveModel(this);
+
+        showProgress(false);
+        makeToast("Event deleted");
+        finish();
+    }
+    //endregion
+
+
+    //region Helper method to make toast and change progress spinner
     private void makeToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+    private void showProgress(boolean show) {
+        if (show) {
+            progressSpinner.setVisibility(View.VISIBLE);
+        } else {
+            progressSpinner.setVisibility(View.GONE);
+        }
     }
     //endregion
 

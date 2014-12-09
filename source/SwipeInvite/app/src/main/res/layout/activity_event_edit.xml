@@ -187,4 +187,13 @@
                 android:textSize="20sp" />
 
         </LinearLayout>
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/progressBar_event_edit"
+            android:layout_gravity="center_horizontal"
+            android:layout_below="@id/edit_separator_3"/>
+
     </RelativeLayout>
