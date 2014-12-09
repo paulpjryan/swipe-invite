@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="?android:attr/listPreferredItemHeight"
-    android:clickable="true">
+   >
 
     <TextView
         android:layout_width="fill_parent"
@@ -18,7 +18,7 @@
         android:layout_marginStart="16dp"
         android:textStyle="bold"
         android:textSize="18dp"
-        android:clickable="true"
+
     />
 
     <TextView
@@ -31,7 +31,7 @@
         android:layout_marginStart="16dp"
         android:layout_below="@+id/list_item_event_name"
         android:textSize="12dp"
-        android:clickable="true"
+
         />
 
     <TextView
@@ -46,7 +46,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginBottom="8dp"
         android:textSize="12dp"
-        android:clickable="true"
+
         />
 
     <ImageButton
@@ -59,6 +59,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/abc_item_background_holo_light"
+
     />
 
 </RelativeLayout>

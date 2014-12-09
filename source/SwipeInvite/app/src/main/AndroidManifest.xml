@@ -162,7 +162,8 @@
             android:name="com.team16.swipeinvite.SearchSpeMemberActivity"
             android:label="@string/search_spec_member"
             android:parentActivityName="com.team16.swipeinvite.SearchGroupActivity"
-            android:theme="@android:style/Theme.Translucent" >
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            >
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data

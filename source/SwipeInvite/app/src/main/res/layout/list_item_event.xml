@@ -4,10 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="?android:attr/listPreferredItemHeight"
-    android:clickable="true"
-
-    android:focusable="false"
-    android:focusableInTouchMode="false"
     android:descendantFocusability="blocksDescendants">
 
     <TextView
@@ -22,8 +18,7 @@
         android:layout_marginStart="16dp"
         android:textStyle="bold"
         android:textSize="18dp"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
+
     />
 
     <TextView
@@ -36,8 +31,7 @@
         android:layout_marginStart="16dp"
         android:layout_below="@+id/list_item_event_name"
         android:textSize="12dp"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
+
         />
 
     <TextView
@@ -52,8 +46,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginBottom="8dp"
         android:textSize="12dp"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
         />
 
     <ImageButton

@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+
 /**
  * Created by Zening on 11/13/2014.
  */
@@ -71,6 +72,8 @@ public class SearchSpeMemberActivity extends Activity implements Observer {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_specfic_member);
+
+
 
         //Get the model
         model = Model.getInstance(this);

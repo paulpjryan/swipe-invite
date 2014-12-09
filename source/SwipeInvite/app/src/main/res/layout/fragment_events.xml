@@ -9,10 +9,7 @@
     android:paddingRight="16dp"
     android:paddingTop="5dp"
     android:paddingBottom="10dp"
-    android:focusableInTouchMode="false"
-    android:focusable="false"
-    android:descendantFocusability="blocksDescendants">
-
+    >
     <EditText
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
@@ -23,18 +20,13 @@
          android:id="@+id/refreshable_view"
          android:layout_width="fill_parent"
          android:layout_height="fill_parent"
-         android:layout_below="@+id/et_search_group"
-         android:focusableInTouchMode="false"
-         android:focusable="false"
-         android:descendantFocusability="blocksDescendants">
+         android:layout_below="@+id/et_search_group">
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/listview_events"
         android:layout_gravity="center_horizontal|bottom"
-        android:focusableInTouchMode="false"
-        android:focusable="false"
-        android:descendantFocusability="blocksDescendants"
+
         />
 
     </com.team16.swipeinvite.RefreshableView>

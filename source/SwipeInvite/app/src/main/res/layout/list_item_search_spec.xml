@@ -4,7 +4,8 @@
     android:layout_height="wrap_content"
     android:id="@+id/list_item_search_spec"
     android:minHeight="?android:attr/listPreferredItemHeight"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical"
+    android:textColor="#ffffffff">
 
 
 

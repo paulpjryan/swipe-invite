@@ -115,7 +115,7 @@ public class AcquaintanceAdapter extends BaseAdapter implements Filterable {
             String filterableString ;
 
             for (int i = 0; i < count; i++) {
-                filterableString = list.get(i).getName();
+                filterableString = list.get(i).getCommonName();
                 if (filterableString.toLowerCase().contains(filterString)) {
                     nlist.add(list.get(i));
                 }
