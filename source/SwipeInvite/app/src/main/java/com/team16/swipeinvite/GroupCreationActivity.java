@@ -90,6 +90,8 @@ public class GroupCreationActivity extends ActionBarActivity {
         //Status View creation to local variables
         this.groupStatusView = (View) findViewById(R.id.group_create_status);
         this.statusMessage = (TextView) findViewById(R.id.group_create_status_message);
+
+        setTitle("Create Group");
     }
 
 

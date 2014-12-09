@@ -158,4 +158,31 @@
             android:orientation="horizontal" >
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/edit_separator_3"
+            android:layout_marginTop="15dp">
+
+        <TextView
+            android:id="@+id/edit_number_of_guests"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Count: "
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:ems="8"
+                android:id="@+id/textView_new_group_typeOpen"
+                android:layout_weight="6"
+                android:maxLength="35"
+                android:background="#37eeeeee"
+                android:maxLines="2"
+                android:enabled="false"/>
+
+        </LinearLayout>
     </RelativeLayout>
